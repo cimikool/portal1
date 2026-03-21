@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Learning Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;height:100dvh;}html,body{height:100%;margin:0;padding:0;}
+html{font-family:'Cairo',sans-serif;background:#F5F4F0;color:#1A1917;-webkit-text-size-adjust:100%;}
+body{min-height:100dvh;display:flex;flex-direction:column;overflow-x:hidden;}
+#app{flex:1;display:flex;flex-direction:column;width:100%;max-width:100%;padding:12px;}
+
+/* ── Header ── */
+.hdr{background:#1C1B18;color:#fff;border-radius:14px;padding:16px 20px;margin-bottom:12px;}
+.hdr h1{font-size:.95rem;font-weight:700;}
+.hdr .sub{font-size:.72rem;opacity:.5;}
+.school-info{font-size:.72rem;opacity:.6;margin-top:4px;line-height:1.6;}
+.student-bar{border-top:1px solid rgba(255,255,255,.12);margin-top:10px;padding-top:10px;display:none;}
+.bar-collapsed{display:flex;align-items:center;justify-content:space-between;}
+.bar-mini-name{font-size:.85rem;font-weight:700;}
+.bar-mini-sub{font-size:.7rem;opacity:.5;margin-top:1px;}
+.expand-btn{background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.7);border-radius:8px;
+            padding:4px 10px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:'Cairo',sans-serif;}
+.expand-btn:hover{background:rgba(255,255,255,.18);}
+.bar-expanded{margin-top:10px;}
+.student-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;}
+.sf{background:rgba(255,255,255,.07);border-radius:8px;padding:7px 10px;}
+.sf .lbl{font-size:.65rem;opacity:.5;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px;}
+.sf .val{font-size:.82rem;font-weight:700;}
+.sf.full{grid-column:1/-1;}
+.score-bar{background:rgba(255,255,255,.1);border-radius:10px;padding:9px 14px;
+           display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.score-bar .lbl{font-size:.72rem;opacity:.6;}
+.score-bar .val{font-size:1.2rem;font-weight:700;color:#86EFAC;}
+.last-login{font-size:.68rem;opacity:.4;text-align:center;margin-bottom:6px;}
+.new-banner{background:#FEF3C7;border-radius:8px;padding:7px 12px;margin-bottom:8px;
+            font-size:.78rem;font-weight:700;color:#92400E;display:none;}
+.logout-btn{width:100%;background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.6);
+            border-radius:8px;padding:7px;font-size:.75rem;font-weight:600;cursor:pointer;
+            font-family:'Cairo',sans-serif;}
+.logout-btn:hover{background:rgba(255,255,255,.15);}
+
+/* ── Tabs ── */
+.tabs{display:flex;gap:0;background:#fff;border-radius:12px;padding:4px;
+      box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:14px;}
+.tab-btn{flex:1;padding:9px;border:none;border-radius:9px;background:none;font-family:'Cairo',sans-serif;
+         font-size:.85rem;font-weight:600;color:#9CA3AF;cursor:pointer;transition:all .15s;
+         display:flex;align-items:center;justify-content:center;gap:6px;}
+.tab-btn.active{background:#1C1B18;color:#fff;}
+.tab-btn .badge-count{background:#EF4444;color:#fff;border-radius:20px;
+                       padding:1px 7px;font-size:.68rem;font-weight:700;}
+.tab-btn.active .badge-count{background:rgba(255,255,255,.25);}
+
+/* ── Cards ── */
+.card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.07);margin-bottom:12px;}
+.section-title{font-size:.75rem;font-weight:700;color:#9CA3AF;text-transform:uppercase;
+               letter-spacing:.06em;margin-bottom:8px;padding:0 2px;}
+
+/* Lesson card */
+.lesson-card{background:#fff;border-radius:13px;border:1.5px solid #E5E3DE;padding:14px 16px;
+             cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+.lesson-card:hover{border-color:#1C1B18;box-shadow:0 2px 12px rgba(0,0,0,.1);}
+.lesson-num{width:38px;height:38px;border-radius:10px;background:#1C1B18;color:#fff;
+            display:flex;align-items:center;justify-content:center;font-size:.85rem;
+            font-weight:700;flex-shrink:0;}
+.lesson-info{flex:1;min-width:0;}
+.lesson-title{font-size:.9rem;font-weight:700;color:#1A1917;
+              white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lesson-meta{font-size:.72rem;color:#9CA3AF;margin-top:3px;}
+
+/* Homework card */
+.hw-card{background:#fff;border-radius:13px;border:1.5px solid #E5E3DE;padding:14px 16px;
+         cursor:pointer;transition:all .15s;margin-bottom:8px;}
+.hw-card:hover{border-color:#4338CA;box-shadow:0 2px 12px rgba(67,56,202,.12);}
+.hw-card.done{border-color:#D1FAE5;background:#F0FDF4;}
+.hw-card.overdue{border-color:#FEE2E2;background:#FFF5F5;}
+.hw-top{display:flex;align-items:center;gap:12px;}
+.hw-icon{width:40px;height:40px;border-radius:10px;background:#EEF2FF;
+         display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.hw-card.done .hw-icon{background:#D1FAE5;}
+.hw-card.overdue .hw-icon{background:#FEE2E2;}
+.hw-info{flex:1;min-width:0;}
+.hw-title{font-size:.9rem;font-weight:700;color:#1A1917;
+          white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hw-meta{font-size:.72rem;color:#9CA3AF;margin-top:3px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.badge{padding:1px 8px;border-radius:20px;font-weight:600;background:#F2F1EE;color:#5C5A52;font-size:.72rem;}
+.badge.done{background:#D1FAE5;color:#065F46;}
+.badge.overdue{background:#FEE2E2;color:#991B1B;}
+.hw-score{font-size:.85rem;font-weight:700;color:#065F46;white-space:nowrap;flex-shrink:0;
+          background:#D1FAE5;padding:3px 10px;border-radius:20px;}
+/* Linked lessons strip */
+.hw-lessons{margin-top:10px;padding-top:10px;border-top:1px solid rgba(0,0,0,.06);
+            display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.hw-lessons-lbl{font-size:.7rem;color:#9CA3AF;font-weight:600;white-space:nowrap;}
+.lesson-link{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;
+             background:#F2F1EE;border-radius:20px;font-size:.75rem;font-weight:600;
+             color:#1A1917;cursor:pointer;border:1.5px solid transparent;transition:all .12s;}
+.lesson-link:hover{background:#E5E3DE;border-color:#1C1B18;}
+.lesson-link .ln{background:#1C1B18;color:#fff;border-radius:4px;
+                 padding:1px 5px;font-size:.65rem;font-weight:700;}
+
+
+
+/* Login */
+.form-lbl{font-size:.8rem;font-weight:700;color:#5C5A52;display:block;margin-bottom:5px;}
+.form-inp{width:100%;background:#F2F1EE;border:1.5px solid rgba(0,0,0,.09);border-radius:10px;
+          padding:10px 13px;font-size:.95rem;color:#1A1917;font-family:'Cairo',sans-serif;
+          outline:none;transition:border-color .15s;margin-bottom:12px;}
+.form-inp:focus{border-color:#4338CA;box-shadow:0 0 0 3px rgba(67,56,202,.1);}
+.form-inp[type=password]{letter-spacing:.25em;}
+.form-hint{font-size:.75rem;color:#9CA3AF;margin-top:-8px;margin-bottom:12px;}
+.btn-primary{width:100%;padding:12px;background:#4338CA;color:#fff;border:none;border-radius:11px;
+             font-family:'Cairo',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;
+             display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-primary:hover{background:#3730A3;}
+.btn-primary:disabled{background:#9CA3AF;cursor:not-allowed;}
+.err{background:#FEF2F2;border:1px solid #FCA5A5;border-radius:10px;padding:10px 14px;
+     font-size:.82rem;color:#991B1B;margin-bottom:12px;display:none;}
+
+/* Misc */
+.empty{text-align:center;padding:32px 16px;color:#9CA3AF;font-size:.85rem;}
+.empty-icon{font-size:2.5rem;margin-bottom:10px;opacity:.4;}
+.loading-row{display:flex;align-items:center;justify-content:center;
+             gap:10px;padding:24px;color:#9CA3AF;font-size:.85rem;}
+.spinner{width:20px;height:20px;border:2px solid rgba(255,255,255,.3);
+         border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+.spinner.dark{border-color:rgba(0,0,0,.12);border-top-color:#4338CA;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.refresh-btn{background:none;border:1.5px solid #E5E3DE;border-radius:10px;padding:8px 20px;
+             font-family:'Cairo',sans-serif;font-size:.8rem;color:#5C5A52;cursor:pointer;
+             display:block;margin:16px auto 0;}
+.refresh-btn:hover{border-color:#1C1B18;}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+      <div>
+        <h1>🎓 Learning Portal</h1>
+        <div class="sub" id="hdr-sub">Enter your details to access your content</div>
+        <div class="school-info" id="school-info" style="display:none;"></div>
+      </div>
+    </div>
+    <div class="student-bar" id="student-bar">
+      <!-- Collapsed row -->
+      <div class="bar-collapsed">
+        <div>
+          <div class="bar-mini-name" id="el-name-mini"></div>
+          <div class="bar-mini-sub" id="el-class-mini"></div>
+        </div>
+        <button class="expand-btn" id="bar-toggle" onclick="toggleBar()">▼ Details</button>
+      </div>
+      <!-- Expanded -->
+      <div class="bar-expanded" id="bar-expanded" style="display:none;">
+        <div id="new-banner" class="new-banner"></div>
+        <div class="student-grid">
+          <div class="sf full"><div class="lbl">Student</div><div class="val" id="el-name"></div></div>
+          <div class="sf"><div class="lbl">Class</div><div class="val" id="el-class"></div></div>
+          <div class="sf"><div class="lbl">Term</div><div class="val" id="el-term"></div></div>
+          <div class="sf"><div class="lbl">Teacher</div><div class="val" id="el-teacher"></div></div>
+          <div class="sf"><div class="lbl">School</div><div class="val" id="el-school" style="font-size:.72rem;"></div></div>
+          <div class="sf"><div class="lbl">Academic Year</div><div class="val" id="el-year"></div></div>
+          <div class="sf"><div class="lbl">Massar</div><div class="val" id="el-massar" style="font-size:.72rem;"></div></div>
+        </div>
+        <div class="score-bar" id="score-bar" style="display:none;">
+          <div class="lbl">Total homework score</div>
+          <div class="val" id="el-total"></div>
+        </div>
+        <div class="last-login" id="el-last-login"></div>
+        <button class="logout-btn" onclick="logout()">Sign out</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="login-screen" style="flex:1;display:flex;align-items:center;justify-content:center;padding:8px;">
+    <div style="width:100%;max-width:380px;">
+      <!-- School branding -->
+      <div style="text-align:center;margin-bottom:28px;">
+        <div style="font-size:2.5rem;margin-bottom:10px;">🎓</div>
+        <h1 style="font-size:1.2rem;font-weight:800;color:#1A1917;margin-bottom:4px;">Learning Portal</h1>
+        <div id="login-school-name" style="font-size:.82rem;color:#9CA3AF;font-weight:500;"></div>
+        <div id="login-teacher-name" style="font-size:.78rem;color:#C0BEB8;margin-top:2px;"></div>
+      </div>
+      <!-- Login card -->
+      <div style="background:#fff;border-radius:18px;padding:28px 24px;box-shadow:0 4px 24px rgba(0,0,0,.08);">
+        <div class="err" id="login-err"></div>
+        <div style="margin-bottom:16px;">
+          <label class="form-lbl" for="massar-inp">Massar Number</label>
+          <input class="form-inp" id="massar-inp" type="text" placeholder="e.g. N130032465"
+                 autocomplete="off" autocapitalize="none" inputmode="text" spellcheck="false"
+                 style="margin-bottom:0;">
+        </div>
+        <div style="margin-bottom:20px;">
+          <label class="form-lbl" for="pin-inp">Secret Code (PIN)</label>
+          <input class="form-inp" id="pin-inp" type="password" maxlength="4"
+                 placeholder="••••" inputmode="numeric" autocomplete="off"
+                 style="margin-bottom:4px;">
+          <div class="form-hint" style="margin-bottom:0;">4 digits — given to you by your teacher</div>
+        </div>
+        <button class="btn-primary" id="login-btn" onclick="doLogin()">Sign In</button>
+      </div>
+      <div style="text-align:center;margin-top:16px;font-size:.72rem;color:#C0BEB8;">
+        Abdellah Guennoun High School · Salah Sahmoudi
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div id="main-screen" style="display:none;">
+    <!-- Tab bar -->
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-lessons" onclick="switchTab('lessons')">
+        📖 Lessons <span class="badge-count" id="lesson-count" style="display:none;"></span>
+      </button>
+      <button class="tab-btn" id="tab-homework" onclick="switchTab('homework')">
+        📝 Homework <span class="badge-count" id="hw-count" style="display:none;"></span>
+      </button>
+    </div>
+    <div id="content-wrap">
+      <div class="loading-row">
+        <div class="spinner dark"></div><span>Loading…</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Config ── */
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxm0dKHveJHylft980UKOxImC9OMk4yhQ6RcYUpwbB3r3BX8Of-fBzAjGAFtJP-DsLH/exec';
+
+/* ── State ── */
+let SESSION    = null;
+let LESSONS    = [];
+let HOMEWORK   = [];
+let SCORES     = {};
+let ACTIVE_TAB = 'lessons';  /* which tab is active */
+let FROM_TAB   = 'lessons';  /* which tab we came from before opening frame */
+let BAR_OPEN   = false;
+
+/* ── Storage helpers ── */
+const ls = {
+  get: function(k)    { try { return localStorage.getItem(k); } catch{ return null; } },
+  set: function(k,v)  { try { localStorage.setItem(k,v); } catch{} },
+  del: function(k)    { try { localStorage.removeItem(k); } catch{} }
+};
+function saveSession(s)   { try { sessionStorage.setItem('lp_session', JSON.stringify(s)); } catch{} }
+function loadSession()    { try { return JSON.parse(sessionStorage.getItem('lp_session')||'null'); } catch{ return null; } }
+function clearSession()   { try { sessionStorage.removeItem('lp_session'); } catch{} }
+
+/* ── API ── */
+async function api(body) {
+  const res = await fetch(SCRIPT_URL, {
+    method:'POST', headers:{'Content-Type':'text/plain'},
+    body: JSON.stringify(body), redirect:'follow'
+  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
+}
+async function apiGet(params) {
+  const qs  = new URLSearchParams(params).toString();
+  const res = await fetch(SCRIPT_URL + '?' + qs, { redirect:'follow' });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
+}
+
+/* ── Login ── */
+async function doLogin() {
+  const massar = document.getElementById('massar-inp').value.trim();
+  const pin    = document.getElementById('pin-inp').value.trim();
+  const errEl  = document.getElementById('login-err');
+  errEl.style.display = 'none';
+  if (!massar) { showErr('Please enter your Massar number'); return; }
+  if (!pin || pin.length !== 4) { showErr('Please enter your 4-digit PIN'); return; }
+  setLoginLoading(true);
+  try {
+    const d = await api({ action:'loginContainer', massarCode:massar, pin });
+    if (!d.ok) { showErr(d.error || 'Incorrect details'); return; }
+    SESSION = {
+      studentName: d.studentName, studentId: d.studentId,
+      massarCode: d.massarCode, classId: d.classId,
+      className: d.className, termId: d.termId,
+      teacherName: d.teacherName||'', schoolName: d.schoolName||'',
+      academicYear: d.academicYear||'', orderNumber: d.orderNumber||0,
+      _pin: pin,
+    };;
+    saveSession(SESSION);
+    ls.set('lp_last_' + massar, new Date().toISOString());
+    enterApp();
+  } catch(e) {
+    showErr('Connection failed — check your internet and try again');
+  } finally { setLoginLoading(false); }
+}
+function setLoginLoading(on) {
+  const b = document.getElementById('login-btn');
+  b.disabled = on;
+  b.innerHTML = on ? '<div class="spinner"></div> Verifying…' : 'Sign In';
+}
+function showErr(msg) {
+  const el = document.getElementById('login-err');
+  el.textContent = msg; el.style.display = 'block';
+}
+
+/* ── Enter app ── */
+function enterApp() {
+  /* Fill login screen labels too (for next visit) */
+  var lsn = document.getElementById('login-school-name');
+  var ltn = document.getElementById('login-teacher-name');
+  if (lsn && SESSION.schoolName)  lsn.textContent  = SESSION.schoolName;
+  if (ltn && SESSION.teacherName) ltn.textContent  = '👨‍🏫 ' + SESSION.teacherName;
+
+  /* School info */
+  const si = document.getElementById('school-info');
+  const siParts = [SESSION.schoolName, SESSION.teacherName].filter(Boolean);
+  if (siParts.length) { si.textContent = siParts.join(' · '); si.style.display = 'block'; }
+  document.getElementById('hdr-sub').style.display = 'none';
+
+  /* Mini bar */
+  document.getElementById('el-name-mini').textContent  = SESSION.studentName;
+  document.getElementById('el-class-mini').textContent = SESSION.className + ' · ' + (SESSION.termId==='s1'?'Term 1':'Term 2');
+
+  /* Expanded fields */
+  document.getElementById('el-name').textContent    = SESSION.studentName;
+  document.getElementById('el-class').textContent   = SESSION.className;
+  document.getElementById('el-term').textContent    = SESSION.termId==='s1'?'Term 1':'Term 2';
+  document.getElementById('el-teacher').textContent = SESSION.teacherName||'—';
+  document.getElementById('el-school').textContent  = SESSION.schoolName||'—';
+  document.getElementById('el-year').textContent    = SESSION.academicYear||'—';
+  document.getElementById('el-massar').textContent  = SESSION.massarCode;
+
+  /* Last login */
+  const prev = ls.get('lp_prev_' + SESSION.massarCode);
+  if (prev) {
+    const d = new Date(prev);
+    document.getElementById('el-last-login').textContent =
+      'Last login: ' + d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  }
+  ls.set('lp_prev_' + SESSION.massarCode, ls.get('lp_last_' + SESSION.massarCode)||new Date().toISOString());
+
+  document.getElementById('student-bar').style.display = 'block';
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('main-screen').style.display  = 'block';
+
+  loadContent();
+}
+
+/* ── Toggle bar ── */
+function toggleBar() {
+  BAR_OPEN = !BAR_OPEN;
+  document.getElementById('bar-expanded').style.display = BAR_OPEN ? 'block' : 'none';
+  document.getElementById('bar-toggle').textContent     = BAR_OPEN ? '▲ Hide' : '▼ Details';
+}
+function collapseBar() {
+  BAR_OPEN = false;
+  document.getElementById('bar-expanded').style.display = 'none';
+  document.getElementById('bar-toggle').textContent     = '▼ Details';
+}
+function expandBar() {
+  BAR_OPEN = true;
+  document.getElementById('bar-expanded').style.display = 'block';
+  document.getElementById('bar-toggle').textContent     = '▲ Hide';
+}
+
+/* ── Load content ── */
+async function loadContent() {
+  const wrap = document.getElementById('content-wrap');
+  wrap.innerHTML = '<div class="loading-row"><div class="spinner dark"></div><span>Loading…</span></div>';
+  try {
+    const [contentData, subData] = await Promise.all([
+      api({ action:'getContentList', classId:SESSION.classId, termId:SESSION.termId }),
+      apiGet({ action:'pullSubmissions', classId:SESSION.classId, massarCode:SESSION.massarCode })
+    ]);
+
+    if (!contentData.ok) {
+      wrap.innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div>' + (contentData.error||'Error loading') + '</div>';
+      return;
+    }
+
+    LESSONS  = contentData.lessons  || [];
+    HOMEWORK = contentData.homework || [];
+
+    /* Build scores map */
+    SCORES = {};
+    if (subData.ok) {
+      (subData.submissions||[]).forEach(function(s) {
+        if (s.massarCode === SESSION.massarCode) {
+          SCORES[s.assignmentToken] = { score:s.score, maxScore:s.maxScore, submittedAt:s.submittedAt };
+        }
+      });
+    }
+
+    /* Update tab counts */
+    updateTabCounts();
+    /* Update total score */
+    updateTotalScore();
+    /* Check for new content */
+    checkNewContent();
+    /* Render active tab */
+    renderTab(ACTIVE_TAB);
+
+  } catch(e) {
+    wrap.innerHTML = '<div class="empty"><div class="empty-icon">📡</div>Connection failed — try again</div>';
+  }
+}
+
+function updateTabCounts() {
+  const lc = document.getElementById('lesson-count');
+  const hc = document.getElementById('hw-count');
+  if (LESSONS.length)  { lc.textContent = LESSONS.length;  lc.style.display = 'inline'; }
+  if (HOMEWORK.length) { hc.textContent = HOMEWORK.length; hc.style.display = 'inline'; }
+}
+
+function updateTotalScore() {
+  const keys = Object.keys(SCORES);
+  if (!keys.length) return;
+  let total=0, maxT=0;
+  keys.forEach(function(k){ total+=SCORES[k].score; maxT+=SCORES[k].maxScore; });
+  document.getElementById('el-total').textContent = total + ' / ' + maxT;
+  document.getElementById('score-bar').style.display = 'flex';
+}
+
+function checkNewContent() {
+  const lastVisit = ls.get('lp_visit_' + SESSION.massarCode);
+  const banner    = document.getElementById('new-banner');
+  if (!lastVisit) { ls.set('lp_visit_' + SESSION.massarCode, new Date().toISOString()); return; }
+  const isNew = function(item) { return item.createdAt && new Date(item.createdAt) > new Date(lastVisit); };
+  const newL  = LESSONS.filter(isNew).length;
+  const newH  = HOMEWORK.filter(isNew).length;
+  if (newL || newH) {
+    const parts = [];
+    if (newL) parts.push(newL + ' new lesson' + (newL>1?'s':''));
+    if (newH) parts.push(newH + ' new assignment' + (newH>1?'s':''));
+    banner.textContent = '🆕 ' + parts.join(' & ') + '!';
+    banner.style.display = 'block';
+    /* Show banner in expanded bar */
+    expandBar();
+  }
+  ls.set('lp_visit_' + SESSION.massarCode, new Date().toISOString());
+}
+
+/* ── Tab switching ── */
+function switchTab(tab) {
+  ACTIVE_TAB = tab;
+  document.getElementById('tab-lessons').classList.toggle('active',  tab==='lessons');
+  document.getElementById('tab-homework').classList.toggle('active', tab==='homework');
+  renderTab(tab);
+}
+
+function renderTab(tab) {
+  if (tab === 'lessons') renderLessons();
+  else renderHomework();
+}
+
+/* ── Render lessons ── */
+function renderLessons() {
+  const wrap = document.getElementById('content-wrap');
+  if (!LESSONS.length) {
+    wrap.innerHTML = '<div class="empty"><div class="empty-icon">📖</div>No lessons available yet</div>';
+    return;
+  }
+  let html = '<div class="section-title">' + LESSONS.length + ' Lesson' + (LESSONS.length>1?'s':'') + '</div>';
+  LESSONS.forEach(function(l) { html += lessonCard(l, false); });
+  html += '<button class="refresh-btn" onclick="loadContent()">↻ Refresh</button>';
+  wrap.innerHTML = html;
+}
+
+function lessonCard(l, compact) {
+  const url = l.fileUrl;
+  return '<div class="lesson-card" onclick="' + (url?'openContent(\'lesson\',\''+esc(l.id)+'\')':'') + '"' +
+    (url?'':' style="opacity:.5;cursor:not-allowed;"') + '>' +
+    '<div class="lesson-num">' + (l.lessonNumber||'—') + '</div>' +
+    '<div class="lesson-info">' +
+      '<div class="lesson-title">' + esc(l.title) + '</div>' +
+      '<div class="lesson-meta">' +
+        (l.subject?'<span>' + esc(l.subject) + '</span>':'') +
+        (l.createdAt?'<span>' + new Date(l.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) + '</span>':'') +
+        (url?'':'<span style="color:#EF4444;">Link missing</span>') +
+      '</div>' +
+    '</div>' +
+    '<span style="color:#C0BEB8;font-size:.9rem;">→</span>' +
+  '</div>';
+}
+
+/* ── Render homework ── */
+function renderHomework() {
+  const wrap = document.getElementById('content-wrap');
+  if (!HOMEWORK.length) {
+    wrap.innerHTML = '<div class="empty"><div class="empty-icon">📝</div>No assignments yet</div>';
+    return;
+  }
+  const active  = HOMEWORK.filter(function(h){ return !h.isOverdue; });
+  const overdue = HOMEWORK.filter(function(h){ return h.isOverdue; });
+  let html = '';
+  if (active.length)  { html += '<div class="section-title">Available</div>' + active.map(hwCard).join(''); }
+  if (overdue.length) { html += '<div class="section-title" style="margin-top:14px;color:#B91C1C;">Past Due</div>' + overdue.map(hwCard).join(''); }
+  html += '<button class="refresh-btn" onclick="loadContent()">↻ Refresh</button>';
+  wrap.innerHTML = html;
+}
+
+function hwCard(hw) {
+  const tok   = hw.assignmentToken || hw.id;
+  const sub   = SCORES[tok];
+  const isDone = !!sub;
+  let cls = 'hw-card';
+  if (isDone) cls += ' done';
+  else if (hw.isOverdue) cls += ' overdue';
+
+  const icon      = isDone ? '✅' : hw.isOverdue ? '⏰' : '📝';
+  const scoreBadge = isDone ? '<span class="hw-score">' + sub.score + ' / ' + sub.maxScore + '</span>' : '';
+  const badge      = isDone ? '<span class="badge done">Submitted</span>' :
+                     hw.isOverdue ? '<span class="badge overdue">Overdue</span>' : '';
+  const url = hw.fileUrl;
+
+  /* Linked lessons strip */
+  let lessonsStrip = '';
+  if (hw.linkedLessons && hw.linkedLessons.length) {
+    lessonsStrip = '<div class="hw-lessons">' +
+      '<span class="hw-lessons-lbl">Covers:</span>' +
+      hw.linkedLessons.map(function(ll) {
+        return '<span class="lesson-link" onclick="event.stopPropagation();openContentFromHw(\''+esc(ll.id)+'\')">' +
+          '<span class="ln">' + ll.lessonNumber + '</span>' + esc(ll.title) + '</span>';
+      }).join('') +
+    '</div>';
+  }
+
+  return '<div class="' + cls + '" onclick="' + (url?'openContent(\'homework\',\''+esc(hw.id)+'\')':'') + '"' +
+    (url?'':' style="cursor:not-allowed;"') + '>' +
+    '<div class="hw-top">' +
+      '<div class="hw-icon">' + icon + '</div>' +
+      '<div class="hw-info">' +
+        '<div class="hw-title">' + esc(hw.title) + '</div>' +
+        '<div class="hw-meta">' +
+          (hw.subject?'<span class="badge">'+esc(hw.subject)+'</span>':'') +
+          (hw.dueDate?'<span>Due '+hw.dueDate+'</span>':'') +
+          badge +
+        '</div>' +
+        (hw.description?'<div style="font-size:.75rem;color:#9CA3AF;margin-top:3px;">'+esc(hw.description)+'</div>':'') +
+      '</div>' +
+      scoreBadge +
+    '</div>' +
+    lessonsStrip +
+  '</div>';
+}
+
+/* ── Open content ── */
+function openContent(type, id) {
+  const item = type==='lesson'
+    ? LESSONS.find(function(l){ return l.id===id; })
+    : HOMEWORK.find(function(h){ return h.id===id; });
+  if (!item || !item.fileUrl) { alert('File not available. Contact your teacher.'); return; }
+
+  /* Save current state so we can restore on return */
+  ls.set('lp_return_tab_' + SESSION.massarCode, ACTIVE_TAB);
+
+  /* Build params passed via URL hash */
+  const tok = item.assignmentToken || item.id;
+  const sub = SCORES[tok];
+  const params = new URLSearchParams({
+    massarCode:      SESSION.massarCode,
+    pin:             SESSION._pin || '',
+    classId:         SESSION.classId,
+    termId:          SESSION.termId,
+    studentName:     SESSION.studentName,
+    scriptUrl:       SCRIPT_URL,
+    contentType:     type,
+    contentId:       item.id,
+    lessonNumber:    item.lessonNumber || '',
+    lessonTitle:     item.title || '',
+    subject:         item.subject || '',
+    homeworkId:      item.id,
+    assignmentToken: tok,
+    attempt:         sub ? '2' : '1',
+  });
+
+  /* Full page navigation */
+  var fileUrl = item.fileUrl || '';
+  /* Convert ?page= URLs to GitHub URLs */
+  if (fileUrl.indexOf('?page=') >= 0) {
+    var pageId = fileUrl.split('?page=')[1].split('&')[0];
+    fileUrl = 'https://cimikool.github.io/portal1/' + pageId + '.html';
+  }
+  window.location.href = fileUrl + '#' + params.toString();
+}
+
+/* Open a lesson from inside a homework card — remember to go back to homework tab */
+function openContentFromHw(lessonId) {
+  openContent('lesson', lessonId);
+}
+
+/* ── Back from frame ── */
+function backFromFrame() {
+  /* Called when returning from a content page - restore correct tab */
+  const savedTab = ls.get('lp_return_tab_' + (SESSION && SESSION.massarCode)) || 'lessons';
+  ACTIVE_TAB = savedTab;
+  document.getElementById('tab-lessons').classList.toggle('active',  ACTIVE_TAB==='lessons');
+  document.getElementById('tab-homework').classList.toggle('active', ACTIVE_TAB==='homework');
+  renderTab(ACTIVE_TAB);
+  expandBar();
+}
+
+/* ── Toast ── */
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#065F46;color:#fff;border-radius:12px;padding:12px 24px;font-size:.88rem;font-weight:700;box-shadow:0 4px 20px rgba(0,0,0,.25);z-index:9999;font-family:\'Cairo\',sans-serif;white-space:nowrap;';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(function(){ t.remove(); }, 4000);
+}
+
+/* ── Logout ── */
+function logout() {
+  clearSession();
+  SESSION=null; LESSONS=[]; HOMEWORK=[]; SCORES={};
+  document.getElementById('student-bar').style.display  = 'none';
+  document.getElementById('school-info').style.display  = 'none';
+  document.getElementById('hdr-sub').style.display      = '';
+  document.getElementById('main-screen').style.display  = 'none';
+  document.getElementById('login-screen').style.display = 'block';
+  document.getElementById('massar-inp').value = '';
+  document.getElementById('pin-inp').value    = '';
+  document.getElementById('login-err').style.display = 'none';
+
+}
+
+/* ── Utils ── */
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+/* ── Keyboard ── */
+document.getElementById('pin-inp').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
+document.getElementById('massar-inp').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('pin-inp').focus(); });
+
+/* ── Init ── */
+(function(){
+  const s = loadSession();
+  if (s && s.massarCode && s.classId) {
+    SESSION = s;
+    enterApp();
+    /* Check if returning from a content page */
+    const savedTab = ls.get('lp_return_tab_' + s.massarCode);
+    if (savedTab) {
+      ls.del('lp_return_tab_' + s.massarCode);
+      setTimeout(function() { switchTab(savedTab); }, 100);
+    }
+  }
+}());
+</script>
+</body>
+</html>
