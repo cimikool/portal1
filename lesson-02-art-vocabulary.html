@@ -494,18 +494,30 @@ function checkMatch(){
   var sb=document.getElementById('match-score');
   document.getElementById('match-score-num').textContent=score+' / 5';
   sb.style.display='block';
-  document.querySelector('.check-btn').style.display='none';
-
-  /* Send practice result to server + update homework button */
   var passed = (score / TOTAL_QUESTIONS) >= PASS_THRESHOLD;
-  sendPracticeResult(score, TOTAL_QUESTIONS, passed);
 
-  /* Persist to localStorage so refresh doesn't reset the practice */
-  try {
-    localStorage.setItem(practiceKey(), JSON.stringify({
-      chosen: matchChosen, score: score, maxScore: TOTAL_QUESTIONS, passed: passed
-    }));
-  } catch(e) {}
+  if (passed) {
+    document.querySelector('.check-btn').style.display = 'none';
+    try { localStorage.setItem(practiceKey(), JSON.stringify({ chosen:matchChosen, score:score, maxScore:TOTAL_QUESTIONS, passed:true })); } catch(e) {}
+  } else {
+    setTimeout(function() {
+      matchData.forEach(function(m, j) {
+        document.getElementById('mo'+j).querySelectorAll('.match-opt').forEach(function(o) {
+          o.style.pointerEvents = 'auto';
+          o.classList.remove('selected','correct','wrong');
+        });
+        var fb2 = document.getElementById('mf'+j);
+        fb2.style.display = 'none';
+      });
+      matchChosen = {};
+      var btn = document.querySelector('.check-btn');
+      btn.textContent = '🔄 Try again';
+      btn.style.display = 'block';
+      document.getElementById('match-score').style.display = 'none';
+    }, 2500);
+  }
+
+  sendPracticeResult(score, TOTAL_QUESTIONS, passed);
 }
 
 function sendPracticeResult(score, maxScore, passed) {
@@ -652,7 +664,9 @@ function restoreCheckUI(score, maxScore, passed) {
   });
   document.getElementById('match-score-num').textContent = score + ' / ' + maxScore;
   document.getElementById('match-score').style.display = 'block';
-  document.querySelector('.check-btn').style.display = 'none';
+  if (passed) {
+    document.querySelector('.check-btn').style.display = 'none';
+  }
   updateHWButton(passed, score, maxScore);
 }
 </script>
