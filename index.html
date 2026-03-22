@@ -318,6 +318,8 @@ function showErr(msg) {
 
 /* ── Enter app ── */
 function enterApp() {
+  /* Reset all data on every login to avoid showing previous student's data */
+  SCORES = {}; LESSONS = []; HOMEWORK = [];
   /* Fill login screen labels too (for next visit) */
   var lsn = document.getElementById('login-school-name');
   var ltn = document.getElementById('login-teacher-name');
