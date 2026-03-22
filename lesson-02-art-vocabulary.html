@@ -490,6 +490,12 @@ function checkMatch(){
 }
 
 function goHomework() {
+  /* Wait for view to be recorded before navigating */
+  if (!window._viewRecorded) {
+    showToast('⏳ Please wait a moment…');
+    setTimeout(goHomework, 1000);
+    return;
+  }
   /* Get script URL and related homework pageId from CTX or TEACHER_CONFIG */
   var scriptUrl = (typeof CTX !== 'undefined' && CTX.scriptUrl) ? CTX.scriptUrl : (typeof SCRIPT_URL !== 'undefined' ? SCRIPT_URL : '');
   var hwId = TEACHER_CONFIG.relatedHomeworkId || '';
@@ -557,5 +563,36 @@ document.addEventListener('DOMContentLoaded', function() {
   if (first) first.style.marginTop = '0';
 });
 </script>
+
+<script>
+/* ── Record lesson view ── */
+(function() {
+  window.addEventListener('load', function() {
+    try {
+      var p = {};
+      try { var h = location.hash.slice(1); if(h) p = Object.fromEntries(new URLSearchParams(h)); } catch(e){}
+      var massar    = p.massarCode || '';
+      var scriptUrl = p.scriptUrl || SCRIPT_URL;
+      var lessonId  = (typeof TEACHER_CONFIG !== 'undefined') ? TEACHER_CONFIG.id : '';
+      var classId   = p.classId || '';
+      if (massar && lessonId && scriptUrl) {
+        /* Record view — store result so goHomework can wait for it */
+        window._viewRecorded = false;
+        fetch(scriptUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({ action: 'recordView', massarCode: massar,
+                                 lessonId: lessonId, classId: classId }),
+          redirect: 'follow'
+        }).then(function(){ window._viewRecorded = true; })
+          .catch(function(){ window._viewRecorded = true; /* fail silently, don't block */ });
+      } else {
+        window._viewRecorded = true;
+      }
+    } catch(e) { window._viewRecorded = true; }
+  });
+})();
+</script>
+
 </body>
 </html>
