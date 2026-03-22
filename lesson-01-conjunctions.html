@@ -383,18 +383,37 @@ function checkAll() {
   var sb = document.getElementById('score-box');
   document.getElementById('score-num').textContent = score + ' / 4';
   sb.style.display='block';
-  document.querySelector('.check-btn').style.display='none';
-
-  /* Send practice result to server + update homework button */
   var passed = (score / TOTAL_QUESTIONS) >= PASS_THRESHOLD;
-  sendPracticeResult(score, TOTAL_QUESTIONS, passed);
 
-  /* Persist to localStorage so refresh doesn't reset the practice */
-  try {
-    localStorage.setItem(practiceKey(), JSON.stringify({
-      chosen: chosen, score: score, maxScore: TOTAL_QUESTIONS, passed: passed
-    }));
-  } catch(e) {}
+  if (passed) {
+    /* Passed — hide button permanently */
+    document.querySelector('.check-btn').style.display = 'none';
+    /* Persist */
+    try { localStorage.setItem(practiceKey(), JSON.stringify({ chosen:chosen, score:score, maxScore:TOTAL_QUESTIONS, passed:true })); } catch(e) {}
+  } else {
+    /* Not passed — show score, then re-enable everything to retry */
+    setTimeout(function() {
+      /* Re-enable all options */
+      for (var j = 0; j < TOTAL_QUESTIONS; j++) {
+        document.getElementById('pq'+j).querySelectorAll('.opt').forEach(function(o) {
+          o.style.pointerEvents = 'auto';
+          o.classList.remove('selected','correct','wrong');
+        });
+        var fb2 = document.getElementById('fb'+j);
+        fb2.style.display = 'none';
+      }
+      chosen = {};
+      /* Show button again with retry label */
+      var btn = document.querySelector('.check-btn');
+      btn.textContent = '🔄 Try again';
+      btn.style.display = 'block';
+      /* Hide score box */
+      document.getElementById('score-box').style.display = 'none';
+    }, 2500); /* Show result for 2.5s then reset */
+  }
+
+  /* Send result to server + update homework button */
+  sendPracticeResult(score, TOTAL_QUESTIONS, passed);
 }
 
 function sendPracticeResult(score, maxScore, passed) {
@@ -548,8 +567,10 @@ function restoreCheckUI(score, maxScore, passed) {
   /* Show score box */
   document.getElementById('score-num').textContent = score + ' / ' + maxScore;
   document.getElementById('score-box').style.display = 'block';
-  document.querySelector('.check-btn').style.display = 'none';
-  /* Restore homework button state */
+  /* Only hide check button if practice was passed */
+  if (passed) {
+    document.querySelector('.check-btn').style.display = 'none';
+  }
   updateHWButton(passed, score, maxScore);
 }
 </script>
