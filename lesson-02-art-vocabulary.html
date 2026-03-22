@@ -378,14 +378,14 @@ body{padding-top:52px !important;}
     </div>
   </div>
 
-  <!-- Related homework -->
-  <div class="hw-link" onclick="goHomework()">
-    <div style="font-size:1.4rem;">📝</div>
+  <!-- Related homework — locked until practice passed -->
+  <div class="hw-link" id="hw-link" onclick="goHomework()" style="opacity:.45;cursor:not-allowed;pointer-events:none;">
+    <div style="font-size:1.4rem;" id="hw-icon">🔒</div>
     <div class="text">
-      <strong>Practise art vocabulary — do the homework!</strong>
-      <span>Homework 2 — Art Vocabulary</span>
+      <strong id="hw-title">Complete the practice to unlock homework</strong>
+      <span id="hw-sub">Score ≥ 80% to unlock Homework 2</span>
     </div>
-    <div style="color:#7C3AED;font-size:1rem;">→</div>
+    <div style="color:#7C3AED;font-size:1rem;" id="hw-arrow" hidden>→</div>
   </div>
 
 </div>
@@ -466,6 +466,9 @@ function pickMatch(qi,el,def){
   el.classList.add('selected');
   matchChosen[qi]=def;
 }
+var TOTAL_QUESTIONS = 5;
+var PASS_THRESHOLD  = 0.8;
+
 function checkMatch(){
   var score=0;
   matchData.forEach(function(m,i){
@@ -487,15 +490,50 @@ function checkMatch(){
   document.getElementById('match-score-num').textContent=score+' / 5';
   sb.style.display='block';
   document.querySelector('.check-btn').style.display='none';
+
+  /* Send practice result to server + update homework button */
+  var passed = (score / TOTAL_QUESTIONS) >= PASS_THRESHOLD;
+  sendPracticeResult(score, TOTAL_QUESTIONS, passed);
+}
+
+function sendPracticeResult(score, maxScore, passed) {
+  updateHWButton(passed, score, maxScore);
+  var massar    = CTX.massarCode || '';
+  var scriptUrl = CTX.scriptUrl  || SCRIPT_URL;
+  var lessonId  = (typeof TEACHER_CONFIG !== 'undefined') ? TEACHER_CONFIG.id : '';
+  var classId   = CTX.classId || '';
+  if (!massar || !lessonId || !scriptUrl) return;
+  fetch(scriptUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ action:'recordPractice', massarCode:massar, lessonId:lessonId,
+                           classId:classId, score:score, maxScore:maxScore }),
+    redirect: 'follow'
+  }).catch(function(){});
+}
+
+function updateHWButton(passed, score, maxScore) {
+  var link  = document.getElementById('hw-link');
+  var icon  = document.getElementById('hw-icon');
+  var title = document.getElementById('hw-title');
+  var sub   = document.getElementById('hw-sub');
+  var arrow = document.getElementById('hw-arrow');
+  if (!link) return;
+  if (passed) {
+    link.style.opacity = '1'; link.style.cursor = 'pointer'; link.style.pointerEvents = 'auto';
+    icon.textContent  = '📝';
+    title.textContent = 'Practise art vocabulary — do the homework!';
+    sub.textContent   = 'Homework 2 — Art Vocabulary  ✅ Practice passed (' + score + '/' + maxScore + ')';
+    arrow.removeAttribute('hidden');
+  } else {
+    link.style.opacity = '1'; link.style.cursor = 'not-allowed'; link.style.pointerEvents = 'none';
+    icon.textContent  = '❌';
+    title.textContent = 'Practice not passed — try again!';
+    sub.textContent   = 'You scored ' + score + '/' + maxScore + '. Need ' + Math.ceil(maxScore * PASS_THRESHOLD) + '/' + maxScore + ' (80%) to unlock.';
+  }
 }
 
 function goHomework() {
-  /* Wait for view to be recorded before navigating */
-  if (!window._viewRecorded) {
-    showToast('⏳ Please wait a moment…');
-    setTimeout(goHomework, 1000);
-    return;
-  }
   /* Get script URL and related homework pageId from CTX or TEACHER_CONFIG */
   var scriptUrl = (typeof CTX !== 'undefined' && CTX.scriptUrl) ? CTX.scriptUrl : (typeof SCRIPT_URL !== 'undefined' ? SCRIPT_URL : '');
   var hwId = TEACHER_CONFIG.relatedHomeworkId || '';
