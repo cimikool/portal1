@@ -132,6 +132,16 @@ body{min-height:100dvh;display:flex;flex-direction:column;overflow-x:hidden;}
              font-family:'Cairo',sans-serif;font-size:.8rem;color:#5C5A52;cursor:pointer;
              display:block;margin:16px auto 0;}
 .refresh-btn:hover{border-color:#1C1B18;}
+
+.lesson-card.locked, .hw-card.locked {
+  opacity: .55;
+  cursor: not-allowed;
+  filter: grayscale(.3);
+}
+.lesson-card.locked:hover, .hw-card.locked:hover {
+  transform: none;
+  box-shadow: none;
+}
 </style>
 </head>
 <body>
@@ -470,10 +480,14 @@ function renderLessons() {
 }
 
 function lessonCard(l, compact) {
-  const url = l.fileUrl;
-  return '<div class="lesson-card" onclick="' + (url?'openContent(\'lesson\',\''+esc(l.id)+'\')':'') + '"' +
-    (url?'':' style="opacity:.5;cursor:not-allowed;"') + '>' +
-    '<div class="lesson-num">' + (l.lessonNumber||'—') + '</div>' +
+  const url    = l.fileUrl;
+  const locked = !!l.locked;
+  const click  = locked ? 'showToast(\'🔒 Complete the previous step first.\')' :
+                 url ? 'openContent(\'lesson\',\''+esc(l.id)+'\')' : '';
+  return '<div class="lesson-card' + (locked?' locked':'') + '" onclick="' + click + '"' +
+    (locked?' style="opacity:.55;cursor:not-allowed;"':'') +
+    (!locked&&!url?' style="opacity:.5;cursor:not-allowed;"':'') + '>' +
+    '<div class="lesson-num">' + (locked?'🔒':l.lessonNumber||'—') + '</div>' +
     '<div class="lesson-info">' +
       '<div class="lesson-title">' + esc(l.title) + '</div>' +
       '<div class="lesson-meta">' +
@@ -503,14 +517,16 @@ function renderHomework() {
 }
 
 function hwCard(hw) {
-  const tok   = hw.assignmentToken || hw.id;
-  const sub   = SCORES[tok];
+  const tok    = hw.assignmentToken || hw.id;
+  const sub    = SCORES[tok];
   const isDone = !!sub;
+  const locked = !!hw.locked;
   let cls = 'hw-card';
-  if (isDone) cls += ' done';
+  if (locked)        cls += ' locked';
+  else if (isDone)   cls += ' done';
   else if (hw.isOverdue) cls += ' overdue';
 
-  const icon      = isDone ? '✅' : hw.isOverdue ? '⏰' : '📝';
+  const icon      = locked ? '🔒' : isDone ? '✅' : hw.isOverdue ? '⏰' : '📝';
   const scoreBadge = isDone ? '<span class="hw-score">' + sub.score + ' / ' + sub.maxScore + '</span>' : '';
   const badge      = isDone ? '<span class="badge done">Submitted</span>' :
                      hw.isOverdue ? '<span class="badge overdue">Overdue</span>' : '';
@@ -553,6 +569,7 @@ function openContent(type, id) {
     ? LESSONS.find(function(l){ return l.id===id; })
     : HOMEWORK.find(function(h){ return h.id===id; });
   if (!item || !item.fileUrl) { alert('File not available. Contact your teacher.'); return; }
+  if (item.locked) { showToast('🔒 Complete the previous step first.'); return; }
 
   /* Save current state so we can restore on return */
   ls.set('lp_return_tab_' + SESSION.massarCode, ACTIVE_TAB);
