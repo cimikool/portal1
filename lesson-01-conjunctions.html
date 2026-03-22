@@ -342,9 +342,9 @@ var explanations = {
 };
 
 function practiceKey() {
-  var massar = CTX.massarCode || 'guest';
-  var lid    = (typeof TEACHER_CONFIG !== 'undefined') ? TEACHER_CONFIG.id : 'L001';
-  return 'practice_' + massar + '_' + lid;
+  /* Key uses only lessonId — no CTX dependency, works even if hash is absent */
+  var lid = (typeof TEACHER_CONFIG !== 'undefined') ? TEACHER_CONFIG.id : 'L001';
+  return 'practice_state_' + lid;
 }
 
 function pick(qi, el, correctWord) {
@@ -500,8 +500,6 @@ document.addEventListener('DOMContentLoaded', function() {
   /* Add padding to first element so it's not under the bar */
   var first = document.querySelector('.page > *:first-child, .lesson-header, .hw-header');
   if (first) first.style.marginTop = '0';
-  /* Restore completed practice from localStorage */
-  restorePractice();
 });
 
 function restorePractice() {
@@ -586,5 +584,9 @@ function restoreCheckUI(score, maxScore, passed) {
 })();
 </script>
 
+<script>
+/* ── Restore practice on every page load (refresh, back, re-open) ── */
+restorePractice();
+</script>
 </body>
 </html>
