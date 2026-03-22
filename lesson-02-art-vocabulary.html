@@ -438,9 +438,8 @@ showCard();
 
 /* Matching practice */
 function practiceKey() {
-  var massar = CTX.massarCode || 'guest';
-  var lid    = (typeof TEACHER_CONFIG !== 'undefined') ? TEACHER_CONFIG.id : 'L002';
-  return 'practice_' + massar + '_' + lid;
+  var lid = (typeof TEACHER_CONFIG !== 'undefined') ? TEACHER_CONFIG.id : 'L002';
+  return 'practice_state_' + lid;
 }
 
 var matchData = [
@@ -612,8 +611,6 @@ document.addEventListener('DOMContentLoaded', function() {
   /* Add padding to first element so it's not under the bar */
   var first = document.querySelector('.page > *:first-child, .lesson-header, .hw-header');
   if (first) first.style.marginTop = '0';
-  /* Restore completed practice from localStorage */
-  restorePractice();
 });
 
 function restorePractice() {
@@ -690,5 +687,9 @@ function restoreCheckUI(score, maxScore, passed) {
 })();
 </script>
 
+<script>
+/* ── Restore practice on every page load ── */
+restorePractice();
+</script>
 </body>
 </html>
