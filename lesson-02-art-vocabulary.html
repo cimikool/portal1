@@ -437,6 +437,12 @@ function fcMove(d){
 showCard();
 
 /* Matching practice */
+function practiceKey() {
+  var massar = CTX.massarCode || 'guest';
+  var lid    = (typeof TEACHER_CONFIG !== 'undefined') ? TEACHER_CONFIG.id : 'L002';
+  return 'practice_' + massar + '_' + lid;
+}
+
 var matchData = [
   {word:'a painting',  correct:'A picture made with paint.'},
   {word:'a drawing',   correct:'A picture made with a pencil or pen.'},
@@ -452,7 +458,7 @@ var matchChosen = {};
   matchData.forEach(function(m,i){
     html+='<div class="match-row"><div class="match-word">'+m.word+'</div><div class="match-opts" id="mo'+i+'">';
     matchDefs.forEach(function(d){
-      html+='<span class="match-opt" onclick="pickMatch('+i+',this,\''+d.replace(/'/g,"\\'")+'\')">' +
+      html+='<span class="match-opt" data-def="'+d.replace(/"/g,'&quot;')+'" onclick="pickMatch('+i+',this,\''+d.replace(/'/g,"\\'")+'\')">' +
             d.replace(/A picture made with (paint|a pencil or pen)\./,'').replace(/A tool|A picture|Very/,'...').slice(0,28)+'…</span>';
     });
     html+='</div></div><div class="feedback-line" id="mf'+i+'"></div>';
@@ -494,6 +500,13 @@ function checkMatch(){
   /* Send practice result to server + update homework button */
   var passed = (score / TOTAL_QUESTIONS) >= PASS_THRESHOLD;
   sendPracticeResult(score, TOTAL_QUESTIONS, passed);
+
+  /* Persist to localStorage so refresh doesn't reset the practice */
+  try {
+    localStorage.setItem(practiceKey(), JSON.stringify({
+      chosen: matchChosen, score: score, maxScore: TOTAL_QUESTIONS, passed: passed
+    }));
+  } catch(e) {}
 }
 
 function sendPracticeResult(score, maxScore, passed) {
@@ -599,7 +612,52 @@ document.addEventListener('DOMContentLoaded', function() {
   /* Add padding to first element so it's not under the bar */
   var first = document.querySelector('.page > *:first-child, .lesson-header, .hw-header');
   if (first) first.style.marginTop = '0';
+  /* Restore completed practice from localStorage */
+  restorePractice();
 });
+
+function restorePractice() {
+  try {
+    var saved = localStorage.getItem(practiceKey());
+    if (!saved) return;
+    var state = JSON.parse(saved);
+    if (!state || typeof state.score === 'undefined') return;
+    /* Re-apply chosen answers visually */
+    matchChosen = state.chosen || {};
+    Object.keys(matchChosen).forEach(function(qi) {
+      var def  = matchChosen[qi];
+      var opts = document.getElementById('mo' + qi);
+      if (!opts) return;
+      opts.querySelectorAll('.match-opt').forEach(function(o) {
+        if (o.getAttribute('data-def') === def) {
+          o.classList.add('selected');
+        }
+      });
+    });
+    /* Restore UI without re-sending to server */
+    restoreCheckUI(state.score, state.maxScore, state.passed);
+  } catch(e) {}
+}
+
+function restoreCheckUI(score, maxScore, passed) {
+  matchData.forEach(function(m, i) {
+    var fb   = document.getElementById('mf' + i);
+    var opts = document.getElementById('mo' + i).querySelectorAll('.match-opt');
+    opts.forEach(function(o){ o.style.pointerEvents = 'none'; });
+    if (matchChosen[i] === m.correct) {
+      opts.forEach(function(o){ if(o.classList.contains('selected')) o.classList.add('correct'); });
+      fb.textContent = '✓ Correct!'; fb.className = 'feedback-line ok'; fb.style.display = 'block';
+    } else if (matchChosen[i]) {
+      opts.forEach(function(o){ if(o.classList.contains('selected')) o.classList.add('wrong'); });
+      fb.textContent = '✗ The answer is: "' + m.correct + '"';
+      fb.className = 'feedback-line no'; fb.style.display = 'block';
+    }
+  });
+  document.getElementById('match-score-num').textContent = score + ' / ' + maxScore;
+  document.getElementById('match-score').style.display = 'block';
+  document.querySelector('.check-btn').style.display = 'none';
+  updateHWButton(passed, score, maxScore);
+}
 </script>
 
 <script>
