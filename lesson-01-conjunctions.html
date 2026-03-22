@@ -341,6 +341,12 @@ var explanations = {
   3:'I have a cat AND a dog — adding two things together.'
 };
 
+function practiceKey() {
+  var massar = CTX.massarCode || 'guest';
+  var lid    = (typeof TEACHER_CONFIG !== 'undefined') ? TEACHER_CONFIG.id : 'L001';
+  return 'practice_' + massar + '_' + lid;
+}
+
 function pick(qi, el, correctWord) {
   var opts = el.parentNode.querySelectorAll('.opt');
   opts.forEach(function(o){o.classList.remove('selected');});
@@ -382,6 +388,13 @@ function checkAll() {
   /* Send practice result to server + update homework button */
   var passed = (score / TOTAL_QUESTIONS) >= PASS_THRESHOLD;
   sendPracticeResult(score, TOTAL_QUESTIONS, passed);
+
+  /* Persist to localStorage so refresh doesn't reset the practice */
+  try {
+    localStorage.setItem(practiceKey(), JSON.stringify({
+      chosen: chosen, score: score, maxScore: TOTAL_QUESTIONS, passed: passed
+    }));
+  } catch(e) {}
 }
 
 function sendPracticeResult(score, maxScore, passed) {
@@ -487,7 +500,60 @@ document.addEventListener('DOMContentLoaded', function() {
   /* Add padding to first element so it's not under the bar */
   var first = document.querySelector('.page > *:first-child, .lesson-header, .hw-header');
   if (first) first.style.marginTop = '0';
+  /* Restore completed practice from localStorage */
+  restorePractice();
 });
+
+function restorePractice() {
+  try {
+    var saved = localStorage.getItem(practiceKey());
+    if (!saved) return;
+    var state = JSON.parse(saved);
+    if (!state || typeof state.score === 'undefined') return;
+    /* Re-apply chosen answers visually */
+    chosen = state.chosen || {};
+    Object.keys(chosen).forEach(function(qi) {
+      var pq = document.getElementById('pq' + qi);
+      if (!pq) return;
+      var ans = chosen[qi];
+      pq.querySelectorAll('.opt').forEach(function(o) {
+        if (o.textContent.trim() === ans) o.classList.add('selected');
+      });
+    });
+    /* Re-run checkAll silently to restore feedback + score display */
+    /* But don't re-send to server — just restore UI */
+    restoreCheckUI(state.score, state.maxScore, state.passed);
+  } catch(e) {}
+}
+
+function restoreCheckUI(score, maxScore, passed) {
+  /* Show feedback for each question */
+  for (var i = 0; i < TOTAL_QUESTIONS; i++) {
+    var ans  = chosen[i];
+    var fb   = document.getElementById('fb' + i);
+    var opts = document.getElementById('pq' + i).querySelectorAll('.opt');
+    opts.forEach(function(o){ o.style.pointerEvents = 'none'; });
+    if (!ans) continue;
+    if (ans === correct[i]) {
+      opts.forEach(function(o){ if(o.textContent.trim()===correct[i]) o.classList.add('correct'); });
+      fb.textContent = '✓ Correct! ' + explanations[i];
+      fb.className = 'feedback ok'; fb.style.display = 'block';
+    } else {
+      opts.forEach(function(o){
+        if(o.textContent.trim()===ans)      o.classList.add('wrong');
+        if(o.textContent.trim()===correct[i]) o.classList.add('correct');
+      });
+      fb.textContent = '✗ The correct answer is "' + correct[i] + '". ' + explanations[i];
+      fb.className = 'feedback no'; fb.style.display = 'block';
+    }
+  }
+  /* Show score box */
+  document.getElementById('score-num').textContent = score + ' / ' + maxScore;
+  document.getElementById('score-box').style.display = 'block';
+  document.querySelector('.check-btn').style.display = 'none';
+  /* Restore homework button state */
+  updateHWButton(passed, score, maxScore);
+}
 </script>
 
 <script>
