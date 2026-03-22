@@ -382,7 +382,7 @@ async function loadContent() {
   wrap.innerHTML = '<div class="loading-row"><div class="spinner dark"></div><span>Loading…</span></div>';
   try {
     const [contentData, subData] = await Promise.all([
-      api({ action:'getContentList', classId:SESSION.classId, termId:SESSION.termId }),
+      api({ action:'getContentList', classId:SESSION.classId, termId:SESSION.termId, massarCode:SESSION.massarCode }),
       apiGet({ action:'pullSubmissions', classId:SESSION.classId, massarCode:SESSION.massarCode })
     ]);
 
@@ -391,8 +391,8 @@ async function loadContent() {
       return;
     }
 
-    LESSONS  = contentData.lessons  || [];
-    HOMEWORK = contentData.homework || [];
+    LESSONS  = (contentData.lessons  || []).map(function(l){ l.locked = !!l.locked; return l; });
+    HOMEWORK = (contentData.homework || []).map(function(h){ h.locked = !!h.locked; return h; });
 
     /* Build scores map */
     SCORES = {};
