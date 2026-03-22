@@ -657,11 +657,14 @@ document.getElementById('massar-inp').addEventListener('keydown', function(e){ i
   if (s && s.massarCode && s.classId) {
     SESSION = s;
     enterApp();
-    /* Check if returning from a content page */
+    /* Check if returning from a content page — reload content to refresh locked state */
     const savedTab = ls.get('lp_return_tab_' + s.massarCode);
     if (savedTab) {
       ls.del('lp_return_tab_' + s.massarCode);
-      setTimeout(function() { switchTab(savedTab); }, 100);
+      /* Reload content to pick up new unlocked items */
+      loadContent().then(function() {
+        switchTab(savedTab);
+      });
     }
   }
 }());
