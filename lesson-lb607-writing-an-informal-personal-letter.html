@@ -210,14 +210,18 @@ body{padding-top:52px !important;}
       <div class="lbl">out of 4 correct</div>
     </div>
   </div>
-  <div class="hw-link" id="hw-link" onclick="goHomework()"
-       style="opacity:.45;cursor:not-allowed;pointer-events:none;">
-    <div style="font-size:1.4rem;" id="hw-icon">🔒</div>
-    <div class="text">
-      <strong id="hw-title">Complete the practice to unlock homework</strong>
-      <span id="hw-sub">Score ≥ 80% to unlock Homework 7</span>
+  <div id="hw-section" style="margin-top:4px;">
+    <div id="hw-locked" style="background:#F2F1EE;border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:12px;opacity:.55;">
+      <div style="font-size:1.4rem;">🔒</div>
+      <div>
+        <div style="font-size:.9rem;font-weight:700;color:#5C5A52;">Complete the practice to unlock homework</div>
+        <div style="font-size:.78rem;color:#9CA3AF;" id="hw-sub">Score ≥ 80% to unlock</div>
+      </div>
     </div>
-    <div style="color:#7C3AED;font-size:1rem;" id="hw-arrow" hidden>→</div>
+    <button id="hw-btn" onclick="goHomework()" hidden
+      style="width:100%;padding:13px;background:#7C3AED;color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:.95rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;">
+      <span>📝</span><span id="hw-btn-label">Open Homework</span>
+    </button>
   </div>
 </div>
 <script>
@@ -285,19 +289,18 @@ function sendPracticeResult(score,maxScore,passed){
     redirect:'follow'}).catch(function(){});
 }
 function updateHWButton(passed,score,maxScore){
-  var link=document.getElementById('hw-link'),icon=document.getElementById('hw-icon'),
-      title=document.getElementById('hw-title'),sub=document.getElementById('hw-sub'),
-      arrow=document.getElementById('hw-arrow');
-  if(!link)return;
+  var locked=document.getElementById('hw-locked');
+  var btn=document.getElementById('hw-btn');
+  var sub=document.getElementById('hw-sub');
+  if(!locked||!btn)return;
   if(passed){
-    link.style.opacity='1';link.style.cursor='pointer';link.style.pointerEvents='auto';
-    icon.textContent='📝';title.textContent='Great work! Go to the homework now.';
-    sub.textContent='Homework 7 — Writing: An Informal / Personal Letter  ✅ ('+score+'/'+maxScore+')';
-    arrow.removeAttribute('hidden');
+    locked.style.display='none';
+    btn.removeAttribute('hidden');
+    document.getElementById('hw-btn-label').textContent='Open Homework ✅ ('+score+'/'+maxScore+')';
   }else{
-    link.style.opacity='1';link.style.cursor='not-allowed';link.style.pointerEvents='none';
-    icon.textContent='❌';title.textContent='Practice not passed — try again!';
-    sub.textContent='You scored '+score+'/'+maxScore+'. Need '+Math.ceil(maxScore*PASS_THRESHOLD)+'/'+maxScore+' to unlock.';
+    locked.style.display='flex';
+    btn.setAttribute('hidden','');
+    if(sub)sub.textContent='You scored '+score+'/'+maxScore+'. Need '+Math.ceil(maxScore*PASS_THRESHOLD)+'/'+maxScore+' (80%) to unlock.';
   }
 }
 function goHomework(){
