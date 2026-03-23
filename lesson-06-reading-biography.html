@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script id="__meta__" type="application/json">
+{
+  "id": "L006",
+  "type": "lesson",
+  "title": "Reading: An Artist's Biography",
+  "subject": "English",
+  "termId": "s1",
+  "lessonNumber": 6,
+  "classGroup": "CC",
+  "lessonIds": "",
+  "assignmentToken": "",
+  "maxScore": 0,
+  "pageId": "lesson-06-reading-biography"
+}
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 6 — Reading: An Artist's Biography</title>
+<script>
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxm0dKHveJHylft980UKOxImC9OMk4yhQ6RcYUpwbB3r3BX8Of-fBzAjGAFtJP-DsLH/exec';
+</script>
+<script>
+var TEACHER_CONFIG = {
+  id:                'L006',
+  classGroup:        'CC',
+  lessonNumber:      6,
+  title:             'Reading: An Artist\'s Biography',
+  subject:           'English',
+  relatedHomeworkId: 'HW006',
+};
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-family:'Segoe UI',system-ui,sans-serif;font-size:16px;background:#F5F4F0;color:#1A1917;line-height:1.75;}
+body{min-height:100dvh;padding:16px 16px 48px;}
+.page{max-width:640px;margin:0 auto;}
+
+.lesson-header{background:#1C1B18;color:#fff;border-radius:14px;padding:20px 24px;margin-bottom:20px;}
+.lesson-num{font-size:.7rem;font-weight:700;opacity:.5;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;}
+.lesson-title{font-size:1.15rem;font-weight:700;line-height:1.3;margin-bottom:8px;}
+.lesson-meta{font-size:.78rem;opacity:.6;display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
+.student-tag{background:rgba(255,255,255,.12);border-radius:20px;padding:2px 10px;font-size:.72rem;}
+.level-badge{background:#B45309;border-radius:20px;padding:2px 10px;font-size:.72rem;font-weight:700;}
+
+.card{background:#fff;border-radius:14px;padding:22px;box-shadow:0 2px 10px rgba(0,0,0,.06);margin-bottom:14px;}
+.card h2{font-size:1rem;font-weight:700;color:#1A1917;margin-bottom:14px;padding-bottom:10px;
+         border-bottom:2px solid #F2F1EE;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.92rem;color:#374151;margin-bottom:10px;}
+.card p:last-child{margin-bottom:0;}
+
+.objective{background:#FFF7ED;border:1.5px solid #FED7AA;border-radius:10px;
+           padding:12px 16px;font-size:.88rem;color:#92400E;margin-bottom:14px;}
+.objective strong{font-weight:700;}
+
+/* ── Reading strategy box ── */
+.strategy{background:#F5F3FF;border:1.5px solid #DDD6FE;border-radius:10px;
+          padding:12px 16px;margin-bottom:14px;font-size:.87rem;color:#4C1D95;}
+.strategy strong{font-weight:700;}
+.strategy ol{margin:6px 0 0 18px;}
+.strategy li{margin-bottom:3px;}
+
+/* ── Vocabulary pre-teach ── */
+.vocab-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px;}
+.vocab-chip{background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:20px;
+            padding:5px 12px;font-size:.83rem;}
+.vocab-chip strong{color:#92400E;font-weight:700;}
+.vocab-chip span{color:#6B7280;}
+
+/* ── Biography text ── */
+.bio-text{background:#FAFAF9;border:1.5px solid #E5E7EB;border-radius:12px;
+          padding:20px;margin-bottom:4px;}
+.bio-text-title{font-size:1rem;font-weight:800;color:#1A1917;margin-bottom:2px;}
+.bio-text-sub{font-size:.75rem;color:#9CA3AF;margin-bottom:14px;font-style:italic;}
+.bio-para{font-size:.9rem;color:#374151;line-height:1.85;margin-bottom:12px;}
+.bio-para:last-child{margin-bottom:0;}
+.bio-para .hl{background:#FEF3C7;border-radius:3px;padding:0 3px;font-weight:600;color:#92400E;}
+.para-label{font-size:.68rem;font-weight:700;color:#9CA3AF;text-transform:uppercase;
+            letter-spacing:.1em;display:block;margin-bottom:4px;}
+
+/* ── Comprehension questions ── */
+.practice-q{margin-bottom:16px;}
+.practice-q .q{font-size:.9rem;font-weight:600;color:#1A1917;margin-bottom:8px;}
+.options{display:flex;flex-wrap:wrap;gap:6px;}
+.opt{padding:7px 14px;background:#F2F1EE;border-radius:20px;cursor:pointer;
+     font-size:.85rem;border:1.5px solid transparent;transition:all .12s;user-select:none;}
+.opt:hover{background:#E8E6E1;}
+.opt.selected{background:#FFF7ED;border-color:#F59E0B;color:#92400E;font-weight:600;}
+.opt.correct{background:#F0FDF4;border-color:#10B981;color:#065F46;font-weight:600;}
+.opt.wrong{background:#FEF2F2;border-color:#EF4444;color:#991B1B;}
+.feedback{font-size:.8rem;margin-top:6px;padding:6px 10px;border-radius:8px;display:none;}
+.feedback.ok{background:#F0FDF4;color:#065F46;}
+.feedback.no{background:#FEF2F2;color:#991B1B;}
+
+.check-btn{padding:10px 24px;background:#B45309;color:#fff;border:none;border-radius:10px;
+           font-size:.88rem;font-weight:700;cursor:pointer;margin-top:6px;font-family:inherit;}
+.check-btn:hover{background:#92400E;}
+.score-box{background:#1C1B18;color:#fff;border-radius:12px;padding:14px 18px;
+           text-align:center;margin-top:4px;display:none;}
+.score-box .big{font-size:2rem;font-weight:800;}
+.score-box .lbl{font-size:.8rem;opacity:.6;margin-top:2px;}
+
+/* ── Note ── */
+.note{background:#F0F9FF;border:1.5px solid #BAE6FD;border-radius:10px;
+      padding:12px 14px;font-size:.85rem;color:#0C4A6E;margin:10px 0;}
+.note strong{font-weight:700;}
+
+/* ── HW link ── */
+.hw-link{background:#FFF7ED;border:1.5px solid #FED7AA;border-radius:12px;
+         padding:14px 18px;display:flex;align-items:center;gap:12px;
+         cursor:pointer;transition:background .15s;margin-top:4px;}
+.hw-link:hover{background:#FFEDD5;}
+.hw-link .text strong{display:block;font-size:.9rem;font-weight:700;color:#92400E;}
+.hw-link .text span{font-size:.78rem;color:#B45309;}
+
+/* ── Top bar ── */
+#top-bar{position:fixed;top:0;left:0;right:0;z-index:9999;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 12px;background:rgba(28,27,24,.95);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+.tb-back{background:rgba(255,255,255,.12);border:none;color:#fff;
+  border-radius:8px;padding:7px 14px;font-size:.85rem;font-weight:700;
+  cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;}
+.tb-back:hover{background:rgba(255,255,255,.22);}
+.tb-title{flex:1;text-align:center;font-size:.82rem;font-weight:600;
+  color:rgba(255,255,255,.7);white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;padding:0 8px;}
+.tb-zoom{background:rgba(255,255,255,.12);border:none;color:#fff;
+  border-radius:8px;padding:7px 14px;font-size:.85rem;font-weight:700;
+  cursor:pointer;font-family:inherit;letter-spacing:.05em;}
+.tb-zoom:hover{background:rgba(255,255,255,.22);}
+body{padding-top:52px !important;}
+</style>
+</head>
+<body>
+
+<div id="top-bar">
+  <button class="tb-back" onclick="goBack()">← Back</button>
+  <span class="tb-title" id="tb-title"></span>
+  <button class="tb-zoom" onclick="cycleZoom()" id="tb-zoom">A</button>
+</div>
+
+<div class="page">
+
+  <div class="lesson-header">
+    <div class="lesson-num">Unit 7 · Lesson 6 · English · A1.2</div>
+    <div class="lesson-title">Reading: An Artist's Biography</div>
+    <div class="lesson-meta">
+      <span class="level-badge">🎨 The Arts</span>
+      <span>A1.2 Common Core</span>
+      <span class="student-tag" id="student-tag" style="display:none;"></span>
+    </div>
+  </div>
+
+  <!-- Objective -->
+  <div class="card">
+    <h2><span class="icon">🎯</span> What you will learn</h2>
+    <div class="objective">
+      By the end of this lesson, you can <strong>read a biography</strong> and find
+      key information — name, nationality, dates, and achievements —
+      using the reading skills and grammar from Lessons 3, 4, and 5.
+    </div>
+    <p>You already know how to <em>ask</em> biography questions (Lesson 5) and use <em>was / were</em> (Lesson 4). Now you will practise <strong>reading</strong> a biography and finding answers to those same questions in a text.</p>
+  </div>
+
+  <!-- Reading strategy -->
+  <div class="card">
+    <h2><span class="icon">📖</span> Before you read — reading strategy</h2>
+    <div class="strategy">
+      <strong>How to read a biography efficiently:</strong>
+      <ol>
+        <li><strong>Skim</strong> the text quickly — read only the first sentence of each paragraph to get the main idea.</li>
+        <li><strong>Look for names, dates, and places</strong> — they are usually the answers to biography questions.</li>
+        <li><strong>Find key verbs</strong> — was, were, studied, painted, performed — they tell you what the person did.</li>
+        <li><strong>Answer the questions</strong> — go back to the text and find the exact line.</li>
+      </ol>
+    </div>
+
+    <p style="font-size:.85rem;color:#6B7280;margin-bottom:10px;"><strong>Key vocabulary in the text below — make sure you know these words:</strong></p>
+    <div class="vocab-row">
+      <div class="vocab-chip"><strong>gifted</strong> <span>= very talented</span></div>
+      <div class="vocab-chip"><strong>to study</strong> <span>= to learn</span></div>
+      <div class="vocab-chip"><strong>to perform</strong> <span>= to sing/act live</span></div>
+      <div class="vocab-chip"><strong>audience</strong> <span>= people watching</span></div>
+      <div class="vocab-chip"><strong>to pass away</strong> <span>= to die (polite)</span></div>
+      <div class="vocab-chip"><strong>legend</strong> <span>= a very famous person</span></div>
+      <div class="vocab-chip"><strong>emotion</strong> <span>= a feeling</span></div>
+      <div class="vocab-chip"><strong>century</strong> <span>= 100 years</span></div>
+    </div>
+  </div>
+
+  <!-- Biography text: Umm Kulthum -->
+  <div class="card">
+    <h2><span class="icon">📄</span> Read the biography</h2>
+
+    <div class="bio-text">
+      <div class="bio-text-title">Umm Kulthum — The Star of the East</div>
+      <div class="bio-text-sub">A biography of one of the greatest Arab artists of all time</div>
+
+      <span class="para-label">Paragraph 1 — Who was she?</span>
+      <p class="bio-para">
+        Umm Kulthum <span class="hl">was</span> one of the most famous singers in the Arab world.
+        She <span class="hl">was</span> born in a small village in Egypt in <span class="hl">1904</span>.
+        Her father <span class="hl">was</span> a religious leader and a lover of music.
+        From a very young age, Umm Kulthum <span class="hl">was</span> a gifted singer with a powerful and emotional voice.
+      </p>
+
+      <span class="para-label">Paragraph 2 — Early life</span>
+      <p class="bio-para">
+        As a child, she often performed with her father at local celebrations.
+        The audiences <span class="hl">were</span> always amazed by her voice.
+        When she <span class="hl">was</span> a teenager, her family moved to Cairo, the capital of Egypt.
+        Cairo <span class="hl">was</span> the centre of music and culture in the Arab world.
+        There, she studied music and quickly became very popular.
+      </p>
+
+      <span class="para-label">Paragraph 3 — Career and fame</span>
+      <p class="bio-para">
+        By the 1930s, Umm Kulthum <span class="hl">was</span> the most famous singer in Egypt.
+        Her concerts <span class="hl">were</span> legendary — they sometimes lasted for five or six hours!
+        Her voice <span class="hl">was</span> full of deep emotion, and her songs <span class="hl">were</span>
+        about love, longing, and the beauty of the Arabic language.
+        Millions of people listened to her on the radio every month.
+      </p>
+
+      <span class="para-label">Paragraph 4 — Legacy</span>
+      <p class="bio-para">
+        Umm Kulthum passed away in <span class="hl">1975</span> in Cairo.
+        She <span class="hl">was</span> 70 years old.
+        More than four million people attended her funeral — one of the largest in history.
+        Today, she is still called <em>"Kawkab al-Sharq"</em> — <strong>the Star of the East</strong>.
+        She <span class="hl">was</span>, and still is, a true legend of Arab music.
+      </p>
+    </div>
+
+    <div class="note" style="margin-top:12px;">
+      <strong>Notice:</strong> The highlighted words are all forms of <strong>was / were</strong> — the grammar you learned in Lesson 4. Can you count how many times they appear in the text?
+    </div>
+  </div>
+
+  <!-- Comprehension questions -->
+  <div class="card">
+    <h2><span class="icon">✏️</span> Comprehension practice</h2>
+    <p style="font-size:.85rem;color:#9CA3AF;margin-bottom:14px;">Read the biography again and choose the correct answer.</p>
+
+    <div class="practice-q" id="pq0">
+      <div class="q">1. Where was Umm Kulthum born?</div>
+      <div class="options">
+        <span class="opt" onclick="pick(0,this,'In a small village in Egypt')">In Cairo, Egypt</span>
+        <span class="opt" onclick="pick(0,this,'In a small village in Egypt')">In a small village in Egypt</span>
+        <span class="opt" onclick="pick(0,this,'In a small village in Egypt')">In Morocco</span>
+        <span class="opt" onclick="pick(0,this,'In a small village in Egypt')">In Lebanon</span>
+      </div>
+      <div class="feedback" id="fb0"></div>
+    </div>
+
+    <div class="practice-q" id="pq1">
+      <div class="q">2. What was Umm Kulthum famous for?</div>
+      <div class="options">
+        <span class="opt" onclick="pick(1,this,'Her powerful singing voice and emotional songs')">Her paintings and sculptures</span>
+        <span class="opt" onclick="pick(1,this,'Her powerful singing voice and emotional songs')">Her powerful singing voice and emotional songs</span>
+        <span class="opt" onclick="pick(1,this,'Her powerful singing voice and emotional songs')">Her silent films and comedy</span>
+        <span class="opt" onclick="pick(1,this,'Her powerful singing voice and emotional songs')">Her work as a film director</span>
+      </div>
+      <div class="feedback" id="fb1"></div>
+    </div>
+
+    <div class="practice-q" id="pq2">
+      <div class="q">3. How long did her concerts sometimes last?</div>
+      <div class="options">
+        <span class="opt" onclick="pick(2,this,'Five or six hours')">One or two hours</span>
+        <span class="opt" onclick="pick(2,this,'Five or six hours')">Three hours exactly</span>
+        <span class="opt" onclick="pick(2,this,'Five or six hours')">Five or six hours</span>
+        <span class="opt" onclick="pick(2,this,'Five or six hours')">All night long</span>
+      </div>
+      <div class="feedback" id="fb2"></div>
+    </div>
+
+    <div class="practice-q" id="pq3">
+      <div class="q">4. What does "Kawkab al-Sharq" mean in English?</div>
+      <div class="options">
+        <span class="opt" onclick="pick(3,this,'The Star of the East')">The Voice of Egypt</span>
+        <span class="opt" onclick="pick(3,this,'The Star of the East')">The Queen of Music</span>
+        <span class="opt" onclick="pick(3,this,'The Star of the East')">The Star of the East</span>
+        <span class="opt" onclick="pick(3,this,'The Star of the East')">The Legend of Cairo</span>
+      </div>
+      <div class="feedback" id="fb3"></div>
+    </div>
+
+    <button class="check-btn" onclick="checkAll()">Check my answers</button>
+    <div class="score-box" id="score-box">
+      <div class="big" id="score-num"></div>
+      <div class="lbl">out of 4 correct</div>
+    </div>
+  </div>
+
+  <!-- Language focus -->
+  <div class="card">
+    <h2><span class="icon">🔍</span> Language focus — was / were in the text</h2>
+    <p>Go back to the biography and find all the examples of <strong>was</strong> and <strong>were</strong>. Here are the most important ones:</p>
+    <div class="note">
+      <strong>was</strong> born · <strong>was</strong> a gifted singer · <strong>was</strong> the most famous ·
+      <strong>was</strong> full of emotion · <strong>was</strong> 70 years old ·
+      <strong>were</strong> amazed · <strong>were</strong> legendary · <strong>were</strong> about love
+    </div>
+    <p style="margin-top:10px;">These are exactly the structures you will need to <strong>write your own biography</strong> in Lesson 11. Keep this lesson as a model!</p>
+  </div>
+
+  <!-- HW link -->
+  <div class="hw-link" id="hw-link" onclick="goHomework()"
+       style="opacity:.45;cursor:not-allowed;pointer-events:none;">
+    <div style="font-size:1.4rem;" id="hw-icon">🔒</div>
+    <div class="text">
+      <strong id="hw-title">Complete the practice to unlock homework</strong>
+      <span id="hw-sub">Score ≥ 80% to unlock Homework 6</span>
+    </div>
+    <div style="color:#B45309;font-size:1rem;" id="hw-arrow" hidden>→</div>
+  </div>
+
+</div><!-- .page -->
+
+<script>
+var CTX = {};
+try { var _h=location.hash.slice(1); if(_h) CTX=Object.fromEntries(new URLSearchParams(_h)); } catch(e){}
+if (CTX.studentName) {
+  var _tag=document.getElementById('student-tag');
+  if(_tag){ _tag.textContent='👤 '+CTX.studentName; _tag.style.display='inline'; }
+}
+</script>
+
+<script>
+var chosen = {};
+var correct = {
+  0: 'In a small village in Egypt',
+  1: 'Her powerful singing voice and emotional songs',
+  2: 'Five or six hours',
+  3: 'The Star of the East'
+};
+var explanations = {
+  0: 'Paragraph 1: "She was born in a small village in Egypt in 1904." She moved to Cairo later, but she was not born there.',
+  1: 'Paragraph 3: "Her voice was full of deep emotion, and her songs were about love, longing, and the beauty of the Arabic language."',
+  2: 'Paragraph 3: "Her concerts were legendary — they sometimes lasted for five or six hours!"',
+  3: 'Paragraph 4: She is called "Kawkab al-Sharq" — the Star of the East.'
+};
+
+var TOTAL_QUESTIONS = 4;
+var PASS_THRESHOLD  = 0.8;
+
+function practiceKey() {
+  return 'practice_state_' + TEACHER_CONFIG.id;
+}
+
+function pick(qi, el, correctWord) {
+  el.parentNode.querySelectorAll('.opt').forEach(function(o){ o.classList.remove('selected'); });
+  el.classList.add('selected');
+  chosen[qi] = el.textContent.trim();
+}
+
+function checkAll() {
+  var score = 0;
+  for (var i = 0; i < TOTAL_QUESTIONS; i++) {
+    var ans  = chosen[i];
+    var fb   = document.getElementById('fb'+i);
+    var opts = document.getElementById('pq'+i).querySelectorAll('.opt');
+    opts.forEach(function(o){ o.style.pointerEvents='none'; });
+    if (!ans) {
+      fb.textContent='⚠ No answer selected.'; fb.className='feedback no'; fb.style.display='block'; continue;
+    }
+    if (ans === correct[i]) {
+      score++;
+      opts.forEach(function(o){ if(o.textContent.trim()===correct[i]) o.classList.add('correct'); });
+      fb.textContent='✓ Correct! '+explanations[i]; fb.className='feedback ok'; fb.style.display='block';
+    } else {
+      opts.forEach(function(o){
+        if(o.textContent.trim()===ans)        o.classList.add('wrong');
+        if(o.textContent.trim()===correct[i]) o.classList.add('correct');
+      });
+      fb.textContent='✗ The correct answer is: "'+correct[i]+'". '+explanations[i];
+      fb.className='feedback no'; fb.style.display='block';
+    }
+  }
+  document.getElementById('score-num').textContent = score+' / 4';
+  document.getElementById('score-box').style.display = 'block';
+
+  var passed = (score/TOTAL_QUESTIONS) >= PASS_THRESHOLD;
+  if (passed) {
+    document.querySelector('.check-btn').style.display='none';
+    try { localStorage.setItem(practiceKey(), JSON.stringify({chosen:chosen,score:score,maxScore:TOTAL_QUESTIONS,passed:true})); } catch(e){}
+  } else {
+    setTimeout(function(){
+      for (var j=0;j<TOTAL_QUESTIONS;j++){
+        document.getElementById('pq'+j).querySelectorAll('.opt').forEach(function(o){
+          o.style.pointerEvents='auto'; o.classList.remove('selected','correct','wrong');
+        });
+        document.getElementById('fb'+j).style.display='none';
+      }
+      chosen={};
+      var btn=document.querySelector('.check-btn');
+      btn.textContent='🔄 Try again'; btn.style.display='block';
+      document.getElementById('score-box').style.display='none';
+    }, 2500);
+  }
+  sendPracticeResult(score, TOTAL_QUESTIONS, passed);
+}
+
+function sendPracticeResult(score, maxScore, passed) {
+  updateHWButton(passed, score, maxScore);
+  var massar=CTX.massarCode||'', scriptUrl=CTX.scriptUrl||SCRIPT_URL;
+  if (!massar||!scriptUrl) return;
+  fetch(scriptUrl, {
+    method:'POST', headers:{'Content-Type':'text/plain'},
+    body:JSON.stringify({action:'recordPractice',massarCode:massar,
+                         lessonId:TEACHER_CONFIG.id,classId:CTX.classId||'',
+                         score:score,maxScore:maxScore}),
+    redirect:'follow'
+  }).catch(function(){});
+}
+
+function updateHWButton(passed, score, maxScore) {
+  var link=document.getElementById('hw-link'), icon=document.getElementById('hw-icon'),
+      title=document.getElementById('hw-title'), sub=document.getElementById('hw-sub'),
+      arrow=document.getElementById('hw-arrow');
+  if (!link) return;
+  if (passed) {
+    link.style.opacity='1'; link.style.cursor='pointer'; link.style.pointerEvents='auto';
+    icon.textContent='📝';
+    title.textContent='Great work! Go to the homework now.';
+    sub.textContent='Homework 6 — Reading Biography  ✅ ('+score+'/'+maxScore+')';
+    arrow.removeAttribute('hidden');
+  } else {
+    link.style.opacity='1'; link.style.cursor='not-allowed'; link.style.pointerEvents='none';
+    icon.textContent='❌';
+    title.textContent='Practice not passed — try again!';
+    sub.textContent='You scored '+score+'/'+maxScore+'. Need '+Math.ceil(maxScore*PASS_THRESHOLD)+'/'+maxScore+' (80%) to unlock.';
+  }
+}
+
+function goHomework() {
+  var scriptUrl=CTX.scriptUrl||SCRIPT_URL, hwId=TEACHER_CONFIG.relatedHomeworkId||'';
+  if (!hwId||!scriptUrl){ alert('No homework linked.'); return; }
+  var params=CTX.massarCode?'#'+new URLSearchParams({
+    massarCode:CTX.massarCode,pin:CTX.pin||'',classId:CTX.classId||'',
+    termId:CTX.termId||'',studentName:CTX.studentName||'',scriptUrl:scriptUrl
+  }).toString():'';
+  var pageMap={
+    'HW001':'homework-01-conjunctions','HW002':'homework-02-art-vocabulary',
+    'HW003':'homework-03-art-forms-artists','HW004':'homework-04-simple-past-be',
+    'HW005':'homework-05-biography-questions','HW006':'homework-06-reading-biography',
+    'HW007':'homework-07-simple-past-verbs','HW008':'homework-08-word-formation',
+    'HW009':'homework-09-past-events'
+  };
+  window.location.href='https://cimikool.github.io/portal1/'+(pageMap[hwId]||hwId)+'.html'+params;
+}
+
+function restorePractice() {
+  try {
+    var saved=localStorage.getItem(practiceKey());
+    if (!saved) return;
+    var state=JSON.parse(saved);
+    if (!state||typeof state.score==='undefined') return;
+    chosen=state.chosen||{};
+    Object.keys(chosen).forEach(function(qi){
+      var pq=document.getElementById('pq'+qi); if (!pq) return;
+      pq.querySelectorAll('.opt').forEach(function(o){
+        if(o.textContent.trim()===chosen[qi]) o.classList.add('selected');
+      });
+    });
+    restoreCheckUI(state.score, state.maxScore, state.passed);
+  } catch(e){}
+}
+
+function restoreCheckUI(score, maxScore, passed) {
+  for (var i=0;i<TOTAL_QUESTIONS;i++){
+    var ans=chosen[i], fb=document.getElementById('fb'+i);
+    var opts=document.getElementById('pq'+i).querySelectorAll('.opt');
+    opts.forEach(function(o){ o.style.pointerEvents='none'; });
+    if (!ans) continue;
+    if (ans===correct[i]){
+      opts.forEach(function(o){ if(o.textContent.trim()===correct[i]) o.classList.add('correct'); });
+      fb.textContent='✓ Correct! '+explanations[i]; fb.className='feedback ok'; fb.style.display='block';
+    } else {
+      opts.forEach(function(o){
+        if(o.textContent.trim()===ans)        o.classList.add('wrong');
+        if(o.textContent.trim()===correct[i]) o.classList.add('correct');
+      });
+      fb.textContent='✗ The correct answer is: "'+correct[i]+'". '+explanations[i];
+      fb.className='feedback no'; fb.style.display='block';
+    }
+  }
+  document.getElementById('score-num').textContent=score+' / '+maxScore;
+  document.getElementById('score-box').style.display='block';
+  if (passed) document.querySelector('.check-btn').style.display='none';
+  updateHWButton(passed, score, maxScore);
+}
+</script>
+
+<script>
+function goBack(){
+  if(window.history.length>1){ window.history.back(); }
+  else {
+    try{ var p=Object.fromEntries(new URLSearchParams(location.hash.slice(1)));
+      if(p.scriptUrl){window.location.href=p.scriptUrl;return;} }catch(e){}
+    window.location.href=window.location.origin+window.location.pathname;
+  }
+}
+var ZOOM_SIZES=[1,1.15,1.3],ZOOM_LABELS=['A','A+','A++'];
+var _zoomIdx=parseInt(localStorage.getItem('lp_zoom')||'0');
+function applyZoom(){
+  document.documentElement.style.fontSize=(_zoomIdx===0?'':ZOOM_SIZES[_zoomIdx]*16+'px');
+  var b=document.getElementById('tb-zoom'); if(b) b.textContent=ZOOM_LABELS[_zoomIdx];
+}
+function cycleZoom(){ _zoomIdx=(_zoomIdx+1)%3; localStorage.setItem('lp_zoom',_zoomIdx); applyZoom(); }
+document.addEventListener('DOMContentLoaded',function(){
+  applyZoom();
+  var tb=document.getElementById('tb-title'); if(tb) tb.textContent=TEACHER_CONFIG.title;
+});
+</script>
+
+<script>
+(function(){
+  window.addEventListener('load',function(){
+    try{
+      var p={};
+      try{var h=location.hash.slice(1);if(h)p=Object.fromEntries(new URLSearchParams(h));}catch(e){}
+      var massar=p.massarCode||'',scriptUrl=p.scriptUrl||SCRIPT_URL,
+          lessonId=TEACHER_CONFIG.id,classId=p.classId||'';
+      window._viewRecorded=false;
+      if(massar&&lessonId&&scriptUrl){
+        fetch(scriptUrl,{method:'POST',headers:{'Content-Type':'text/plain'},
+          body:JSON.stringify({action:'recordView',massarCode:massar,lessonId:lessonId,classId:classId}),
+          redirect:'follow'
+        }).then(function(){window._viewRecorded=true;}).catch(function(){window._viewRecorded=true;});
+      } else {window._viewRecorded=true;}
+    }catch(e){window._viewRecorded=true;}
+  });
+})();
+</script>
+
+<script>restorePractice();</script>
+</body>
+</html>

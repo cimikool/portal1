@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script id="__meta__" type="application/json">
+{
+  "id": "L004",
+  "type": "lesson",
+  "title": "Grammar: Simple Past of \"to be\"",
+  "subject": "English",
+  "termId": "s1",
+  "lessonNumber": 4,
+  "classGroup": "CC",
+  "lessonIds": "",
+  "assignmentToken": "",
+  "maxScore": 0,
+  "pageId": "lesson-04-simple-past-be"
+}
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 4 — Grammar: Simple Past of "to be"</title>
+<script>
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxm0dKHveJHylft980UKOxImC9OMk4yhQ6RcYUpwbB3r3BX8Of-fBzAjGAFtJP-DsLH/exec';
+</script>
+<script>
+var TEACHER_CONFIG = {
+  id:                'L004',
+  classGroup:        'CC',
+  lessonNumber:      4,
+  title:             'Grammar: Simple Past of "to be"',
+  subject:           'English',
+  relatedHomeworkId: 'HW004',
+};
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-family:'Segoe UI',system-ui,sans-serif;font-size:16px;background:#F5F4F0;color:#1A1917;line-height:1.75;}
+body{min-height:100dvh;padding:16px 16px 48px;}
+.page{max-width:640px;margin:0 auto;}
+
+.lesson-header{background:#1C1B18;color:#fff;border-radius:14px;padding:20px 24px;margin-bottom:20px;}
+.lesson-num{font-size:.7rem;font-weight:700;opacity:.5;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;}
+.lesson-title{font-size:1.15rem;font-weight:700;line-height:1.3;margin-bottom:8px;}
+.lesson-meta{font-size:.78rem;opacity:.6;display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
+.student-tag{background:rgba(255,255,255,.12);border-radius:20px;padding:2px 10px;font-size:.72rem;}
+.level-badge{background:#B45309;border-radius:20px;padding:2px 10px;font-size:.72rem;font-weight:700;}
+
+.card{background:#fff;border-radius:14px;padding:22px;box-shadow:0 2px 10px rgba(0,0,0,.06);margin-bottom:14px;}
+.card h2{font-size:1rem;font-weight:700;color:#1A1917;margin-bottom:14px;padding-bottom:10px;
+         border-bottom:2px solid #F2F1EE;display:flex;align-items:center;gap:8px;}
+.card h2 .icon{font-size:1.2rem;}
+.card p{font-size:.92rem;color:#374151;margin-bottom:10px;}
+.card p:last-child{margin-bottom:0;}
+
+.objective{background:#FFF7ED;border:1.5px solid #FED7AA;border-radius:10px;
+           padding:12px 16px;font-size:.88rem;color:#92400E;margin-bottom:14px;}
+.objective strong{font-weight:700;}
+
+/* ── Grammar table ── */
+.gram-table{width:100%;border-collapse:collapse;margin:10px 0;}
+.gram-table th{background:#1C1B18;color:#fff;font-size:.78rem;font-weight:700;
+               padding:9px 12px;text-align:left;}
+.gram-table td{font-size:.88rem;padding:9px 12px;border-bottom:1px solid #F2F1EE;color:#374151;}
+.gram-table tr:last-child td{border-bottom:none;}
+.gram-table tr:nth-child(even) td{background:#FAFAF9;}
+.gram-table .subject{font-weight:700;color:#1A1917;}
+.gram-table .verb-was{color:#B45309;font-weight:800;}
+.gram-table .verb-were{color:#4338CA;font-weight:800;}
+.gram-table .neg{color:#DC2626;font-weight:700;}
+
+/* ── Formula box ── */
+.formula{background:#F5F3FF;border:2px solid #C4B5FD;border-radius:12px;
+         padding:14px 18px;margin:10px 0;font-size:.92rem;}
+.formula .row{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;}
+.formula .row:last-child{margin-bottom:0;}
+.formula .label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
+                color:#6D28D9;min-width:80px;}
+.formula .parts{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.formula .box{background:#EDE9FE;border:1.5px solid #A78BFA;border-radius:6px;
+              padding:3px 10px;font-size:.85rem;font-weight:700;color:#4C1D95;}
+.formula .box.verb{background:#FFF7ED;border-color:#FCD34D;color:#92400E;}
+.formula .plus{color:#9CA3AF;font-size:.8rem;}
+
+/* ── Example sentences ── */
+.ex-list{display:flex;flex-direction:column;gap:8px;}
+.ex-item{padding:11px 14px;border-radius:10px;font-size:.9rem;border-left:4px solid transparent;}
+.ex-item.aff{background:#FFF7ED;border-color:#F59E0B;}
+.ex-item.neg{background:#FEF2F2;border-color:#EF4444;}
+.ex-item.que{background:#EEF2FF;border-color:#4338CA;}
+.ex-item strong{font-weight:800;}
+.ex-item .trans{font-size:.78rem;color:#9CA3AF;margin-top:3px;display:block;}
+
+/* ── Note ── */
+.note{background:#F0F9FF;border:1.5px solid #BAE6FD;border-radius:10px;
+      padding:12px 14px;font-size:.85rem;color:#0C4A6E;margin:10px 0;}
+.note strong{font-weight:700;}
+
+/* ── Bio card ── */
+.bio-card{background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:12px;padding:16px;}
+.bio-name{font-size:1rem;font-weight:800;color:#92400E;margin-bottom:2px;}
+.bio-dates{font-size:.75rem;color:#B45309;margin-bottom:10px;font-weight:600;}
+.bio-facts{display:flex;flex-direction:column;gap:6px;}
+.bio-fact{font-size:.87rem;color:#374151;padding:6px 10px;background:#fff;
+          border-radius:8px;border-left:3px solid #F59E0B;}
+.bio-fact strong{color:#92400E;font-weight:700;}
+
+/* ── Practice ── */
+.practice-q{margin-bottom:16px;}
+.practice-q .q{font-size:.9rem;font-weight:600;color:#1A1917;margin-bottom:8px;}
+.options{display:flex;flex-wrap:wrap;gap:6px;}
+.opt{padding:7px 14px;background:#F2F1EE;border-radius:20px;cursor:pointer;
+     font-size:.85rem;border:1.5px solid transparent;transition:all .12s;user-select:none;}
+.opt:hover{background:#E8E6E1;}
+.opt.selected{background:#FFF7ED;border-color:#F59E0B;color:#92400E;font-weight:600;}
+.opt.correct{background:#F0FDF4;border-color:#10B981;color:#065F46;font-weight:600;}
+.opt.wrong{background:#FEF2F2;border-color:#EF4444;color:#991B1B;}
+.feedback{font-size:.8rem;margin-top:6px;padding:6px 10px;border-radius:8px;display:none;}
+.feedback.ok{background:#F0FDF4;color:#065F46;}
+.feedback.no{background:#FEF2F2;color:#991B1B;}
+.check-btn{padding:10px 24px;background:#B45309;color:#fff;border:none;border-radius:10px;
+           font-size:.88rem;font-weight:700;cursor:pointer;margin-top:6px;font-family:inherit;}
+.check-btn:hover{background:#92400E;}
+.score-box{background:#1C1B18;color:#fff;border-radius:12px;padding:14px 18px;
+           text-align:center;margin-top:4px;display:none;}
+.score-box .big{font-size:2rem;font-weight:800;}
+.score-box .lbl{font-size:.8rem;opacity:.6;margin-top:2px;}
+
+/* ── HW link ── */
+.hw-link{background:#FFF7ED;border:1.5px solid #FED7AA;border-radius:12px;
+         padding:14px 18px;display:flex;align-items:center;gap:12px;
+         cursor:pointer;transition:background .15s;margin-top:4px;}
+.hw-link:hover{background:#FFEDD5;}
+.hw-link .text strong{display:block;font-size:.9rem;font-weight:700;color:#92400E;}
+.hw-link .text span{font-size:.78rem;color:#B45309;}
+
+/* ── Top bar ── */
+#top-bar{position:fixed;top:0;left:0;right:0;z-index:9999;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 12px;background:rgba(28,27,24,.95);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+.tb-back{background:rgba(255,255,255,.12);border:none;color:#fff;
+  border-radius:8px;padding:7px 14px;font-size:.85rem;font-weight:700;
+  cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;}
+.tb-back:hover{background:rgba(255,255,255,.22);}
+.tb-title{flex:1;text-align:center;font-size:.82rem;font-weight:600;
+  color:rgba(255,255,255,.7);white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;padding:0 8px;}
+.tb-zoom{background:rgba(255,255,255,.12);border:none;color:#fff;
+  border-radius:8px;padding:7px 14px;font-size:.85rem;font-weight:700;
+  cursor:pointer;font-family:inherit;letter-spacing:.05em;}
+.tb-zoom:hover{background:rgba(255,255,255,.22);}
+body{padding-top:52px !important;}
+</style>
+</head>
+<body>
+
+<div id="top-bar">
+  <button class="tb-back" onclick="goBack()">← Back</button>
+  <span class="tb-title" id="tb-title"></span>
+  <button class="tb-zoom" onclick="cycleZoom()" id="tb-zoom">A</button>
+</div>
+
+<div class="page">
+
+  <div class="lesson-header">
+    <div class="lesson-num">Unit 7 · Lesson 4 · English · A1.2</div>
+    <div class="lesson-title">Grammar: Simple Past of <em>"to be"</em></div>
+    <div class="lesson-meta">
+      <span class="level-badge">🎨 The Arts</span>
+      <span>A1.2 Common Core</span>
+      <span class="student-tag" id="student-tag" style="display:none;"></span>
+    </div>
+  </div>
+
+  <!-- Objective -->
+  <div class="card">
+    <h2><span class="icon">🎯</span> What you will learn</h2>
+    <div class="objective">
+      By the end of this lesson, you can use <strong>was</strong> and <strong>were</strong>
+      to talk about people and things in the <strong>past</strong> —
+      especially to describe famous <strong>artists</strong> and their lives.
+    </div>
+    <p>In Lesson 3 you learned the names of artists — <em>painter, composer, actor</em>. Now you will learn how to <strong>talk about them in the past</strong>. We use the past of <strong>"to be"</strong> to say who they were, where they were born, and what they were famous for.</p>
+  </div>
+
+  <!-- Was / Were table -->
+  <div class="card">
+    <h2><span class="icon">📋</span> Was and Were — the basics</h2>
+    <p>The verb <strong>"to be"</strong> has two past forms: <strong>was</strong> and <strong>were</strong>.</p>
+
+    <table class="gram-table">
+      <tr><th>Subject</th><th>Affirmative (+)</th><th>Negative (−)</th><th>Short answer</th></tr>
+      <tr><td class="subject">I</td><td><span class="verb-was">was</span> an artist</td><td><span class="neg">was not / wasn't</span></td><td>Yes, I <span class="verb-was">was</span>.</td></tr>
+      <tr><td class="subject">He / She / It</td><td><span class="verb-was">was</span> a painter</td><td><span class="neg">was not / wasn't</span></td><td>No, he <span class="neg">wasn't</span>.</td></tr>
+      <tr><td class="subject">You</td><td><span class="verb-were">were</span> a singer</td><td><span class="neg">were not / weren't</span></td><td>Yes, you <span class="verb-were">were</span>.</td></tr>
+      <tr><td class="subject">We / They</td><td><span class="verb-were">were</span> actors</td><td><span class="neg">were not / weren't</span></td><td>No, they <span class="neg">weren't</span>.</td></tr>
+    </table>
+
+    <div class="note" style="margin-top:12px;">
+      <strong>Simple rule:</strong> Use <strong>was</strong> with I / he / she / it &nbsp;•&nbsp;
+      Use <strong>were</strong> with you / we / they
+    </div>
+  </div>
+
+  <!-- Formulas -->
+  <div class="card">
+    <h2><span class="icon">⚙️</span> How to build sentences</h2>
+
+    <div class="formula">
+      <div class="row">
+        <span class="label">✅ Positive</span>
+        <div class="parts">
+          <span class="box">Subject</span>
+          <span class="plus">+</span>
+          <span class="box verb">was / were</span>
+          <span class="plus">+</span>
+          <span class="box">complement</span>
+        </div>
+      </div>
+      <div class="row">
+        <span class="label">❌ Negative</span>
+        <div class="parts">
+          <span class="box">Subject</span>
+          <span class="plus">+</span>
+          <span class="box verb">wasn't / weren't</span>
+          <span class="plus">+</span>
+          <span class="box">complement</span>
+        </div>
+      </div>
+      <div class="row">
+        <span class="label">❓ Question</span>
+        <div class="parts">
+          <span class="box verb">Was / Were</span>
+          <span class="plus">+</span>
+          <span class="box">subject</span>
+          <span class="plus">+</span>
+          <span class="box">complement</span>
+          <span class="plus">?</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Examples from artists -->
+  <div class="card">
+    <h2><span class="icon">💬</span> Examples — artists in the past</h2>
+    <div class="ex-list">
+      <div class="ex-item aff">
+        Picasso <strong>was</strong> a Spanish painter.
+        <span class="trans">He / She / It → was ✓</span>
+      </div>
+      <div class="ex-item aff">
+        Leonardo da Vinci <strong>was</strong> born in Italy in 1452.
+        <span class="trans">We use "was born" to talk about birth.</span>
+      </div>
+      <div class="ex-item aff">
+        Umm Kulthum and Fairouz <strong>were</strong> famous Arab singers.
+        <span class="trans">Two people (they) → were ✓</span>
+      </div>
+      <div class="ex-item neg">
+        Charlie Chaplin <strong>wasn't</strong> a painter. He <strong>was</strong> an actor.
+        <span class="trans">Negative + correction ✓</span>
+      </div>
+      <div class="ex-item neg">
+        The first films <strong>weren't</strong> in colour. They <strong>were</strong> black and white.
+        <span class="trans">they → weren't ✓</span>
+      </div>
+      <div class="ex-item que">
+        <strong>Was</strong> Picasso Spanish? — Yes, he <strong>was</strong>.
+        <span class="trans">Question → short answer ✓</span>
+      </div>
+      <div class="ex-item que">
+        <strong>Were</strong> da Vinci and Picasso painters? — Yes, they <strong>were</strong>.
+        <span class="trans">Two people → were ✓</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Picasso biography model -->
+  <div class="card">
+    <h2><span class="icon">🖌️</span> A model biography — Pablo Picasso</h2>
+    <p style="font-size:.85rem;color:#6B7280;margin-bottom:12px;">Read this biography. Notice how <strong>was / were</strong> are used throughout.</p>
+    <div class="bio-card">
+      <div class="bio-name">Pablo Picasso</div>
+      <div class="bio-dates">1881 – 1973 · Spanish painter &amp; sculptor</div>
+      <div class="bio-facts">
+        <div class="bio-fact">Pablo Picasso <strong>was</strong> born in Málaga, Spain, in 1881.</div>
+        <div class="bio-fact">His father <strong>was</strong> an art teacher.</div>
+        <div class="bio-fact">Picasso <strong>was</strong> a very talented child. He <strong>was</strong> only 13 when he painted his first masterpiece.</div>
+        <div class="bio-fact">His most famous paintings <strong>were</strong> <em>Guernica</em> and <em>Les Demoiselles d'Avignon</em>.</div>
+        <div class="bio-fact">He <strong>was</strong> not only a painter — he <strong>was</strong> also a sculptor and a poet.</div>
+        <div class="bio-fact">Picasso <strong>was</strong> one of the most influential artists of the 20th century. He <strong>was</strong> 91 years old when he died in 1973.</div>
+      </div>
+    </div>
+    <div class="note" style="margin-top:12px;">
+      <strong>Notice:</strong> In biographies, we always use <strong>was / were</strong> because we are talking about someone who lived in the past. This is the most important grammar point of Unit 7!
+    </div>
+  </div>
+
+  <!-- Key tip -->
+  <div class="card">
+    <h2><span class="icon">💡</span> Common mistakes — be careful!</h2>
+    <div class="ex-list">
+      <div class="ex-item neg">
+        ✗ &nbsp; He <strong>were</strong> a painter.
+        <span class="trans">WRONG — He / She / It always takes WAS, not were.</span>
+      </div>
+      <div class="ex-item aff">
+        ✓ &nbsp; He <strong>was</strong> a painter.
+        <span class="trans">CORRECT ✓</span>
+      </div>
+      <div class="ex-item neg">
+        ✗ &nbsp; They <strong>was</strong> famous actors.
+        <span class="trans">WRONG — They / We / You always take WERE, not was.</span>
+      </div>
+      <div class="ex-item aff">
+        ✓ &nbsp; They <strong>were</strong> famous actors.
+        <span class="trans">CORRECT ✓</span>
+      </div>
+    </div>
+    <div class="note" style="margin-top:10px;">
+      <strong>Time expressions</strong> used with the simple past of <em>be</em>:<br>
+      <em>in 1881 · last year · yesterday · in the 20th century · long ago · at the age of 13</em>
+    </div>
+  </div>
+
+  <!-- Practice -->
+  <div class="card">
+    <h2><span class="icon">✏️</span> Quick practice</h2>
+    <p style="font-size:.85rem;color:#9CA3AF;margin-bottom:14px;">Choose <strong>was</strong> or <strong>were</strong> to complete each sentence.</p>
+
+    <div class="practice-q" id="pq0">
+      <div class="q">1. Picasso ___ born in Spain in 1881.</div>
+      <div class="options">
+        <span class="opt" onclick="pick(0,this,'was')">was</span>
+        <span class="opt" onclick="pick(0,this,'was')">were</span>
+        <span class="opt" onclick="pick(0,this,'was')">wasn't</span>
+        <span class="opt" onclick="pick(0,this,'was')">weren't</span>
+      </div>
+      <div class="feedback" id="fb0"></div>
+    </div>
+
+    <div class="practice-q" id="pq1">
+      <div class="q">2. Charlie Chaplin and Buster Keaton ___ famous silent film actors.</div>
+      <div class="options">
+        <span class="opt" onclick="pick(1,this,'were')">was</span>
+        <span class="opt" onclick="pick(1,this,'were')">were</span>
+        <span class="opt" onclick="pick(1,this,'were')">wasn't</span>
+        <span class="opt" onclick="pick(1,this,'were')">weren't</span>
+      </div>
+      <div class="feedback" id="fb1"></div>
+    </div>
+
+    <div class="practice-q" id="pq2">
+      <div class="q">3. The early films ___ in colour — they were black and white.</div>
+      <div class="options">
+        <span class="opt" onclick="pick(2,this,'weren\'t')">was</span>
+        <span class="opt" onclick="pick(2,this,'weren\'t')">were</span>
+        <span class="opt" onclick="pick(2,this,'weren\'t')">wasn't</span>
+        <span class="opt" onclick="pick(2,this,'weren\'t')">weren't</span>
+      </div>
+      <div class="feedback" id="fb2"></div>
+    </div>
+
+    <div class="practice-q" id="pq3">
+      <div class="q">4. ___ Umm Kulthum a painter? — No, she ___ a singer.</div>
+      <div class="options">
+        <span class="opt" onclick="pick(3,this,'Was / was')">Was / was</span>
+        <span class="opt" onclick="pick(3,this,'Was / was')">Were / were</span>
+        <span class="opt" onclick="pick(3,this,'Was / was')">Was / were</span>
+        <span class="opt" onclick="pick(3,this,'Was / was')">Were / was</span>
+      </div>
+      <div class="feedback" id="fb3"></div>
+    </div>
+
+    <button class="check-btn" onclick="checkAll()">Check my answers</button>
+    <div class="score-box" id="score-box">
+      <div class="big" id="score-num"></div>
+      <div class="lbl">out of 4 correct</div>
+    </div>
+  </div>
+
+  <!-- HW link -->
+  <div class="hw-link" id="hw-link" onclick="goHomework()"
+       style="opacity:.45;cursor:not-allowed;pointer-events:none;">
+    <div style="font-size:1.4rem;" id="hw-icon">🔒</div>
+    <div class="text">
+      <strong id="hw-title">Complete the practice to unlock homework</strong>
+      <span id="hw-sub">Score ≥ 80% to unlock Homework 4</span>
+    </div>
+    <div style="color:#B45309;font-size:1rem;" id="hw-arrow" hidden>→</div>
+  </div>
+
+</div><!-- .page -->
+
+<script>
+var CTX = {};
+try { var _h = location.hash.slice(1); if (_h) CTX = Object.fromEntries(new URLSearchParams(_h)); } catch(e) {}
+if (CTX.studentName) {
+  var _tag = document.getElementById('student-tag');
+  if (_tag) { _tag.textContent = '👤 ' + CTX.studentName; _tag.style.display = 'inline'; }
+}
+</script>
+
+<script>
+var chosen = {};
+var correct = { 0:'was', 1:'were', 2:"weren't", 3:'Was / was' };
+var explanations = {
+  0: '"Picasso" is one person (he) → WAS. He was born in Spain in 1881.',
+  1: '"Chaplin and Keaton" = two people (they) → WERE famous actors.',
+  2: '"The early films" = they → WEREN\'T in colour. They were black and white.',
+  3: 'Question with "she" (one person) → WAS. Answer: she WAS a singer.'
+};
+
+var TOTAL_QUESTIONS = 4;
+var PASS_THRESHOLD  = 0.8;
+
+function practiceKey() {
+  return 'practice_state_' + TEACHER_CONFIG.id;
+}
+
+function pick(qi, el, correctWord) {
+  el.parentNode.querySelectorAll('.opt').forEach(function(o){ o.classList.remove('selected'); });
+  el.classList.add('selected');
+  chosen[qi] = el.textContent.trim();
+}
+
+function checkAll() {
+  var score = 0;
+  for (var i = 0; i < TOTAL_QUESTIONS; i++) {
+    var ans  = chosen[i];
+    var fb   = document.getElementById('fb' + i);
+    var opts = document.getElementById('pq' + i).querySelectorAll('.opt');
+    opts.forEach(function(o){ o.style.pointerEvents = 'none'; });
+    if (!ans) {
+      fb.textContent = '⚠ No answer selected.'; fb.className = 'feedback no'; fb.style.display = 'block'; continue;
+    }
+    if (ans === correct[i]) {
+      score++;
+      opts.forEach(function(o){ if(o.textContent.trim() === correct[i]) o.classList.add('correct'); });
+      fb.textContent = '✓ Correct! ' + explanations[i]; fb.className = 'feedback ok'; fb.style.display = 'block';
+    } else {
+      opts.forEach(function(o){
+        if(o.textContent.trim() === ans)        o.classList.add('wrong');
+        if(o.textContent.trim() === correct[i]) o.classList.add('correct');
+      });
+      fb.textContent = '✗ The correct answer is "' + correct[i] + '". ' + explanations[i];
+      fb.className = 'feedback no'; fb.style.display = 'block';
+    }
+  }
+  document.getElementById('score-num').textContent = score + ' / 4';
+  document.getElementById('score-box').style.display = 'block';
+
+  var passed = (score / TOTAL_QUESTIONS) >= PASS_THRESHOLD;
+  if (passed) {
+    document.querySelector('.check-btn').style.display = 'none';
+    try { localStorage.setItem(practiceKey(), JSON.stringify({ chosen:chosen, score:score, maxScore:TOTAL_QUESTIONS, passed:true })); } catch(e) {}
+  } else {
+    setTimeout(function() {
+      for (var j = 0; j < TOTAL_QUESTIONS; j++) {
+        document.getElementById('pq'+j).querySelectorAll('.opt').forEach(function(o){
+          o.style.pointerEvents = 'auto'; o.classList.remove('selected','correct','wrong');
+        });
+        document.getElementById('fb'+j).style.display = 'none';
+      }
+      chosen = {};
+      var btn = document.querySelector('.check-btn');
+      btn.textContent = '🔄 Try again'; btn.style.display = 'block';
+      document.getElementById('score-box').style.display = 'none';
+    }, 2500);
+  }
+  sendPracticeResult(score, TOTAL_QUESTIONS, passed);
+}
+
+function sendPracticeResult(score, maxScore, passed) {
+  updateHWButton(passed, score, maxScore);
+  var massar = CTX.massarCode || '';
+  var scriptUrl = CTX.scriptUrl || SCRIPT_URL;
+  if (!massar || !scriptUrl) return;
+  fetch(scriptUrl, {
+    method:'POST', headers:{'Content-Type':'text/plain'},
+    body: JSON.stringify({ action:'recordPractice', massarCode:massar,
+                           lessonId:TEACHER_CONFIG.id, classId:CTX.classId||'',
+                           score:score, maxScore:maxScore }),
+    redirect:'follow'
+  }).catch(function(){});
+}
+
+function updateHWButton(passed, score, maxScore) {
+  var link = document.getElementById('hw-link');
+  var icon = document.getElementById('hw-icon');
+  var title = document.getElementById('hw-title');
+  var sub  = document.getElementById('hw-sub');
+  var arrow = document.getElementById('hw-arrow');
+  if (!link) return;
+  if (passed) {
+    link.style.opacity='1'; link.style.cursor='pointer'; link.style.pointerEvents='auto';
+    icon.textContent='📝';
+    title.textContent='Great work! Go to the homework now.';
+    sub.textContent='Homework 4 — Simple Past of "to be"  ✅ (' + score + '/' + maxScore + ')';
+    arrow.removeAttribute('hidden');
+  } else {
+    link.style.opacity='1'; link.style.cursor='not-allowed'; link.style.pointerEvents='none';
+    icon.textContent='❌';
+    title.textContent='Practice not passed — try again!';
+    sub.textContent='You scored '+score+'/'+maxScore+'. Need '+Math.ceil(maxScore*PASS_THRESHOLD)+'/'+maxScore+' (80%) to unlock.';
+  }
+}
+
+function goHomework() {
+  var scriptUrl = CTX.scriptUrl || SCRIPT_URL;
+  var hwId = TEACHER_CONFIG.relatedHomeworkId || '';
+  if (!hwId || !scriptUrl) { alert('No homework linked.'); return; }
+  var params = CTX.massarCode ? '#' + new URLSearchParams({
+    massarCode:CTX.massarCode, pin:CTX.pin||'', classId:CTX.classId||'',
+    termId:CTX.termId||'', studentName:CTX.studentName||'', scriptUrl:scriptUrl
+  }).toString() : '';
+  var pageMap = {
+    'HW001':'homework-01-conjunctions','HW002':'homework-02-art-vocabulary',
+    'HW003':'homework-03-art-forms-artists','HW004':'homework-04-simple-past-be',
+    'HW005':'homework-05-biography-questions','HW006':'homework-06-reading-biography',
+    'HW007':'homework-07-simple-past-verbs','HW008':'homework-08-word-formation',
+    'HW009':'homework-09-past-events'
+  };
+  window.location.href = 'https://cimikool.github.io/portal1/' + (pageMap[hwId]||hwId) + '.html' + params;
+}
+
+function restorePractice() {
+  try {
+    var saved = localStorage.getItem(practiceKey());
+    if (!saved) return;
+    var state = JSON.parse(saved);
+    if (!state || typeof state.score === 'undefined') return;
+    chosen = state.chosen || {};
+    Object.keys(chosen).forEach(function(qi) {
+      var pq = document.getElementById('pq'+qi);
+      if (!pq) return;
+      pq.querySelectorAll('.opt').forEach(function(o){
+        if (o.textContent.trim() === chosen[qi]) o.classList.add('selected');
+      });
+    });
+    restoreCheckUI(state.score, state.maxScore, state.passed);
+  } catch(e) {}
+}
+
+function restoreCheckUI(score, maxScore, passed) {
+  for (var i = 0; i < TOTAL_QUESTIONS; i++) {
+    var ans  = chosen[i];
+    var fb   = document.getElementById('fb'+i);
+    var opts = document.getElementById('pq'+i).querySelectorAll('.opt');
+    opts.forEach(function(o){ o.style.pointerEvents = 'none'; });
+    if (!ans) continue;
+    if (ans === correct[i]) {
+      opts.forEach(function(o){ if(o.textContent.trim()===correct[i]) o.classList.add('correct'); });
+      fb.textContent='✓ Correct! '+explanations[i]; fb.className='feedback ok'; fb.style.display='block';
+    } else {
+      opts.forEach(function(o){
+        if(o.textContent.trim()===ans)        o.classList.add('wrong');
+        if(o.textContent.trim()===correct[i]) o.classList.add('correct');
+      });
+      fb.textContent='✗ The correct answer is "'+correct[i]+'". '+explanations[i];
+      fb.className='feedback no'; fb.style.display='block';
+    }
+  }
+  document.getElementById('score-num').textContent = score + ' / ' + maxScore;
+  document.getElementById('score-box').style.display = 'block';
+  if (passed) document.querySelector('.check-btn').style.display = 'none';
+  updateHWButton(passed, score, maxScore);
+}
+</script>
+
+<script>
+function goBack() {
+  if (window.history.length > 1) { window.history.back(); }
+  else {
+    try {
+      var p = Object.fromEntries(new URLSearchParams(location.hash.slice(1)));
+      if (p.scriptUrl) { window.location.href = p.scriptUrl; return; }
+    } catch(e) {}
+    window.location.href = window.location.origin + window.location.pathname;
+  }
+}
+var ZOOM_SIZES=['1','1.15','1.3'], ZOOM_LABELS=['A','A+','A++'];
+var _zoomIdx = parseInt(localStorage.getItem('lp_zoom')||'0');
+function applyZoom(){
+  document.documentElement.style.fontSize=(_zoomIdx===0?'':(parseFloat(ZOOM_SIZES[_zoomIdx])*16)+'px');
+  var b=document.getElementById('tb-zoom'); if(b) b.textContent=ZOOM_LABELS[_zoomIdx];
+}
+function cycleZoom(){ _zoomIdx=(_zoomIdx+1)%3; localStorage.setItem('lp_zoom',_zoomIdx); applyZoom(); }
+document.addEventListener('DOMContentLoaded', function(){
+  applyZoom();
+  var tb=document.getElementById('tb-title');
+  if(tb) tb.textContent=TEACHER_CONFIG.title;
+});
+</script>
+
+<script>
+(function(){
+  window.addEventListener('load', function(){
+    try {
+      var p={};
+      try{ var h=location.hash.slice(1); if(h) p=Object.fromEntries(new URLSearchParams(h)); }catch(e){}
+      var massar=p.massarCode||'', scriptUrl=p.scriptUrl||SCRIPT_URL,
+          lessonId=TEACHER_CONFIG.id, classId=p.classId||'';
+      window._viewRecorded=false;
+      if(massar&&lessonId&&scriptUrl){
+        fetch(scriptUrl,{method:'POST',headers:{'Content-Type':'text/plain'},
+          body:JSON.stringify({action:'recordView',massarCode:massar,lessonId:lessonId,classId:classId}),
+          redirect:'follow'
+        }).then(function(){window._viewRecorded=true;}).catch(function(){window._viewRecorded=true;});
+      } else { window._viewRecorded=true; }
+    } catch(e){ window._viewRecorded=true; }
+  });
+})();
+</script>
+
+<script>restorePractice();</script>
+</body>
+</html>
