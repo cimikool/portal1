@@ -206,12 +206,21 @@ body{padding-top:52px !important;}
         <div style="font-size:.78rem;color:#9CA3AF;" id="hw-sub">Score ≥ 80% to unlock</div>
       </div>
     </div>
+    <button id="hw-btn" onclick="goHomework()" style="display:none;width:100%;padding:13px;background:#7C3AED;color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:.95rem;font-weight:700;cursor:pointer;align-items:center;justify-content:center;gap:10px;">
+      <span>📝</span><span id="hw-btn-label">Open Homework</span>
+    </button>
+  </div>
+    </div>
+    <button id="hw-btn" onclick="goHomework()" style="display:none;width:100%;padding:13px;background:#7C3AED;color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:.95rem;font-weight:700;cursor:pointer;align-items:center;justify-content:center;gap:10px;">
+      <span>📝</span><span id="hw-btn-label">Open Homework</span>
+    </button>
+  </div>
     <button id="hw-btn" onclick="goHomework()" hidden
       style="width:100%;padding:13px;background:#7C3AED;color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:.95rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;">
       <span>📝</span><span id="hw-btn-label">Open Homework</span>
     </button>
   </div>
-</div>
+
 <script>
 var CTX={};
 try{var _h=location.hash.slice(1);if(_h)CTX=Object.fromEntries(new URLSearchParams(_h));}catch(e){}
@@ -223,7 +232,7 @@ var correct={0:'They were worried about the cultural differences.',1:'tolerate',
 var explanations={0:'Paragraph 1: \"Her parents worried about the cultural differences.\"',1:'\"Put up with\" = TOLERATE. \"David found it hard to put up with certain customs.\"',2:'Paragraph 3: \"David picked up some Arabic words, dressed up for Moroccan celebrations, and even looked up recipes.\"',3:'Paragraph 4: \"Our differences are not a problem — they are our greatest asset.\" (asset = something valuable)'};
 var TOTAL_QUESTIONS=4;
 var PASS_THRESHOLD=0.8;
-function practiceKey(){var m=CTX.massarCode||'';return 'practice_state_'+(m?m+'_':'')+TEACHER_CONFIG.id;}
+function practiceKey(){var m=(typeof CTX!=='undefined'&&CTX.massarCode)?CTX.massarCode+'_':'';return 'practice_state_'+m+TEACHER_CONFIG.id;}
 function pick(qi,el){
   el.parentNode.querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
   el.classList.add('selected');chosen[qi]=el.textContent.trim();
@@ -276,6 +285,41 @@ function sendPracticeResult(score,maxScore,passed){
                          classId:CTX.classId||'',score:score,maxScore:maxScore}),
     redirect:'follow'}).catch(function(){});
 }
+function goHomework(){
+  var massar=CTX.massarCode||'',scriptUrl=CTX.scriptUrl||SCRIPT_URL;
+  var classId=CTX.classId||'',termId=CTX.termId||'';
+  var btn=document.getElementById('hw-btn'),lbl=document.getElementById('hw-btn-label');
+  if(btn)btn.disabled=true;if(lbl)lbl.textContent='Loading…';
+  if(!massar||!scriptUrl){
+    if(btn)btn.disabled=false;if(lbl)lbl.textContent='Open Homework';
+    alert('Not logged in. Go back to the portal.');return;
+  }
+  fetch(scriptUrl,{method:'POST',headers:{'Content-Type':'text/plain'},
+    body:JSON.stringify({action:'getContentList',massarCode:massar,classId:classId,termId:termId}),
+    redirect:'follow'})
+  .then(function(r){return r.json();})
+  .then(function(data){
+    if(!data.ok){throw new Error(data.error||'Server error');}
+    var myId=TEACHER_CONFIG.id;
+    var myBase=myId.replace(/-[A-Za-z0-9]{4}$/,'');
+    var hw=null;
+    (data.homework||[]).forEach(function(h){
+      if(h.lessonIds){h.lessonIds.split(',').forEach(function(lid){
+        lid=lid.trim();if(lid===myId||lid===myBase)hw=h;
+      });}
+    });
+    if(!hw||!hw.fileUrl){throw new Error('Homework not found. Run Sync from the teacher portal.');}
+    if(hw.locked){throw new Error('Homework is still locked on the server. Try refreshing the portal.');}
+    var params=new URLSearchParams({massarCode:massar,pin:CTX.pin||'',classId:classId,
+      termId:termId,studentName:CTX.studentName||'',scriptUrl:scriptUrl,
+      assignmentToken:hw.assignmentToken||hw.id,homeworkId:hw.id,attempt:'1'});
+    window.location.href=hw.fileUrl+'#'+params.toString();
+  })
+  .catch(function(e){
+    if(btn)btn.disabled=false;if(lbl)lbl.textContent='Open Homework';
+    alert('⚠ '+e.message);
+  });
+}
 function updateHWButton(passed,score,maxScore){
   var locked=document.getElementById('hw-locked');
   var btn=document.getElementById('hw-btn');
@@ -283,32 +327,22 @@ function updateHWButton(passed,score,maxScore){
   if(!locked||!btn)return;
   if(passed){
     locked.style.display='none';
-    btn.removeAttribute('hidden');
-    document.getElementById('hw-btn-label').textContent='Open Homework ✅ ('+score+'/'+maxScore+')';
+    btn.style.display='flex';
   }else{
     locked.style.display='flex';
-    btn.setAttribute('hidden','');
+    btn.style.display='none';
     if(sub)sub.textContent='You scored '+score+'/'+maxScore+'. Need '+Math.ceil(maxScore*PASS_THRESHOLD)+'/'+maxScore+' (80%) to unlock.';
   }
 }
-function goHomework(){
-  var scriptUrl=CTX.scriptUrl||SCRIPT_URL,hwId=TEACHER_CONFIG.relatedHomeworkId||'';
-  if(!hwId||!scriptUrl){alert('No homework linked.');return;}
-  var params=CTX.massarCode?'#'+new URLSearchParams({massarCode:CTX.massarCode,pin:CTX.pin||'',
-    classId:CTX.classId||'',termId:CTX.termId||'',studentName:CTX.studentName||'',scriptUrl:scriptUrl}).toString():'';
-  var pageMap={'HW-B601':'homework-b601-cultural-values-vocabulary',
-    'HW-B602':'homework-b602-defining-concepts',
-    'HW-B603':'homework-b603-complaining-apologizing',
-    'HW-B604':'homework-b604-phrasal-verbs',
-    'HW-B605':'homework-b605-reading-mixed-marriage',
-    'HW-B606':'homework-b606-cultural-discussion',
-    'HW-B607':'homework-b607-informal-letter'};
-  window.location.href='https://cimikool.github.io/portal1/'+(pageMap[hwId]||hwId)+'.html'+params;
-}
 function restorePractice(){
   try{
-    var saved=localStorage.getItem(practiceKey());if(!saved)return;
-    var state=JSON.parse(saved);if(!state||typeof state.score==='undefined')return;
+    var key=practiceKey();
+    /* Only restore if the key belongs to the current student */
+    var expectedMassar=CTX.massarCode||'';
+    if(expectedMassar&&key.indexOf(expectedMassar)<0)return;
+    var saved=localStorage.getItem(key);if(!saved)return;
+    var state=JSON.parse(saved);
+    if(!state||typeof state.score==='undefined')return;
     chosen=state.chosen||{};
     Object.keys(chosen).forEach(function(qi){
       var pq=document.getElementById('pq'+qi);if(!pq)return;
@@ -320,6 +354,7 @@ function restorePractice(){
 function restoreCheckUI(score,maxScore,passed){
   for(var i=0;i<TOTAL_QUESTIONS;i++){
     var ans=chosen[i],fb=document.getElementById('fb'+i);
+    if(!fb)continue;
     var opts=document.getElementById('pq'+i).querySelectorAll('.opt');
     opts.forEach(function(o){o.style.pointerEvents='none';});
     if(!ans)continue;

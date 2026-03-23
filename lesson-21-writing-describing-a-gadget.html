@@ -212,16 +212,24 @@ body{padding-top:52px !important;}
     </div>
   </div>
   <!-- HW link -->
-  <div class="hw-link" id="hw-link" onclick="goHomework()"
-       style="opacity:.45;cursor:not-allowed;pointer-events:none;">
-    <div style="font-size:1.4rem;" id="hw-icon">🔒</div>
-    <div class="text">
-      <strong id="hw-title">Complete the practice to unlock homework</strong>
-      <span id="hw-sub">Score ≥ 80% to unlock Homework 021</span>
+  <div id="hw-section" style="margin-top:4px;">
+    <div id="hw-locked" style="background:#F2F1EE;border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:12px;opacity:.55;">
+      <div style="font-size:1.4rem;">🔒</div>
+      <div>
+        <div style="font-size:.9rem;font-weight:700;color:#5C5A52;">Complete the practice to unlock homework</div>
+        <div style="font-size:.78rem;color:#9CA3AF;" id="hw-sub">Score ≥ 80% to unlock</div>
+      </div>
     </div>
-    <div style="color:#1D4ED8;font-size:1rem;" id="hw-arrow" hidden>→</div>
+    <button id="hw-btn" onclick="goHomework()" style="display:none;width:100%;padding:13px;background:#1D4ED8;color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:.95rem;font-weight:700;cursor:pointer;align-items:center;justify-content:center;gap:10px;">
+      <span>📝</span><span id="hw-btn-label">Open Homework</span>
+    </button>
   </div>
-</div>
+    </div>
+    <button id="hw-btn" onclick="goHomework()" style="display:none;width:100%;padding:13px;background:#1D4ED8;color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:.95rem;font-weight:700;cursor:pointer;align-items:center;justify-content:center;gap:10px;">
+      <span>📝</span><span id="hw-btn-label">Open Homework</span>
+    </button>
+  </div>
+
 <script>
 var CTX={};
 try{var _h=location.hash.slice(1);if(_h)CTX=Object.fromEntries(new URLSearchParams(_h));}catch(e){}
@@ -234,7 +242,7 @@ var explanations={0:'Paragraph 2 describes the FUNCTION — what the gadget is u
 var TOTAL_QUESTIONS=4;
 var PASS_THRESHOLD=0.8;
 function practiceKey(){var m=(typeof CTX!=='undefined'&&CTX.massarCode)?CTX.massarCode+'_':'';return 'practice_state_'+m+TEACHER_CONFIG.id;}
-function pick(qi,el,correctWord){
+function pick(qi,el){
   el.parentNode.querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
   el.classList.add('selected');chosen[qi]=el.textContent.trim();
 }
@@ -267,9 +275,7 @@ function checkAll(){
   }else{
     setTimeout(function(){
       for(var j=0;j<TOTAL_QUESTIONS;j++){
-        document.getElementById('pq'+j).querySelectorAll('.opt').forEach(function(o){
-          o.style.pointerEvents='auto';o.classList.remove('selected','correct','wrong');
-        });
+        document.getElementById('pq'+j).querySelectorAll('.opt').forEach(function(o){o.style.pointerEvents='auto';o.classList.remove('selected','correct','wrong');});
         document.getElementById('fb'+j).style.display='none';
       }
       chosen={};
@@ -288,35 +294,64 @@ function sendPracticeResult(score,maxScore,passed){
                          classId:CTX.classId||'',score:score,maxScore:maxScore}),
     redirect:'follow'}).catch(function(){});
 }
-function updateHWButton(passed,score,maxScore){
-  var link=document.getElementById('hw-link'),icon=document.getElementById('hw-icon'),
-      title=document.getElementById('hw-title'),sub=document.getElementById('hw-sub'),
-      arrow=document.getElementById('hw-arrow');
-  if(!link)return;
-  if(passed){
-    link.style.opacity='1';link.style.cursor='pointer';link.style.pointerEvents='auto';
-    icon.textContent='📝';
-    title.textContent='Great work! Go to the homework now.';
-    sub.textContent='Homework 021 — Writing: Describing a Gadget  ✅ ('+score+'/'+maxScore+')';
-    arrow.removeAttribute('hidden');
-  }else{
-    link.style.opacity='1';link.style.cursor='not-allowed';link.style.pointerEvents='none';
-    icon.textContent='❌';title.textContent='Practice not passed — try again!';
-    sub.textContent='You scored '+score+'/'+maxScore+'. Need '+Math.ceil(maxScore*PASS_THRESHOLD)+'/'+maxScore+' (80%) to unlock.';
-  }
-}
 function goHomework(){
-  var scriptUrl=CTX.scriptUrl||SCRIPT_URL,hwId=TEACHER_CONFIG.relatedHomeworkId||'';
-  if(!hwId||!scriptUrl){alert('No homework linked.');return;}
-  var params=CTX.massarCode?'#'+new URLSearchParams({massarCode:CTX.massarCode,pin:CTX.pin||'',
-    classId:CTX.classId||'',termId:CTX.termId||'',studentName:CTX.studentName||'',scriptUrl:scriptUrl}).toString():'';
-  var pageMap={'HW01':'homework-01-conjunctions','HW02':'homework-02-art-vocabulary','HW03':'homework-03-art-forms-artists','HW04':'homework-04-simple-past-of-to-be','HW05':'homework-05-biography-questions','HW06':'homework-06-reading-biography','HW07':'homework-07-simple-past-verbs','HW08':'homework-08-word-formation','HW09':'homework-09-past-events','HW010':'homework-010-focus-on-music','HW011':'homework-011-writing-a-biography','HW012':'homework-012-science-scientists','HW013':'homework-013-question-tags','HW014':'homework-014-asking-about-scientists','HW015':'homework-015-great-scientists','HW016':'homework-016-past-continuous','HW017':'homework-017-simple-past-vs-past-continuous','HW018':'homework-018-inventions-inventors','HW019':'homework-019-computers-new-technologies','HW020':'homework-020-an-email','HW021':'homework-021-describing-a-gadget'};
-  window.location.href='https://cimikool.github.io/portal1/'+(pageMap[hwId]||hwId)+'.html'+params;
+  var massar=CTX.massarCode||'',scriptUrl=CTX.scriptUrl||SCRIPT_URL;
+  var classId=CTX.classId||'',termId=CTX.termId||'';
+  var btn=document.getElementById('hw-btn'),lbl=document.getElementById('hw-btn-label');
+  if(btn)btn.disabled=true;if(lbl)lbl.textContent='Loading…';
+  if(!massar||!scriptUrl){
+    if(btn)btn.disabled=false;if(lbl)lbl.textContent='Open Homework';
+    alert('Not logged in. Go back to the portal.');return;
+  }
+  fetch(scriptUrl,{method:'POST',headers:{'Content-Type':'text/plain'},
+    body:JSON.stringify({action:'getContentList',massarCode:massar,classId:classId,termId:termId}),
+    redirect:'follow'})
+  .then(function(r){return r.json();})
+  .then(function(data){
+    if(!data.ok){throw new Error(data.error||'Server error');}
+    var myId=TEACHER_CONFIG.id;
+    var myBase=myId.replace(/-[A-Za-z0-9]{4}$/,'');
+    var hw=null;
+    (data.homework||[]).forEach(function(h){
+      if(h.lessonIds){h.lessonIds.split(',').forEach(function(lid){
+        lid=lid.trim();if(lid===myId||lid===myBase)hw=h;
+      });}
+    });
+    if(!hw||!hw.fileUrl){throw new Error('Homework not found. Run Sync from the teacher portal.');}
+    if(hw.locked){throw new Error('Homework is still locked on the server. Try refreshing the portal.');}
+    var params=new URLSearchParams({massarCode:massar,pin:CTX.pin||'',classId:classId,
+      termId:termId,studentName:CTX.studentName||'',scriptUrl:scriptUrl,
+      assignmentToken:hw.assignmentToken||hw.id,homeworkId:hw.id,attempt:'1'});
+    window.location.href=hw.fileUrl+'#'+params.toString();
+  })
+  .catch(function(e){
+    if(btn)btn.disabled=false;if(lbl)lbl.textContent='Open Homework';
+    alert('⚠ '+e.message);
+  });
+}
+function updateHWButton(passed,score,maxScore){
+  var locked=document.getElementById('hw-locked');
+  var btn=document.getElementById('hw-btn');
+  var sub=document.getElementById('hw-sub');
+  if(!locked||!btn)return;
+  if(passed){
+    locked.style.display='none';
+    btn.style.display='flex';
+  }else{
+    locked.style.display='flex';
+    btn.style.display='none';
+    if(sub)sub.textContent='You scored '+score+'/'+maxScore+'. Need '+Math.ceil(maxScore*PASS_THRESHOLD)+'/'+maxScore+' (80%) to unlock.';
+  }
 }
 function restorePractice(){
   try{
-    var saved=localStorage.getItem(practiceKey());if(!saved)return;
-    var state=JSON.parse(saved);if(!state||typeof state.score==='undefined')return;
+    var key=practiceKey();
+    /* Only restore if the key belongs to the current student */
+    var expectedMassar=CTX.massarCode||'';
+    if(expectedMassar&&key.indexOf(expectedMassar)<0)return;
+    var saved=localStorage.getItem(key);if(!saved)return;
+    var state=JSON.parse(saved);
+    if(!state||typeof state.score==='undefined')return;
     chosen=state.chosen||{};
     Object.keys(chosen).forEach(function(qi){
       var pq=document.getElementById('pq'+qi);if(!pq)return;
@@ -328,6 +363,7 @@ function restorePractice(){
 function restoreCheckUI(score,maxScore,passed){
   for(var i=0;i<TOTAL_QUESTIONS;i++){
     var ans=chosen[i],fb=document.getElementById('fb'+i);
+    if(!fb)continue;
     var opts=document.getElementById('pq'+i).querySelectorAll('.opt');
     opts.forEach(function(o){o.style.pointerEvents='none';});
     if(!ans)continue;
@@ -350,40 +386,25 @@ function restoreCheckUI(score,maxScore,passed){
 }
 </script>
 <script>
-function goBack(){
-  if(window.history.length>1){window.history.back();}
+function goBack(){if(window.history.length>1){window.history.back();}
   else{try{var p=Object.fromEntries(new URLSearchParams(location.hash.slice(1)));
     if(p.scriptUrl){window.location.href=p.scriptUrl;return;}}catch(e){}
-    window.location.href=window.location.origin+window.location.pathname;}
-}
+    window.location.href=window.location.origin+window.location.pathname;}}
 var ZOOM_SIZES=[1,1.15,1.3],ZOOM_LABELS=['A','A+','A++'];
 var _zoomIdx=parseInt(localStorage.getItem('lp_zoom')||'0');
-function applyZoom(){
-  document.documentElement.style.fontSize=(_zoomIdx===0?'':ZOOM_SIZES[_zoomIdx]*16+'px');
-  var b=document.getElementById('tb-zoom');if(b)b.textContent=ZOOM_LABELS[_zoomIdx];
-}
+function applyZoom(){document.documentElement.style.fontSize=(_zoomIdx===0?'':ZOOM_SIZES[_zoomIdx]*16+'px');
+  var b=document.getElementById('tb-zoom');if(b)b.textContent=ZOOM_LABELS[_zoomIdx];}
 function cycleZoom(){_zoomIdx=(_zoomIdx+1)%3;localStorage.setItem('lp_zoom',_zoomIdx);applyZoom();}
-document.addEventListener('DOMContentLoaded',function(){
-  applyZoom();
-  var tb=document.getElementById('tb-title');if(tb)tb.textContent=TEACHER_CONFIG.title;
-});
+document.addEventListener('DOMContentLoaded',function(){applyZoom();
+  var tb=document.getElementById('tb-title');if(tb)tb.textContent=TEACHER_CONFIG.title;});
 </script>
 <script>
-(function(){
-  window.addEventListener('load',function(){
-    try{
-      var p={};try{var h=location.hash.slice(1);if(h)p=Object.fromEntries(new URLSearchParams(h));}catch(e){}
-      var massar=p.massarCode||'',scriptUrl=p.scriptUrl||SCRIPT_URL,
-          lessonId=TEACHER_CONFIG.id,classId=p.classId||'';
-      window._viewRecorded=false;
-      if(massar&&lessonId&&scriptUrl){
-        fetch(scriptUrl,{method:'POST',headers:{'Content-Type':'text/plain'},
-          body:JSON.stringify({action:'recordView',massarCode:massar,lessonId:lessonId,classId:classId}),
-          redirect:'follow'}).then(function(){window._viewRecorded=true;}).catch(function(){window._viewRecorded=true;});
-      }else{window._viewRecorded=true;}
-    }catch(e){window._viewRecorded=true;}
-  });
-})();
+(function(){window.addEventListener('load',function(){
+  try{var p={};try{var h=location.hash.slice(1);if(h)p=Object.fromEntries(new URLSearchParams(h));}catch(e){}
+    var massar=p.massarCode||'',scriptUrl=p.scriptUrl||SCRIPT_URL,lessonId=TEACHER_CONFIG.id,classId=p.classId||'';
+    if(massar&&lessonId&&scriptUrl){fetch(scriptUrl,{method:'POST',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({action:'recordView',massarCode:massar,lessonId:lessonId,classId:classId}),
+      redirect:'follow'}).catch(function(){});}}catch(e){}}); })();
 </script>
 <script>restorePractice();</script>
 </body>

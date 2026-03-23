@@ -369,14 +369,22 @@ body{padding-top:52px !important;}
   </div>
 
   <!-- HW link -->
-  <div class="hw-link" id="hw-link" onclick="goHomework()"
-       style="opacity:.45;cursor:not-allowed;pointer-events:none;">
-    <div style="font-size:1.4rem;" id="hw-icon">🔒</div>
-    <div class="text">
-      <strong id="hw-title">Complete the practice to unlock homework</strong>
-      <span id="hw-sub">Score ≥ 80% to unlock Homework 5</span>
+  <div id="hw-section" style="margin-top:4px;">
+    <div id="hw-locked" style="background:#F2F1EE;border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:12px;opacity:.55;">
+      <div style="font-size:1.4rem;">🔒</div>
+      <div>
+        <div style="font-size:.9rem;font-weight:700;color:#5C5A52;">Complete the practice to unlock homework</div>
+        <div style="font-size:.78rem;color:#9CA3AF;" id="hw-sub">Score ≥ 80% to unlock</div>
+      </div>
     </div>
-    <div style="color:#B45309;font-size:1rem;" id="hw-arrow" hidden>→</div>
+    <button id="hw-btn" onclick="goHomework()" style="display:none;width:100%;padding:13px;background:#1D4ED8;color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:.95rem;font-weight:700;cursor:pointer;align-items:center;justify-content:center;gap:10px;">
+      <span>📝</span><span id="hw-btn-label">Open Homework</span>
+    </button>
+  </div>
+    </div>
+    <button id="hw-btn" onclick="goHomework()" style="display:none;width:100%;padding:13px;background:#1D4ED8;color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:.95rem;font-weight:700;cursor:pointer;align-items:center;justify-content:center;gap:10px;">
+      <span>📝</span><span id="hw-btn-label">Open Homework</span>
+    </button>
   </div>
 
 </div><!-- .page -->
@@ -490,61 +498,94 @@ function updateHWButton(passed, score, maxScore) {
   }
 }
 
-function goHomework() {
-  var scriptUrl = CTX.scriptUrl||SCRIPT_URL, hwId = TEACHER_CONFIG.relatedHomeworkId||'';
-  if (!hwId||!scriptUrl){ alert('No homework linked.'); return; }
-  var params = CTX.massarCode ? '#'+new URLSearchParams({
-    massarCode:CTX.massarCode, pin:CTX.pin||'', classId:CTX.classId||'',
-    termId:CTX.termId||'', studentName:CTX.studentName||'', scriptUrl:scriptUrl
-  }).toString() : '';
-  var pageMap = {
-    'HW001':'homework-01-conjunctions','HW002':'homework-02-art-vocabulary',
-    'HW003':'homework-03-art-forms-artists','HW004':'homework-04-simple-past-be',
-    'HW005':'homework-05-biography-questions','HW006':'homework-06-reading-biography',
-    'HW007':'homework-07-simple-past-verbs','HW008':'homework-08-word-formation',
-    'HW009':'homework-09-past-events'
-  };
-  window.location.href='https://cimikool.github.io/portal1/'+(pageMap[hwId]||hwId)+'.html'+params;
-}
-
-function restorePractice() {
-  try {
-    var saved = localStorage.getItem(practiceKey());
-    if (!saved) return;
-    var state = JSON.parse(saved);
-    if (!state || typeof state.score==='undefined') return;
-    matchChosen = state.chosen || {};
-    Object.keys(matchChosen).forEach(function(qi) {
-      var opts = document.getElementById('mo'+qi);
-      if (!opts) return;
-      opts.querySelectorAll('.match-opt').forEach(function(o){
-        if (o.getAttribute('data-def') === matchChosen[qi]) o.classList.add('selected');
-      });
+function goHomework(){
+  var massar=CTX.massarCode||'',scriptUrl=CTX.scriptUrl||SCRIPT_URL;
+  var classId=CTX.classId||'',termId=CTX.termId||'';
+  var btn=document.getElementById('hw-btn'),lbl=document.getElementById('hw-btn-label');
+  if(btn)btn.disabled=true;if(lbl)lbl.textContent='Loading…';
+  if(!massar||!scriptUrl){
+    if(btn)btn.disabled=false;if(lbl)lbl.textContent='Open Homework';
+    alert('Not logged in. Go back to the portal.');return;
+  }
+  fetch(scriptUrl,{method:'POST',headers:{'Content-Type':'text/plain'},
+    body:JSON.stringify({action:'getContentList',massarCode:massar,classId:classId,termId:termId}),
+    redirect:'follow'})
+  .then(function(r){return r.json();})
+  .then(function(data){
+    if(!data.ok){throw new Error(data.error||'Server error');}
+    var myId=TEACHER_CONFIG.id;
+    var myBase=myId.replace(/-[A-Za-z0-9]{4}$/,'');
+    var hw=null;
+    (data.homework||[]).forEach(function(h){
+      if(h.lessonIds){h.lessonIds.split(',').forEach(function(lid){
+        lid=lid.trim();if(lid===myId||lid===myBase)hw=h;
+      });}
     });
-    restoreCheckUI(state.score, state.maxScore, state.passed);
-  } catch(e){}
+    if(!hw||!hw.fileUrl){throw new Error('Homework not found. Run Sync from the teacher portal.');}
+    if(hw.locked){throw new Error('Homework is still locked on the server. Try refreshing the portal.');}
+    var params=new URLSearchParams({massarCode:massar,pin:CTX.pin||'',classId:classId,
+      termId:termId,studentName:CTX.studentName||'',scriptUrl:scriptUrl,
+      assignmentToken:hw.assignmentToken||hw.id,homeworkId:hw.id,attempt:'1'});
+    window.location.href=hw.fileUrl+'#'+params.toString();
+  })
+  .catch(function(e){
+    if(btn)btn.disabled=false;if(lbl)lbl.textContent='Open Homework';
+    alert('⚠ '+e.message);
+  });
 }
-
-function restoreCheckUI(score, maxScore, passed) {
-  for (var i = 0; i < TOTAL_QUESTIONS; i++) {
-    var ans  = matchChosen[i];
-    var fb   = document.getElementById('mf'+i);
-    var opts = document.getElementById('mo'+i).querySelectorAll('.match-opt');
-    opts.forEach(function(o){ o.style.pointerEvents='none'; });
-    if (!ans) continue;
-    if (ans === matchCorrect[i]) {
-      opts.forEach(function(o){ if(o.classList.contains('selected')) o.classList.add('correct'); });
-      fb.textContent='✓ Correct!'; fb.className='feedback-line ok'; fb.style.display='block';
-    } else {
-      opts.forEach(function(o){ if(o.classList.contains('selected')) o.classList.add('wrong'); });
-      fb.textContent='✗ Correct answer: "'+matchCorrect[i]+'"';
-      fb.className='feedback-line no'; fb.style.display='block';
+function updateHWButton(passed,score,maxScore){
+  var locked=document.getElementById('hw-locked');
+  var btn=document.getElementById('hw-btn');
+  var sub=document.getElementById('hw-sub');
+  if(!locked||!btn)return;
+  if(passed){
+    locked.style.display='none';
+    btn.style.display='flex';
+  }else{
+    locked.style.display='flex';
+    btn.style.display='none';
+    if(sub)sub.textContent='You scored '+score+'/'+maxScore+'. Need '+Math.ceil(maxScore*PASS_THRESHOLD)+'/'+maxScore+' (80%) to unlock.';
+  }
+}
+function restorePractice(){
+  try{
+    var key=practiceKey();
+    var expectedMassar=CTX.massarCode||'';
+    if(expectedMassar&&key.indexOf(expectedMassar)<0)return;
+    var saved=localStorage.getItem(key);if(!saved)return;
+    var state=JSON.parse(saved);
+    if(!state||typeof state.score==='undefined')return;
+    chosen=state.chosen||{};
+    Object.keys(chosen).forEach(function(qi){
+      var pq=document.getElementById('pq'+qi);if(!pq)return;
+      pq.querySelectorAll('.opt').forEach(function(o){if(o.textContent.trim()===chosen[qi])o.classList.add('selected');});
+    });
+    restoreCheckUI(state.score,state.maxScore,state.passed);
+  }catch(e){}
+}
+function restoreCheckUI(score,maxScore,passed){
+  for(var i=0;i<TOTAL_QUESTIONS;i++){
+    var ans=chosen[i],fb=document.getElementById('fb'+i);
+    if(!fb)continue;
+    var opts=document.getElementById('pq'+i).querySelectorAll('.opt');
+    opts.forEach(function(o){o.style.pointerEvents='none';});
+    if(!ans)continue;
+    if(ans===correct[i]){
+      opts.forEach(function(o){if(o.textContent.trim()===correct[i])o.classList.add('correct');});
+      fb.textContent='✓ Correct! '+explanations[i];fb.className='feedback ok';fb.style.display='block';
+    }else{
+      opts.forEach(function(o){
+        if(o.textContent.trim()===ans)o.classList.add('wrong');
+        if(o.textContent.trim()===correct[i])o.classList.add('correct');
+      });
+      fb.textContent='✗ The correct answer is "'+correct[i]+'". '+explanations[i];
+      fb.className='feedback no';fb.style.display='block';
     }
   }
-  document.getElementById('match-score-num').textContent = score+' / '+maxScore;
-  document.getElementById('match-score').style.display='block';
-  if (passed) document.querySelector('.check-btn').style.display='none';
-  updateHWButton(passed, score, maxScore);
+  document.getElementById('score-num').textContent=score+' / '+maxScore;
+  document.getElementById('score-box').style.display='block';
+  if(passed)document.querySelector('.check-btn').style.display='none';
+  updateHWButton(passed,score,maxScore);
 }
 </script>
 
