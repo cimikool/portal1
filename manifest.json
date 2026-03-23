@@ -1,46 +1,354 @@
 {
   "files": [
-    {"path": "lesson-01-conjunctions.html",                             "classIds": ["vYckXeY_GS"]},
-    {"path": "lesson-02-art-vocabulary.html",                          "classIds": ["vYckXeY_GS"]},
-    {"path": "lesson-03-art-forms-artists.html",                       "classIds": ["vYckXeY_GS"]},
-    {"path": "lesson-04-simple-past-be.html",                          "classIds": ["vYckXeY_GS"]},
-    {"path": "lesson-05-biography-questions.html",                     "classIds": ["vYckXeY_GS"]},
-    {"path": "lesson-06-reading-biography.html",                       "classIds": ["vYckXeY_GS"]},
-    {"path": "lesson-07-simple-past-verbs.html",                       "classIds": ["vYckXeY_GS"]},
-    {"path": "lesson-08-word-formation.html",                          "classIds": ["vYckXeY_GS"]},
-    {"path": "lesson-09-past-events.html",                             "classIds": ["vYckXeY_GS"]},
-    {"path": "lesson-10-reading-music.html",                           "classIds": ["vYckXeY_GS"]},
-    {"path": "lesson-11-writing-biography.html",                       "classIds": ["vYckXeY_GS"]},
-    {"path": "lesson-12-vocabulary-science-scientists.html",           "classIds": ["vYckXeY_GS"]},
-    {"path": "lesson-13-grammar-question-tags.html",                   "classIds": ["vYckXeY_GS"]},
-    {"path": "lesson-14-communication-asking-about-scientists.html",   "classIds": ["vYckXeY_GS"]},
-    {"path": "lesson-15-reading-great-scientists.html",                "classIds": ["vYckXeY_GS"]},
-    {"path": "lesson-16-grammar-past-continuous.html",                 "classIds": ["vYckXeY_GS"]},
-    {"path": "lesson-17-grammar-simple-past-vs-past-continuous.html",  "classIds": ["vYckXeY_GS"]},
-    {"path": "lesson-18-communication-inventions-inventors.html",      "classIds": ["vYckXeY_GS"]},
-    {"path": "lesson-19-reading-computers-new-technologies.html",      "classIds": ["vYckXeY_GS"]},
-    {"path": "lesson-20-writing-an-email.html",                        "classIds": ["vYckXeY_GS"]},
-    {"path": "lesson-21-writing-describing-a-gadget.html",             "classIds": ["vYckXeY_GS"]},
-    {"path": "homework-01-conjunctions.html",                          "classIds": ["vYckXeY_GS"]},
-    {"path": "homework-02-art-vocabulary.html",                        "classIds": ["vYckXeY_GS"]},
-    {"path": "homework-03-art-forms-artists.html",                     "classIds": ["vYckXeY_GS"]},
-    {"path": "homework-04-simple-past-be.html",                        "classIds": ["vYckXeY_GS"]},
-    {"path": "homework-05-biography-questions.html",                   "classIds": ["vYckXeY_GS"]},
-    {"path": "homework-06-reading-biography.html",                     "classIds": ["vYckXeY_GS"]},
-    {"path": "homework-07-simple-past-verbs.html",                     "classIds": ["vYckXeY_GS"]},
-    {"path": "homework-08-word-formation.html",                        "classIds": ["vYckXeY_GS"]},
-    {"path": "homework-09-past-events.html",                           "classIds": ["vYckXeY_GS"]},
-    {"path": "homework-10-reading-music.html",                         "classIds": ["vYckXeY_GS"]},
-    {"path": "homework-11-writing-biography.html",                     "classIds": ["vYckXeY_GS"]},
-    {"path": "homework-12-vocabulary-science-scientists.html",         "classIds": ["vYckXeY_GS"]},
-    {"path": "homework-13-grammar-question-tags.html",                 "classIds": ["vYckXeY_GS"]},
-    {"path": "homework-14-communication-asking-about-scientists.html", "classIds": ["vYckXeY_GS"]},
-    {"path": "homework-15-reading-great-scientists.html",              "classIds": ["vYckXeY_GS"]},
-    {"path": "homework-16-grammar-past-continuous.html",               "classIds": ["vYckXeY_GS"]},
-    {"path": "homework-17-grammar-simple-past-vs-past-continuous.html","classIds": ["vYckXeY_GS"]},
-    {"path": "homework-18-communication-inventions-inventors.html",    "classIds": ["vYckXeY_GS"]},
-    {"path": "homework-19-reading-computers-new-technologies.html",    "classIds": ["vYckXeY_GS"]},
-    {"path": "homework-20-writing-an-email.html",                      "classIds": ["vYckXeY_GS"]},
-    {"path": "homework-21-writing-describing-a-gadget.html",           "classIds": ["vYckXeY_GS"]}
+    {
+      "path": "lesson-01-conjunctions.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "lesson-02-art-vocabulary.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "lesson-03-art-forms-artists.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "lesson-04-simple-past-be.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "lesson-05-biography-questions.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "lesson-06-reading-biography.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "lesson-07-simple-past-verbs.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "lesson-08-word-formation.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "lesson-09-past-events.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "lesson-10-reading-music.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "lesson-11-writing-biography.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "lesson-12-vocabulary-science-scientists.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "lesson-13-grammar-question-tags.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "lesson-14-communication-asking-about-scientists.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "lesson-15-reading-great-scientists.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "lesson-16-grammar-past-continuous.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "lesson-17-grammar-simple-past-vs-past-continuous.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "lesson-18-communication-inventions-inventors.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "lesson-19-reading-computers-new-technologies.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "lesson-20-writing-an-email.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "lesson-21-writing-describing-a-gadget.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "homework-01-conjunctions.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "homework-02-art-vocabulary.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "homework-03-art-forms-artists.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "homework-04-simple-past-be.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "homework-05-biography-questions.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "homework-06-reading-biography.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "homework-07-simple-past-verbs.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "homework-08-word-formation.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "homework-09-past-events.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "homework-10-reading-music.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "homework-11-writing-biography.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "homework-12-vocabulary-science-scientists.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "homework-13-grammar-question-tags.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "homework-14-communication-asking-about-scientists.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "homework-15-reading-great-scientists.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "homework-16-grammar-past-continuous.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "homework-17-grammar-simple-past-vs-past-continuous.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "homework-18-communication-inventions-inventors.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "homework-19-reading-computers-new-technologies.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "homework-20-writing-an-email.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "homework-21-writing-describing-a-gadget.html",
+      "classIds": [
+        "vYckXeY_GS"
+      ]
+    },
+    {
+      "path": "lesson-lb601-vocabulary-cultural-values.html",
+      "classIds": [
+        "zjNsrntmh7",
+        "GXPGjggyDv"
+      ]
+    },
+    {
+      "path": "lesson-lb602-functions-defining-concepts.html",
+      "classIds": [
+        "zjNsrntmh7",
+        "GXPGjggyDv"
+      ]
+    },
+    {
+      "path": "lesson-lb603-functions-complaining-and-apologising.html",
+      "classIds": [
+        "zjNsrntmh7",
+        "GXPGjggyDv"
+      ]
+    },
+    {
+      "path": "lesson-lb604-grammar-phrasal-verbs.html",
+      "classIds": [
+        "zjNsrntmh7",
+        "GXPGjggyDv"
+      ]
+    },
+    {
+      "path": "lesson-lb605-reading-a-mixed-marriage.html",
+      "classIds": [
+        "zjNsrntmh7",
+        "GXPGjggyDv"
+      ]
+    },
+    {
+      "path": "lesson-lb606-speaking-cultural-values-and-stereotypes.html",
+      "classIds": [
+        "zjNsrntmh7",
+        "GXPGjggyDv"
+      ]
+    },
+    {
+      "path": "lesson-lb607-writing-an-informal-personal-letter.html",
+      "classIds": [
+        "zjNsrntmh7",
+        "GXPGjggyDv"
+      ]
+    },
+    {
+      "path": "homework-hwb601-vocabulary-cultural-values.html",
+      "classIds": [
+        "zjNsrntmh7",
+        "GXPGjggyDv"
+      ]
+    },
+    {
+      "path": "homework-hwb602-functions-defining-concepts.html",
+      "classIds": [
+        "zjNsrntmh7",
+        "GXPGjggyDv"
+      ]
+    },
+    {
+      "path": "homework-hwb603-functions-complaining-and-apologising.html",
+      "classIds": [
+        "zjNsrntmh7",
+        "GXPGjggyDv"
+      ]
+    },
+    {
+      "path": "homework-hwb604-grammar-phrasal-verbs.html",
+      "classIds": [
+        "zjNsrntmh7",
+        "GXPGjggyDv"
+      ]
+    },
+    {
+      "path": "homework-hwb605-reading-a-mixed-marriage.html",
+      "classIds": [
+        "zjNsrntmh7",
+        "GXPGjggyDv"
+      ]
+    },
+    {
+      "path": "homework-hwb606-speaking-cultural-values-and-stereotypes.html",
+      "classIds": [
+        "zjNsrntmh7",
+        "GXPGjggyDv"
+      ]
+    },
+    {
+      "path": "homework-hwb607-writing-an-informal-personal-letter.html",
+      "classIds": [
+        "zjNsrntmh7",
+        "GXPGjggyDv"
+      ]
+    }
   ]
 }
