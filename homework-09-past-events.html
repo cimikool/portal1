@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Talking About Past Events</title>
 <script id="__meta__" type="application/json">
-{"id":"HW09","type":"homework","title":"Talking About Past Events","subject":"English","termId":"s1","lessonNumber":0,"classGroup":"CC","lessonIds":"L009","assignmentToken":"KXhDQFrrvnYfjv6J","maxScore":20,"pageId":"homework-09-past-events"}
+{"id":"HW09","type":"homework","title":"Talking About Past Events","subject":"English","termId":"s1","lessonNumber":0,"classGroup":"CC","lessonIds":"L009","assignmentToken":"HW09","maxScore":20,"pageId":"homework-09-past-events"}
 </script>
 <script>var SCRIPT_URL='https://script.google.com/macros/s/AKfycbxm0dKHveJHylft980UKOxImC9OMk4yhQ6RcYUpwbB3r3BX8Of-fBzAjGAFtJP-DsLH/exec';</script>
 <script>
 var TEACHER_CONFIG = {
-  assignmentToken: 'KXhDQFrrvnYfjv6J', title: 'Talking About Past Events',
+  assignmentToken: 'HW009-TOKEN', title: 'Talking About Past Events',
   subject: 'English', dueDate: '2026-06-30', maxScore: 20,
   questions: [
   {type:'mcq',question:'"What did you do last weekend?" — Best answer:',options:['I go to the cinema yesterday.','I went to the cinema with my family.','I am going to a concert.','I do my homework last night.'],correct:1,points:2,explanation:'"I went" — simple past, go → went. ✓'},
@@ -500,8 +500,27 @@ function showToast(msg){
 
 /* Navigation */
 function goBack(){
+  /* Set return markers so portal reloads content fresh */
+  try{
+    var p={};try{var h=location.hash.slice(1);if(h)p=Object.fromEntries(new URLSearchParams(h));}catch(e){}
+    var massar=p.massarCode||'';
+    if(massar){
+      localStorage.setItem('lp_return_tab_'+massar,'homework');
+      var classId=p.classId||'';
+      /* Determine unit from assignmentToken prefix */
+      var tok=TEACHER_CONFIG.assignmentToken||'';
+      var unit='';
+      if(tok.indexOf('HW-B7')>=0||tok.indexOf('hwb7')>=0)unit='71';
+      else if(tok.indexOf('HW-B6')>=0||tok.indexOf('hwb6')>=0)unit='61';
+      else if(tok.indexOf('HW')>=0){
+        var ln=TEACHER_CONFIG.lessonNumber||0;
+        unit=ln<=2?'0':ln<=11?'7':'8';
+      }
+      if(unit)localStorage.setItem('lp_return_unit_'+massar,unit);
+    }
+  }catch(e){}
   if(window.history.length>1)window.history.back();
-  else{try{var p=Object.fromEntries(new URLSearchParams(location.hash.slice(1)));if(p.scriptUrl)window.location.href=p.scriptUrl;}catch(e){}}
+  else{try{var p2=Object.fromEntries(new URLSearchParams(location.hash.slice(1)));if(p2.scriptUrl)window.location.href=p2.scriptUrl;}catch(e){}}
 }
 
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}

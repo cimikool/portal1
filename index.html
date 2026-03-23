@@ -892,9 +892,27 @@ document.getElementById('massar-inp').addEventListener('keydown', function(e){ i
       ACTIVE_UNIT = (savedUnit !== null && savedUnit !== '') ? parseInt(savedUnit) : null;
       ACTIVE_TAB  = savedTab || 'lessons';
       loadContent();
+    } else {
+      loadContent();
     }
   }
 }());
+
+/* ── Reload fresh when restored from bfcache (history.back) ── */
+window.addEventListener('pageshow', function(e) {
+  if (e.persisted && SESSION && SESSION.massarCode) {
+    /* Page was restored from back/forward cache — reload content */
+    const savedTab  = ls.get('lp_return_tab_'  + SESSION.massarCode);
+    const savedUnit = ls.get('lp_return_unit_' + SESSION.massarCode);
+    if (savedTab !== null) {
+      ls.del('lp_return_tab_'  + SESSION.massarCode);
+      ls.del('lp_return_unit_' + SESSION.massarCode);
+      ACTIVE_UNIT = (savedUnit !== null && savedUnit !== '') ? parseInt(savedUnit) : null;
+      ACTIVE_TAB  = savedTab || 'lessons';
+    }
+    loadContent();
+  }
+});
 </script>
 </body>
 </html>

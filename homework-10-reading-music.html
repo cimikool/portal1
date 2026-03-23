@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Focus on Music</title>
 <script id="__meta__" type="application/json">
-{"id":"HW10","type":"homework","title":"Focus on Music","subject":"English","termId":"s1","lessonNumber":0,"classGroup":"CC","lessonIds":"L010","assignmentToken":"DYJk7aypVk6MhSTw","maxScore":20,"pageId":"homework-10-reading-music"}
+{"id":"HW10","type":"homework","title":"Focus on Music","subject":"English","termId":"s1","lessonNumber":0,"classGroup":"CC","lessonIds":"L010","assignmentToken":"HW10","maxScore":20,"pageId":"homework-10-reading-music"}
 </script>
 <script>var SCRIPT_URL='https://script.google.com/macros/s/AKfycbxm0dKHveJHylft980UKOxImC9OMk4yhQ6RcYUpwbB3r3BX8Of-fBzAjGAFtJP-DsLH/exec';</script>
 <script>
 var TEACHER_CONFIG = {
-  assignmentToken: 'DYJk7aypVk6MhSTw', title: 'Focus on Music',
+  assignmentToken: 'HW010-TOKEN', title: 'Focus on Music',
   subject: 'English', dueDate: '2026-06-30', maxScore: 20,
   questions: [
   {type:'tf',question:'Bob Marley was born in Kingston, the capital of Jamaica.',correct:'false',points:2,explanation:'FALSE — He was born in Nine Mile, Saint Ann. He moved to Kingston later.'},
@@ -500,8 +500,27 @@ function showToast(msg){
 
 /* Navigation */
 function goBack(){
+  /* Set return markers so portal reloads content fresh */
+  try{
+    var p={};try{var h=location.hash.slice(1);if(h)p=Object.fromEntries(new URLSearchParams(h));}catch(e){}
+    var massar=p.massarCode||'';
+    if(massar){
+      localStorage.setItem('lp_return_tab_'+massar,'homework');
+      var classId=p.classId||'';
+      /* Determine unit from assignmentToken prefix */
+      var tok=TEACHER_CONFIG.assignmentToken||'';
+      var unit='';
+      if(tok.indexOf('HW-B7')>=0||tok.indexOf('hwb7')>=0)unit='71';
+      else if(tok.indexOf('HW-B6')>=0||tok.indexOf('hwb6')>=0)unit='61';
+      else if(tok.indexOf('HW')>=0){
+        var ln=TEACHER_CONFIG.lessonNumber||0;
+        unit=ln<=2?'0':ln<=11?'7':'8';
+      }
+      if(unit)localStorage.setItem('lp_return_unit_'+massar,unit);
+    }
+  }catch(e){}
   if(window.history.length>1)window.history.back();
-  else{try{var p=Object.fromEntries(new URLSearchParams(location.hash.slice(1)));if(p.scriptUrl)window.location.href=p.scriptUrl;}catch(e){}}
+  else{try{var p2=Object.fromEntries(new URLSearchParams(location.hash.slice(1)));if(p2.scriptUrl)window.location.href=p2.scriptUrl;}catch(e){}}
 }
 
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
