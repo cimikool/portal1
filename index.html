@@ -603,6 +603,13 @@ function renderUnitView() {
   });
 
   html += '</div>'; /* end units-screen */
+
+  /* If no unit cards were rendered, show a helpful message */
+  if (html === '<div class="units-title">My Courses</div><div class="units-screen"></div>') {
+    wrap.innerHTML = '<div class="empty"><div class="empty-icon">📚</div>No units available yet — check back soon.</div>';
+    return;
+  }
+
   html += '<button class="refresh-btn" onclick="loadContent()">↻ Refresh</button>';
   wrap.innerHTML = html;
 }
