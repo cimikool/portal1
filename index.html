@@ -290,14 +290,17 @@ body{min-height:100dvh;display:flex;flex-direction:column;overflow-x:hidden;}
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxm0dKHveJHylft980UKOxImC9OMk4yhQ6RcYUpwbB3r3BX8Of-fBzAjGAFtJP-DsLH/exec';
 
 /* ── Unit map — add new units here as you create them ── */
-/* classGroups: if set, unit card only appears for students in those class groups.
+/* classIds: if set, unit card only appears for students whose classId is in this list.
    Leave undefined or [] to show to all students. */
+const CC_CLASS_IDS  = ['vYckXeY_GS','U889smjzQU','EhHw9lPmTZ','DVfRHIJMai','WQg786n7Gq'];
+const BAC_CLASS_IDS = ['zjNsrntmh7','GXPGjggyDv'];
+
 const UNIT_MAP = [
-  { unit: 0,  label: 'Warm-up',                   emoji: '🌱', lessonRange: [1, 2],  classGroups: ['CC'] },
-  { unit: 7,  label: 'Unit 7 — The Arts',          emoji: '🎨', lessonRange: [3, 11], classGroups: ['CC'] },
-  { unit: 8,  label: 'Unit 8 — Science & Tech',    emoji: '🔬', lessonRange: [12, 21],classGroups: ['CC'] },
-  { unit: 61, label: 'Unit 6 — Cultural Values',   emoji: '🌍', lessonRange: [1, 7],  classGroups: ['2BAC'],
-    idPrefix: 'L-B6' /* lessons for this unit have IDs starting with L-B6 */ },
+  { unit: 0,  label: 'Warm-up',                    emoji: '🌱', lessonRange: [1, 2],   classIds: CC_CLASS_IDS },
+  { unit: 7,  label: 'Unit 7 — The Arts',           emoji: '🎨', lessonRange: [3, 11],  classIds: CC_CLASS_IDS },
+  { unit: 8,  label: 'Unit 8 — Science & Tech',     emoji: '🔬', lessonRange: [12, 21], classIds: CC_CLASS_IDS },
+  { unit: 61, label: 'Unit 6 — Cultural Issues',    emoji: '🌍', lessonRange: [1, 7],   classIds: BAC_CLASS_IDS,
+    idPrefix: 'L-B6' },
 ];
 
 /* ── State ── */
@@ -526,14 +529,13 @@ function renderUnitView() {
 
   let html = '<div class="units-title">My Courses</div><div class="units-screen">';
 
-  /* Determine the student's classGroup from SESSION */
-  const studentGroup = (SESSION && SESSION.classGroup) ? SESSION.classGroup : '';
+  /* Use classId for reliable unit filtering */
+  const studentClassId = SESSION ? (SESSION.classId || '') : '';
 
   UNIT_MAP.forEach(function(u) {
-    /* Filter units by classGroup — skip if not for this student's group */
-    if (u.classGroups && u.classGroups.length) {
-      const groupMatch = u.classGroups.some(function(g){ return studentGroup.indexOf(g) >= 0; });
-      if (!groupMatch) return;
+    /* Filter units by classId — skip if not for this student's class */
+    if (u.classIds && u.classIds.length) {
+      if (u.classIds.indexOf(studentClassId) < 0) return;
     }
 
     const uLessons  = getLessonsForUnit(u.unit);
