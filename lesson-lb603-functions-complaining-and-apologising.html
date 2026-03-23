@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <script id="__meta__" type="application/json">
-{"id":"L-B603","type":"lesson","title":"Functions: Complaining and Apologising","subject":"English","termId":"s1","lessonNumber":3,"classGroup":"2BAC","lessonIds":"","assignmentToken":"","maxScore":0,"pageId":"lesson-lb603-functions-complaining-and-apologising"}
+{"id":"L-B603","type":"lesson","title":"Functions: Complaining and Apologising","subject":"English","termId":"s1","lessonNumber":3,"classGroup":"2BAC","lessonIds":"","assignmentToken":"","maxScore":0,"pageId":"lesson-l-b603-functions-complaining-and-apologising"}
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -240,7 +240,7 @@ var correct={0:'I\'d like to complain about the lack of respect shown.',1:'for',
 var explanations={0:'\"I\'d like to complain about…\" is the formal complaint structure ✓',1:'After \"apologise\" → FOR + verb-ing. \"I apologise FOR being late.\" ✓',2:'\"I\'d like to apologise for any inconvenience caused.\" is the most formal apology expression ✓',3:'\"I\'m DISAPPOINTED with…\" — formal expression of complaint/dissatisfaction ✓'};
 var TOTAL_QUESTIONS=4;
 var PASS_THRESHOLD=0.8;
-function practiceKey(){return 'practice_state_'+TEACHER_CONFIG.id;}
+function practiceKey(){var m=CTX.massarCode||'';return 'practice_state_'+(m?m+'_':'')+TEACHER_CONFIG.id;}
 function pick(qi,el){
   el.parentNode.querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
   el.classList.add('selected');chosen[qi]=el.textContent.trim();

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <script id="__meta__" type="application/json">
-{"id":"L-B702","type":"lesson","title":"Functions: Asking for Advice","subject":"English","termId":"s1","lessonNumber":2,"classGroup":"2BAC","lessonIds":"","assignmentToken":"","maxScore":0,"pageId":"lesson-lb702-functions-asking-for-advice"}
+{"id":"L-B702","type":"lesson","title":"Functions: Asking for Advice","subject":"English","termId":"s1","lessonNumber":2,"classGroup":"2BAC","lessonIds":"","assignmentToken":"","maxScore":0,"pageId":"lesson-l-b702-functions-asking-for-advice"}
 </script>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lesson 2 — Functions: Asking for Advice</title>
@@ -233,7 +233,7 @@ var correct={0:'I was wondering if you could advise me on this matter.',1:'Secon
 var explanations={0:'\"I was wondering if you could advise me on…\" is the most formal and indirect expression. ✓',1:'\"If you were me, what would you do?\" = SECOND CONDITIONAL (if + past simple, would + base verb). ✓',2:'\"What should I do?\" is neutral and the most commonly used expression for asking advice. ✓',3:'\"Could you give me some advice ABOUT…?\" — ABOUT is the correct preposition here. ✓'};
 var TOTAL_QUESTIONS=4;
 var PASS_THRESHOLD=0.8;
-function practiceKey(){return 'practice_state_'+TEACHER_CONFIG.id;}
+function practiceKey(){var m=CTX.massarCode||'';return 'practice_state_'+(m?m+'_':'')+TEACHER_CONFIG.id;}
 function pick(qi,el){
   el.parentNode.querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
   el.classList.add('selected');chosen[qi]=el.textContent.trim();

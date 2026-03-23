@@ -236,7 +236,7 @@ var correct={0:'The subject line',1:'I am writing to ask about my science projec
 var explanations={0:'The SUBJECT LINE gives a short title so the reader knows what the email is about.',1:'\"I am writing to ask about my science project.\" is a correct formal opening line.',2:'\"Yours sincerely,\" is the correct formal sign-off for a letter/email to a teacher.',3:'\"While she was working in her laboratory\" — past continuous with WHILE (from Lesson 17).'};
 var TOTAL_QUESTIONS=4;
 var PASS_THRESHOLD=0.8;
-function practiceKey(){return 'practice_state_'+TEACHER_CONFIG.id;}
+function practiceKey(){var m=(typeof CTX!=='undefined'&&CTX.massarCode)?CTX.massarCode+'_':'';return 'practice_state_'+m+TEACHER_CONFIG.id;}
 function pick(qi,el,correctWord){
   el.parentNode.querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
   el.classList.add('selected');chosen[qi]=el.textContent.trim();

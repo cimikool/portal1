@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <script id="__meta__" type="application/json">
-{"id":"L-B601","type":"lesson","title":"Vocabulary: Cultural Values","subject":"English","termId":"s1","lessonNumber":1,"classGroup":"2BAC","lessonIds":"","assignmentToken":"","maxScore":0,"pageId":"lesson-lb601-vocabulary-cultural-values"}
+{"id":"L-B601","type":"lesson","title":"Vocabulary: Cultural Values","subject":"English","termId":"s1","lessonNumber":1,"classGroup":"2BAC","lessonIds":"","assignmentToken":"","maxScore":0,"pageId":"lesson-l-b601-vocabulary-cultural-values"}
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -238,7 +238,7 @@ var correct={0:'tolerance',1:'irresponsibility',2:'stereotype',3:'coexistence'};
 var explanations={0:'TOLERANCE = accepting others\' differences. \"Intolerance\" is its opposite.',1:'The prefix IR- is used before words starting with R: ir + responsible = IRRESPONSIBLE / irresponsibility.',2:'A STEREOTYPE is a fixed, oversimplified image or idea about a particular group.',3:'COEXISTENCE = living peacefully alongside others who have different beliefs or ways of life.'};
 var TOTAL_QUESTIONS=4;
 var PASS_THRESHOLD=0.8;
-function practiceKey(){return 'practice_state_'+TEACHER_CONFIG.id;}
+function practiceKey(){var m=CTX.massarCode||'';return 'practice_state_'+(m?m+'_':'')+TEACHER_CONFIG.id;}
 function pick(qi,el){
   el.parentNode.querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
   el.classList.add('selected');chosen[qi]=el.textContent.trim();

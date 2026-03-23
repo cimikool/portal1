@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <script id="__meta__" type="application/json">
-{"id":"L-B703","type":"lesson","title":"Functions: Giving Advice","subject":"English","termId":"s1","lessonNumber":3,"classGroup":"2BAC","lessonIds":"","assignmentToken":"","maxScore":0,"pageId":"lesson-lb703-functions-giving-advice"}
+{"id":"L-B703","type":"lesson","title":"Functions: Giving Advice","subject":"English","termId":"s1","lessonNumber":3,"classGroup":"2BAC","lessonIds":"","assignmentToken":"","maxScore":0,"pageId":"lesson-l-b703-functions-giving-advice"}
 </script>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lesson 3 — Functions: Giving Advice</title>
@@ -231,7 +231,7 @@ var correct={0:'should',1:'or',2:'in',3:'You\'d better do it immediately.'};
 var explanations={0:'\"You SHOULD register to vote.\" — neutral recommendation. \"Ought to\" also works but \"should\" is the simplest form. ✓',1:'\"You\'d better… OR…\" — \"had better\" implies a warning, completed with OR + consequence. ✓',2:'\"If I were IN your shoes\" — idiomatic expression meaning \"if I were in your situation\". ✓',3:'\"You\'d better do it immediately.\" — \"had better\" = strongest advice, implies negative consequences if ignored. ✓'};
 var TOTAL_QUESTIONS=4;
 var PASS_THRESHOLD=0.8;
-function practiceKey(){return 'practice_state_'+TEACHER_CONFIG.id;}
+function practiceKey(){var m=CTX.massarCode||'';return 'practice_state_'+(m?m+'_':'')+TEACHER_CONFIG.id;}
 function pick(qi,el){
   el.parentNode.querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
   el.classList.add('selected');chosen[qi]=el.textContent.trim();

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <script id="__meta__" type="application/json">
-{"id":"L-B605","type":"lesson","title":"Reading: A Mixed Marriage","subject":"English","termId":"s1","lessonNumber":5,"classGroup":"2BAC","lessonIds":"","assignmentToken":"","maxScore":0,"pageId":"lesson-lb605-reading-a-mixed-marriage"}
+{"id":"L-B605","type":"lesson","title":"Reading: A Mixed Marriage","subject":"English","termId":"s1","lessonNumber":5,"classGroup":"2BAC","lessonIds":"","assignmentToken":"","maxScore":0,"pageId":"lesson-l-b605-reading-a-mixed-marriage"}
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -223,7 +223,7 @@ var correct={0:'They were worried about the cultural differences.',1:'tolerate',
 var explanations={0:'Paragraph 1: \"Her parents worried about the cultural differences.\"',1:'\"Put up with\" = TOLERATE. \"David found it hard to put up with certain customs.\"',2:'Paragraph 3: \"David picked up some Arabic words, dressed up for Moroccan celebrations, and even looked up recipes.\"',3:'Paragraph 4: \"Our differences are not a problem — they are our greatest asset.\" (asset = something valuable)'};
 var TOTAL_QUESTIONS=4;
 var PASS_THRESHOLD=0.8;
-function practiceKey(){return 'practice_state_'+TEACHER_CONFIG.id;}
+function practiceKey(){var m=CTX.massarCode||'';return 'practice_state_'+(m?m+'_':'')+TEACHER_CONFIG.id;}
 function pick(qi,el){
   el.parentNode.querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
   el.classList.add('selected');chosen[qi]=el.textContent.trim();

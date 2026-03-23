@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <script id="__meta__" type="application/json">
-{"id":"L-B602","type":"lesson","title":"Functions: Defining Concepts","subject":"English","termId":"s1","lessonNumber":2,"classGroup":"2BAC","lessonIds":"","assignmentToken":"","maxScore":0,"pageId":"lesson-lb602-functions-defining-concepts"}
+{"id":"L-B602","type":"lesson","title":"Functions: Defining Concepts","subject":"English","termId":"s1","lessonNumber":2,"classGroup":"2BAC","lessonIds":"","assignmentToken":"","maxScore":0,"pageId":"lesson-l-b602-functions-defining-concepts"}
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -227,7 +227,7 @@ var correct={0:'Diversity can be defined as the presence of a variety of culture
 var explanations={0:'\"Diversity can be defined as the presence of a variety of cultures...\" = Pattern 1, complete and formal ✓',1:'\"Altruism MEANS the practice of…\" — Pattern 3, clean and correct ✓',2:'\"A stereotype is a [category word] that [relative clause]\" — Pattern 5 ✓',3:'\"is USED to describe\" — Pattern 4: X is used to describe... ✓'};
 var TOTAL_QUESTIONS=4;
 var PASS_THRESHOLD=0.8;
-function practiceKey(){return 'practice_state_'+TEACHER_CONFIG.id;}
+function practiceKey(){var m=CTX.massarCode||'';return 'practice_state_'+(m?m+'_':'')+TEACHER_CONFIG.id;}
 function pick(qi,el){
   el.parentNode.querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
   el.classList.add('selected');chosen[qi]=el.textContent.trim();

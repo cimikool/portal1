@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <script id="__meta__" type="application/json">
-{"id":"L-B607","type":"lesson","title":"Writing: An Informal / Personal Letter","subject":"English","termId":"s1","lessonNumber":7,"classGroup":"2BAC","lessonIds":"","assignmentToken":"","maxScore":0,"pageId":"lesson-lb607-writing-an-informal-personal-letter"}
+{"id":"L-B607","type":"lesson","title":"Writing: An Informal / Personal Letter","subject":"English","termId":"s1","lessonNumber":7,"classGroup":"2BAC","lessonIds":"","assignmentToken":"","maxScore":0,"pageId":"lesson-l-b607-writing-an-informal-personal-letter"}
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -235,7 +235,7 @@ var correct={0:'Dear Layla,',1:'Best wishes,',2:'Contractions and personal langu
 var explanations={0:'\"Dear Layla,\" — using a first name is the correct informal greeting ✓',1:'\"Best wishes,\" is an appropriate informal sign-off. \"Yours faithfully\" and \"Yours sincerely\" are formal. ✓',2:'Informal letters use CONTRACTIONS (I\'m, it\'s) and personal, conversational language. ✓',3:'\"Write back soon — I\'d love to hear your thoughts!\" is a natural informal closing line ✓'};
 var TOTAL_QUESTIONS=4;
 var PASS_THRESHOLD=0.8;
-function practiceKey(){return 'practice_state_'+TEACHER_CONFIG.id;}
+function practiceKey(){var m=CTX.massarCode||'';return 'practice_state_'+(m?m+'_':'')+TEACHER_CONFIG.id;}
 function pick(qi,el){
   el.parentNode.querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
   el.classList.add('selected');chosen[qi]=el.textContent.trim();

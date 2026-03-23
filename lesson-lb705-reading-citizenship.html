@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <script id="__meta__" type="application/json">
-{"id":"L-B705","type":"lesson","title":"Reading: Citizenship","subject":"English","termId":"s1","lessonNumber":5,"classGroup":"2BAC","lessonIds":"","assignmentToken":"","maxScore":0,"pageId":"lesson-lb705-reading-citizenship"}
+{"id":"L-B705","type":"lesson","title":"Reading: Citizenship","subject":"English","termId":"s1","lessonNumber":5,"classGroup":"2BAC","lessonIds":"","assignmentToken":"","maxScore":0,"pageId":"lesson-l-b705-reading-citizenship"}
 </script>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lesson 5 — Reading: Citizenship</title>
@@ -222,7 +222,7 @@ var correct={0:'Both exercise rights and fulfil responsibilities',1:'A constitut
 var explanations={0:'Paragraph 1: \"society functions well only when its members both exercise their rights and fulfil their responsibilities.\"',1:'Paragraph 2: \"These rights are usually protected by a constitution.\"',2:'Paragraph 3: \"Voting is simultaneously a right and a civic duty.\"',3:'Paragraph 4: \"Active citizenship — going beyond the legal minimum to volunteer, campaign for change, and support those in need.\"'};
 var TOTAL_QUESTIONS=4;
 var PASS_THRESHOLD=0.8;
-function practiceKey(){return 'practice_state_'+TEACHER_CONFIG.id;}
+function practiceKey(){var m=CTX.massarCode||'';return 'practice_state_'+(m?m+'_':'')+TEACHER_CONFIG.id;}
 function pick(qi,el){
   el.parentNode.querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
   el.classList.add('selected');chosen[qi]=el.textContent.trim();

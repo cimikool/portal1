@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <script id="__meta__" type="application/json">
-{"id":"L-B606","type":"lesson","title":"Speaking: Cultural Values and Stereotypes","subject":"English","termId":"s1","lessonNumber":6,"classGroup":"2BAC","lessonIds":"","assignmentToken":"","maxScore":0,"pageId":"lesson-lb606-speaking-cultural-values-and-stereotypes"}
+{"id":"L-B606","type":"lesson","title":"Speaking: Cultural Values and Stereotypes","subject":"English","termId":"s1","lessonNumber":6,"classGroup":"2BAC","lessonIds":"","assignmentToken":"","maxScore":0,"pageId":"lesson-l-b606-speaking-cultural-values-and-stereotypes"}
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -227,7 +227,7 @@ var correct={0:'I see your point, but I\'m afraid I disagree.',1:'To sum up…',
 var explanations={0:'\"I see your point, but I\'m afraid I disagree.\" = polite disagreement ✓',1:'\"To sum up…\" introduces a conclusion. Other conclusion phrases: In conclusion, On the whole, All in all. ✓',2:'From the discussion: \"Stereotypes reduce individuals to oversimplified categories and prevent genuine understanding.\"',3:'\"IN my opinion\" OR \"FROM my perspective\" — both correct. Here the answer is FROM. ✓'};
 var TOTAL_QUESTIONS=4;
 var PASS_THRESHOLD=0.8;
-function practiceKey(){return 'practice_state_'+TEACHER_CONFIG.id;}
+function practiceKey(){var m=CTX.massarCode||'';return 'practice_state_'+(m?m+'_':'')+TEACHER_CONFIG.id;}
 function pick(qi,el){
   el.parentNode.querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
   el.classList.add('selected');chosen[qi]=el.textContent.trim();

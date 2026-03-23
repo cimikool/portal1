@@ -346,7 +346,7 @@ var tfChosen={};
 var TOTAL_QUESTIONS=5;
 var PASS_THRESHOLD=0.8;
 
-function practiceKey(){return 'practice_state_'+TEACHER_CONFIG.id;}
+function practiceKey(){var m=(typeof CTX!=='undefined'&&CTX.massarCode)?CTX.massarCode+'_':'';return 'practice_state_'+m+TEACHER_CONFIG.id;}
 
 function pickTF(qi,el,correct){
   document.getElementById('tf'+qi).querySelectorAll('.tf-opt')

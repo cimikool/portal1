@@ -245,7 +245,7 @@ var correct={0:'wasn\'t',1:'don\'t',2:'didn\'t',3:'did'};
 var explanations={0:'was → negative tag = WASN\'T. \"Marie Curie was a scientist, wasn\'t she?\" ✓',1:'Present simple with \"they\" → negative tag = DON\'T. \"Scientists work in labs, don\'t they?\" ✓',2:'Simple past positive → negative tag = DIDN\'T. \"Pasteur discovered a vaccine, didn\'t he?\" ✓',3:'Past NEGATIVE statement → POSITIVE tag = DID. \"didn\'t he\" would be wrong here. ✓'};
 var TOTAL_QUESTIONS=4;
 var PASS_THRESHOLD=0.8;
-function practiceKey(){return 'practice_state_'+TEACHER_CONFIG.id;}
+function practiceKey(){var m=(typeof CTX!=='undefined'&&CTX.massarCode)?CTX.massarCode+'_':'';return 'practice_state_'+m+TEACHER_CONFIG.id;}
 function pick(qi,el,correctWord){
   el.parentNode.querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
   el.classList.add('selected');chosen[qi]=el.textContent.trim();

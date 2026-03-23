@@ -236,7 +236,7 @@ var correct={0:'chemist',1:'A room where scientists do experiments',2:'doctor',3
 var explanations={0:'A CHEMIST studies chemistry — atoms, molecules, and reactions.',1:'A LABORATORY (or lab) is a room where scientists do experiments.',2:'Marie Curie was both a PHYSICIST and a CHEMIST — she worked in both fields.',3:'An INVENTION is a new machine or device. An inventor makes inventions.'};
 var TOTAL_QUESTIONS=4;
 var PASS_THRESHOLD=0.8;
-function practiceKey(){return 'practice_state_'+TEACHER_CONFIG.id;}
+function practiceKey(){var m=(typeof CTX!=='undefined'&&CTX.massarCode)?CTX.massarCode+'_':'';return 'practice_state_'+m+TEACHER_CONFIG.id;}
 function pick(qi,el,correctWord){
   el.parentNode.querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
   el.classList.add('selected');chosen[qi]=el.textContent.trim();

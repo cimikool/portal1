@@ -235,7 +235,7 @@ var correct={0:'were conducting',1:'She was discovering radium at 3pm.',2:'Yes, 
 var explanations={0:'\"Scientists\" = they (plural) → WERE conducting. \"The scientists were conducting an experiment.\" ✓',1:'\"She was discovering radium at 3pm\" = was + verb-ing ✓. Note: option 4 is wrong because \"she\" takes WAS not WERE.',2:'Past continuous question → short answer with WAS/WERE. \"Yes, she WAS.\" ✓',3:'The past continuous describes an action that WAS IN PROGRESS at a moment in the past.'};
 var TOTAL_QUESTIONS=4;
 var PASS_THRESHOLD=0.8;
-function practiceKey(){return 'practice_state_'+TEACHER_CONFIG.id;}
+function practiceKey(){var m=(typeof CTX!=='undefined'&&CTX.massarCode)?CTX.massarCode+'_':'';return 'practice_state_'+m+TEACHER_CONFIG.id;}
 function pick(qi,el,correctWord){
   el.parentNode.querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
   el.classList.add('selected');chosen[qi]=el.textContent.trim();

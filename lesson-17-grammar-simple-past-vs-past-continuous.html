@@ -232,7 +232,7 @@ var correct={0:'was studying / made',1:'While I was watching TV, the electricity
 var explanations={0:'Long ongoing action (was studying) + shorter interruption (made) → was studying / made ✓',1:'\"While I was watching TV\" (past continuous) + \"the electricity went out\" (simple past) ✓',2:'\"when\" is used with the SIMPLE PAST to show the short interrupting event.',3:'Two simultaneous ongoing actions → BOTH in past continuous: \"were working / was giving\" ✓'};
 var TOTAL_QUESTIONS=4;
 var PASS_THRESHOLD=0.8;
-function practiceKey(){return 'practice_state_'+TEACHER_CONFIG.id;}
+function practiceKey(){var m=(typeof CTX!=='undefined'&&CTX.massarCode)?CTX.massarCode+'_':'';return 'practice_state_'+m+TEACHER_CONFIG.id;}
 function pick(qi,el,correctWord){
   el.parentNode.querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
   el.classList.add('selected');chosen[qi]=el.textContent.trim();

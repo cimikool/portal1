@@ -233,7 +233,7 @@ var correct={0:'Paragraph 2 — What it is used for',1:'which',2:'The smartphone
 var explanations={0:'Paragraph 2 describes the FUNCTION — what the gadget is used for.',1:'\"which\" is used for things (not people). \"A smartphone is a device WHICH combines…\" ✓',2:'\"The smartphone is used to make calls and browse the internet.\" — correct function description ✓',3:'\"Were developed\" = PASSIVE VOICE — uses was/were + past participle. Common in gadget and science writing.'};
 var TOTAL_QUESTIONS=4;
 var PASS_THRESHOLD=0.8;
-function practiceKey(){return 'practice_state_'+TEACHER_CONFIG.id;}
+function practiceKey(){var m=(typeof CTX!=='undefined'&&CTX.massarCode)?CTX.massarCode+'_':'';return 'practice_state_'+m+TEACHER_CONFIG.id;}
 function pick(qi,el,correctWord){
   el.parentNode.querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
   el.classList.add('selected');chosen[qi]=el.textContent.trim();

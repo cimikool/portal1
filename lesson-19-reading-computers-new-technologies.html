@@ -225,7 +225,7 @@ var correct={0:'Seattle, USA',1:'1975',2:'Every home and office should have one'
 var explanations={0:'Paragraph 1: \"Bill Gates was born on 28 October 1955 in Seattle, USA.\"',1:'Paragraph 2: \"In 1975, Gates dropped out of Harvard University to found Microsoft.\"',2:'Paragraph 3: \"Gates believed that every home and every office should have a personal computer.\"',3:'Paragraph 4: He left Microsoft and \"focused on charity work\" — fighting disease and poverty.'};
 var TOTAL_QUESTIONS=4;
 var PASS_THRESHOLD=0.8;
-function practiceKey(){return 'practice_state_'+TEACHER_CONFIG.id;}
+function practiceKey(){var m=(typeof CTX!=='undefined'&&CTX.massarCode)?CTX.massarCode+'_':'';return 'practice_state_'+m+TEACHER_CONFIG.id;}
 function pick(qi,el,correctWord){
   el.parentNode.querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
   el.classList.add('selected');chosen[qi]=el.textContent.trim();

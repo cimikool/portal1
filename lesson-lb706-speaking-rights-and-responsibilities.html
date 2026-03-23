@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <script id="__meta__" type="application/json">
-{"id":"L-B706","type":"lesson","title":"Speaking: Rights and Responsibilities","subject":"English","termId":"s1","lessonNumber":6,"classGroup":"2BAC","lessonIds":"","assignmentToken":"","maxScore":0,"pageId":"lesson-lb706-speaking-rights-and-responsibilities"}
+{"id":"L-B706","type":"lesson","title":"Speaking: Rights and Responsibilities","subject":"English","termId":"s1","lessonNumber":6,"classGroup":"2BAC","lessonIds":"","assignmentToken":"","maxScore":0,"pageId":"lesson-l-b706-speaking-rights-and-responsibilities"}
 </script>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lesson 6 — Speaking: Rights and Responsibilities</title>
@@ -225,7 +225,7 @@ var correct={0:'In my view…',1:'On the other hand…',2:'ought',3:'All things 
 var explanations={0:'\"In my view…\" introduces a personal opinion. Others: \"I strongly believe that…\", \"As far as I\'m concerned…\" ✓',1:'\"On the other hand…\" introduces a contrasting idea. Also: \"However…\", \"Despite this…\" ✓',2:'\"Citizens OUGHT to fulfil their responsibilities.\" — reported speech using \"ought to\" ✓',3:'\"All things considered…\" introduces a conclusion. Others: \"On balance…\", \"Taking everything into account…\" ✓'};
 var TOTAL_QUESTIONS=4;
 var PASS_THRESHOLD=0.8;
-function practiceKey(){return 'practice_state_'+TEACHER_CONFIG.id;}
+function practiceKey(){var m=CTX.massarCode||'';return 'practice_state_'+(m?m+'_':'')+TEACHER_CONFIG.id;}
 function pick(qi,el){
   el.parentNode.querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
   el.classList.add('selected');chosen[qi]=el.textContent.trim();

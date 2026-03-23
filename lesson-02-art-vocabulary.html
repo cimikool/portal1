@@ -439,7 +439,8 @@ showCard();
 /* Matching practice */
 function practiceKey() {
   var lid = (typeof TEACHER_CONFIG !== 'undefined') ? TEACHER_CONFIG.id : 'L002';
-  return 'practice_state_' + lid;
+  var massar = (typeof CTX !== 'undefined' && CTX.massarCode) ? CTX.massarCode + '_' : '';
+  return 'practice_state_' + massar + lid;
 }
 
 var matchData = [

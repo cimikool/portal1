@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <script id="__meta__" type="application/json">
-{"id":"L-B704","type":"lesson","title":"Grammar: Reported Speech","subject":"English","termId":"s1","lessonNumber":4,"classGroup":"2BAC","lessonIds":"","assignmentToken":"","maxScore":0,"pageId":"lesson-lb704-grammar-reported-speech"}
+{"id":"L-B704","type":"lesson","title":"Grammar: Reported Speech","subject":"English","termId":"s1","lessonNumber":4,"classGroup":"2BAC","lessonIds":"","assignmentToken":"","maxScore":0,"pageId":"lesson-l-b704-grammar-reported-speech"}
 </script>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lesson 4 — Grammar: Reported Speech</title>
@@ -241,7 +241,7 @@ var correct={0:'respected',1:'would build',2:'to apply',3:'if'};
 var explanations={0:'Present simple → past simple in reported speech. \"He said that he RESPECTED the law.\" ✓',1:'will → WOULD in reported speech. \"The mayor said they WOULD BUILD a new school.\" ✓',2:'told + object + TO-INFINITIVE. \"She told me TO APPLY for the programme.\" ✓',3:'Yes/no question → whether/IF in reported speech. \"She asked IF young people voted.\" ✓'};
 var TOTAL_QUESTIONS=4;
 var PASS_THRESHOLD=0.8;
-function practiceKey(){return 'practice_state_'+TEACHER_CONFIG.id;}
+function practiceKey(){var m=CTX.massarCode||'';return 'practice_state_'+(m?m+'_':'')+TEACHER_CONFIG.id;}
 function pick(qi,el){
   el.parentNode.querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
   el.classList.add('selected');chosen[qi]=el.textContent.trim();

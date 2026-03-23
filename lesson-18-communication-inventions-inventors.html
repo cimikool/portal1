@@ -231,7 +231,7 @@ var correct={0:'Alexander Graham Bell invented the telephone in 1876.',1:'The pu
 var explanations={0:'\"Who invented…?\" → answer with name + invented + year. \"Alexander Graham Bell invented the telephone in 1876.\" ✓',1:'\"What is it used for?\" asks about the PURPOSE or FUNCTION of the invention.',2:'Past positive → negative tag = DIDN\'T. \"He invented it, didn\'t he?\" ✓',3:'Tim Berners-Lee invented the WORLD WIDE WEB in 1989.'};
 var TOTAL_QUESTIONS=4;
 var PASS_THRESHOLD=0.8;
-function practiceKey(){return 'practice_state_'+TEACHER_CONFIG.id;}
+function practiceKey(){var m=(typeof CTX!=='undefined'&&CTX.massarCode)?CTX.massarCode+'_':'';return 'practice_state_'+m+TEACHER_CONFIG.id;}
 function pick(qi,el,correctWord){
   el.parentNode.querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
   el.classList.add('selected');chosen[qi]=el.textContent.trim();

@@ -241,7 +241,7 @@ var correct={0:'Her discoveries or achievements',1:'didn\'t',2:'He was a French 
 var explanations={0:'\"What did she discover?\" asks about ACHIEVEMENTS / DISCOVERIES.',1:'Past positive → negative tag = DIDN\'T. \"He developed vaccines, didn\'t he?\" ✓',2:'\"Who was he?\" asks about IDENTITY and PROFESSION. \"He was a French scientist and chemist.\" ✓',3:'Marie Curie was born in Warsaw, Poland (not France — she moved to France later).'};
 var TOTAL_QUESTIONS=4;
 var PASS_THRESHOLD=0.8;
-function practiceKey(){return 'practice_state_'+TEACHER_CONFIG.id;}
+function practiceKey(){var m=(typeof CTX!=='undefined'&&CTX.massarCode)?CTX.massarCode+'_':'';return 'practice_state_'+m+TEACHER_CONFIG.id;}
 function pick(qi,el,correctWord){
   el.parentNode.querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
   el.classList.add('selected');chosen[qi]=el.textContent.trim();

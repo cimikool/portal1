@@ -342,9 +342,9 @@ var explanations = {
 };
 
 function practiceKey() {
-  /* Key uses only lessonId — no CTX dependency, works even if hash is absent */
   var lid = (typeof TEACHER_CONFIG !== 'undefined') ? TEACHER_CONFIG.id : 'L001';
-  return 'practice_state_' + lid;
+  var massar = (typeof CTX !== 'undefined' && CTX.massarCode) ? CTX.massarCode + '_' : '';
+  return 'practice_state_' + massar + lid;
 }
 
 function pick(qi, el, correctWord) {

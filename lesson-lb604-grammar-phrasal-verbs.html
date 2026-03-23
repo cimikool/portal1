@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <script id="__meta__" type="application/json">
-{"id":"L-B604","type":"lesson","title":"Grammar: Phrasal Verbs","subject":"English","termId":"s1","lessonNumber":4,"classGroup":"2BAC","lessonIds":"","assignmentToken":"","maxScore":0,"pageId":"lesson-lb604-grammar-phrasal-verbs"}
+{"id":"L-B604","type":"lesson","title":"Grammar: Phrasal Verbs","subject":"English","termId":"s1","lessonNumber":4,"classGroup":"2BAC","lessonIds":"","assignmentToken":"","maxScore":0,"pageId":"lesson-l-b604-grammar-phrasal-verbs"}
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -231,7 +231,7 @@ var correct={0:'tolerate without complaining',1:'hand in',2:'look up',3:'brought
 var explanations={0:'\"Put up with\" = TOLERATE / accept without complaining. \"I can\'t put up with intolerance.\" ✓',1:'\"Hand IN\" = submit to a person in authority. \"Hand OUT\" means distribute. ✓',2:'\"Look UP\" = search for information (in a dictionary, online). ✓',3:'\"Brought UP\" = raised (a child). \"She was brought up in a multicultural family.\" ✓'};
 var TOTAL_QUESTIONS=4;
 var PASS_THRESHOLD=0.8;
-function practiceKey(){return 'practice_state_'+TEACHER_CONFIG.id;}
+function practiceKey(){var m=CTX.massarCode||'';return 'practice_state_'+(m?m+'_':'')+TEACHER_CONFIG.id;}
 function pick(qi,el){
   el.parentNode.querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
   el.classList.add('selected');chosen[qi]=el.textContent.trim();

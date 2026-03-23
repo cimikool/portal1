@@ -450,7 +450,8 @@ var PASS_THRESHOLD  = 0.8;
 
 function practiceKey() {
   var lid = (typeof TEACHER_CONFIG !== 'undefined') ? TEACHER_CONFIG.id : 'L003';
-  return 'practice_state_' + lid;
+  var massar = (typeof CTX !== 'undefined' && CTX.massarCode) ? CTX.massarCode + '_' : '';
+  return 'practice_state_' + massar + lid;
 }
 
 function pick(qi, el, correctWord) {

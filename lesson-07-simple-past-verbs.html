@@ -458,7 +458,8 @@ var TOTAL_QUESTIONS = 5;
 var PASS_THRESHOLD  = 0.8;
 
 function practiceKey() {
-  return 'practice_state_' + TEACHER_CONFIG.id;
+  var massar = (typeof CTX !== 'undefined' && CTX.massarCode) ? CTX.massarCode + '_' : '';
+  return 'practice_state_' + massar + TEACHER_CONFIG.id;
 }
 
 function pick(qi, el, correctWord) {
