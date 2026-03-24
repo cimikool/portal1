@@ -1,364 +1,1307 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Learning Portal</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg:#f6f4ef; --card:#fff; --ink:#1c1b18; --muted:#8a867c; --line:#e6e2d8;
-  --brand:#3f46c7; --ok:#0f9d58; --warn:#b45309; --danger:#b91c1c;
-}
-*{box-sizing:border-box} html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:'Cairo',sans-serif}
-body{min-height:100vh}
-#app{max-width:980px;margin:0 auto;padding:16px}
-.hdr{background:#1c1b18;color:#fff;border-radius:16px;padding:18px 20px;margin-bottom:14px}
-.hdr h1{margin:0;font-size:1.05rem}
-.hdr .sub{opacity:.65;font-size:.78rem;margin-top:2px}
-.meta{margin-top:10px;font-size:.8rem;opacity:.82}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 2px 12px rgba(0,0,0,.04)}
-.login{max-width:420px;margin:42px auto}
-label{display:block;margin:0 0 6px;font-weight:700;font-size:.84rem}
-input{width:100%;padding:12px 14px;border:1px solid #d8d2c5;background:#f9f8f5;border-radius:12px;font:inherit;margin-bottom:12px}
-button{font:inherit;cursor:pointer}
-.btn{border:none;background:var(--brand);color:#fff;padding:12px 14px;border-radius:12px;font-weight:700}
-.btn.secondary{background:#efede6;color:var(--ink)}
-.row{display:flex;gap:10px;flex-wrap:wrap}
-.err{display:none;background:#fef2f2;border:1px solid #fecaca;color:#991b1b;padding:10px 12px;border-radius:12px;margin-bottom:12px}
-.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:12px}
-.muted{color:var(--muted)}
-.units{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
-.unit{padding:16px;cursor:pointer}
-.unit h3{margin:0 0 6px;font-size:1rem}
-.stats{font-size:.8rem;color:var(--muted)}
-.badge{display:inline-block;padding:3px 10px;border-radius:999px;background:#efede6;font-size:.75rem;font-weight:700;margin-top:8px}
-.badge.ok{background:#dcfce7;color:#166534}
-.badge.warn{background:#fef3c7;color:#92400e}
-.tabs{display:flex;gap:8px;margin:12px 0}
-.tab{flex:1;border:none;border-radius:12px;padding:10px;background:#efede6;color:var(--ink);font-weight:700}
-.tab.active{background:var(--ink);color:#fff}
-.list{display:flex;flex-direction:column;gap:10px}
-.item{display:flex;gap:12px;align-items:flex-start;padding:14px}
-.item .num{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#1c1b18;color:#fff;font-weight:700;flex-shrink:0}
-.item .body{flex:1;min-width:0}
-.item .title{font-weight:700}
-.item .meta2{font-size:.78rem;color:var(--muted);margin-top:4px}
-.item.locked{opacity:.58}
-.item.locked .num{background:#8d8b84}
-.score{background:#dcfce7;color:#166534;border-radius:999px;padding:4px 10px;font-size:.76rem;font-weight:700;white-space:nowrap}
-.link{border:none;background:none;color:var(--brand);padding:0;font-weight:700}
-.back{margin-bottom:10px}
-.empty{padding:28px;text-align:center;color:var(--muted)}
-@media (max-width:640px){#app{padding:12px}.row{flex-direction:column}}
-</style>
-</head>
-<body>
-<div id="app">
-  <div class="hdr">
-    <h1>🎓 Learning Portal</h1>
-    <div class="sub" id="hdr-sub">Login to access your lessons and homework</div>
-    <div class="meta" id="hdr-meta" style="display:none"></div>
-  </div>
+/* ================================================================
+   دفتر الأستاذ — Apps Script v6
+   Clean architecture rewrite.
 
-  <div id="login-screen" class="card login">
-    <div id="login-err" class="err"></div>
-    <label>Massar Number</label>
-    <input id="massar" placeholder="e.g. N130032465" autocomplete="off">
-    <label>PIN</label>
-    <input id="pin" type="password" maxlength="4" placeholder="••••" inputmode="numeric">
-    <button class="btn" id="login-btn" onclick="doLogin()">Sign in</button>
-  </div>
+   Design principles:
+   - One endpoint (getPortalData) returns everything the portal needs
+   - Backend is the single source of truth for tokens and locking
+   - Each sheet is read ONCE per request, indexed into a map
+   - Submission limit (max 2) counts active + superseded rows
+   - Token is resolved from the sheet, never trusted from the client
+   ================================================================ */
 
-  <div id="main-screen" style="display:none">
-    <div class="toolbar">
-      <div>
-        <div id="student-name" style="font-weight:700"></div>
-        <div id="student-line" class="muted"></div>
-      </div>
-      <div class="row">
-        <button class="btn secondary" onclick="refreshPortal(true)">Refresh</button>
-        <button class="btn secondary" onclick="logout()">Sign out</button>
-      </div>
-    </div>
-
-    <div id="view-units"></div>
-
-    <div id="view-unit" style="display:none">
-      <button class="btn secondary back" onclick="showUnits()">← Units</button>
-      <div class="card">
-        <div id="unit-title" style="font-weight:700;font-size:1rem"></div>
-        <div id="unit-stats" class="muted" style="margin-top:4px"></div>
-        <div class="tabs">
-          <button class="tab active" id="tab-lessons" onclick="setTab('lessons')">Lessons</button>
-          <button class="tab" id="tab-homework" onclick="setTab('homework')">Homework</button>
-        </div>
-        <div id="unit-list"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxm0dKHveJHylft980UKOxImC9OMk4yhQ6RcYUpwbB3r3BX8Of-fBzAjGAFtJP-DsLH/exec';
-const APP_SECRET = 'School2025';
-
-let SESSION = null;
-let PORTAL = null;
-let ACTIVE_UNIT = null;
-let ACTIVE_TAB = 'lessons';
-let LOAD_BUSY = false;
-
-const ls = {
-  get(k){ try { return localStorage.getItem(k); } catch { return null; } },
-  set(k,v){ try { localStorage.setItem(k,v); } catch {} },
-  del(k){ try { localStorage.removeItem(k); } catch {} }
+/* ── Sheet names ── */
+var SH = {
+  push:        'PushData',
+  students:    'Students',
+  homework:    'Homework',
+  submissions: 'Submissions',
+  drafts:      'Drafts',
+  views:       'Views',
+  evalData:    'EvalData',
+  config:      'Config'
 };
 
-function withSecret(obj){ if (APP_SECRET) obj.secret = APP_SECRET; return obj; }
+/* ── Class groups ── */
+var CG = {
+  CC:  ['vYckXeY_GS','U889smjzQU','EhHw9lPmTZ','DVfRHIJMai','WQg786n7Gq'],
+  BAC: ['GXPGjggyDv','zjNsrntmh7'],
+  NAMES: {
+    'vYckXeY_GS':'TCS-1','U889smjzQU':'TCS-2','EhHw9lPmTZ':'TCSF-1',
+    'DVfRHIJMai':'TCSF-2','WQg786n7Gq':'TCS-3',
+    'GXPGjggyDv':'2BACSP-1','zjNsrntmh7':'2BACSP-2'
+  }
+};
 
-async function api(body){
-  const res = await fetch(SCRIPT_URL, {
-    method:'POST',
-    headers:{'Content-Type':'text/plain'},
-    body: JSON.stringify(withSecret(body))
-  });
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  return res.json();
+/* ================================================================
+   ROUTERS
+   ================================================================ */
+
+function doGet(e) {
+  var p      = (e && e.parameter) || {};
+  var action = p.action || '';
+  var page   = p.page   || '';
+  try {
+    if (action === 'pull')            return json(handlePull());
+    if (action === 'pullSubmissions') return json(handlePullSubmissions(p));
+    var url = ScriptApp.getService().getUrl();
+    if (page) {
+      try {
+        var tpl = HtmlService.createTemplateFromFile(page);
+        tpl.scriptUrl = url;
+        tpl.urlParams = JSON.stringify(p);
+        return tpl.evaluate().setTitle(page.replace(/-/g,' '))
+          .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+      } catch(err) {
+        return HtmlService.createHtmlOutput('<p style="font-family:sans-serif;padding:24px">Page not found: <b>'+page+'</b></p>');
+      }
+    }
+    try {
+      var t2 = HtmlService.createTemplateFromFile('container');
+      t2.scriptUrl = url;
+      return t2.evaluate().setTitle('Learning Portal')
+        .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+    } catch(err2) {
+      return HtmlService.createHtmlOutput('<h2 style="font-family:sans-serif;padding:24px">Learning Portal</h2>');
+    }
+  } catch(err) {
+    return json({ ok:false, error:err.message });
+  }
 }
 
-function saveSession(){ sessionStorage.setItem('lp_core_session', JSON.stringify(SESSION)); }
-function loadSession(){ try { return JSON.parse(sessionStorage.getItem('lp_core_session') || 'null'); } catch { return null; } }
-function clearSession(){ sessionStorage.removeItem('lp_core_session'); }
+function doPost(e) {
+  var body;
+  try { body = JSON.parse(e.postData.contents); }
+  catch(err) { return json({ ok:false, error:'Invalid JSON' }); }
+  try {
+    var a = body.action;
+    Logger.log('[doPost] action='+a+' massar='+(body.massarCode||'')
+               +' classId='+(body.classId||''));
+    /* Dispatch alphabetically */
+    if (a === 'deleteDraft')    return json(handleDeleteDraft(body));
+    if (a === 'getDraft')       return json(handleGetDraft(body));
+    if (a === 'getPortalData')  return json(handleGetPortalData(body));
+    if (a === 'loginContainer') return json(handleLoginContainer(body));
+    if (a === 'push')           return json(handlePush(body.payload));
+    if (a === 'recordPractice') return json(handleRecordPractice(body));
+    if (a === 'recordView')     return json(handleRecordView(body));
+    if (a === 'saveDraft')      return json(handleSaveDraft(body));
+    if (a === 'submitHomework') return json(handleSubmitHomework(body));
+    if (a === 'test')           return json({ ok:true, version:'v6' });
+    if (a === 'verifyStudent')  return json(handleVerifyStudent(body));
+    /* Legacy aliases kept for backward compatibility */
+    if (a === 'getContentList')  return json(handleGetPortalData(body));
+    if (a === 'getHomeworkList') return json(handleGetHomeworkList(body));
+    return json({ ok:false, error:'Unknown action: '+a });
+  } catch(err) {
+    Logger.log('[CRASH] '+err.message+'\n'+err.stack);
+    return json({ ok:false, error:err.message });
+  }
+}
 
-async function doLogin(){
-  const massar = document.getElementById('massar').value.trim();
-  const pin = document.getElementById('pin').value.trim();
-  const err = document.getElementById('login-err');
-  err.style.display = 'none';
-  if (!massar) return showErr('Please enter your Massar number');
-  if (!pin) return showErr('Please enter your PIN');
+function doOptions() {
+  return ContentService.createTextOutput('').setMimeType(ContentService.MimeType.TEXT);
+}
 
-  const btn = document.getElementById('login-btn');
-  btn.disabled = true; btn.textContent = 'Signing in...';
+function json(data) {
+  return ContentService.createTextOutput(JSON.stringify(data))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+/* ================================================================
+   getPortalData — single endpoint for portal load
+   Returns: lessons[], homework[], submissions{}, student info
+   One call replaces: getContentList + pullSubmissions
+   ================================================================ */
+function handleGetPortalData(body) {
+  var classId = str(body.classId);
+  var termId  = str(body.termId);
+  var massar  = str(body.massarCode);
+
+  if (!classId) return { ok:false, error:'classId required' };
+  if (!massar)  return { ok:false, error:'massarCode required' };
+
+  var ss         = SpreadsheetApp.getActiveSpreadsheet();
+  var scriptUrl  = ScriptApp.getService().getUrl();
+
+  /* ── Read each sheet ONCE into a raw values array ── */
+  var hwRows  = readSheet(ss, SH.homework);
+  var viewRows= readSheet(ss, SH.views);
+  var subRows = readSheet(ss, SH.submissions);
+
+  /* ── Build content items from Homework sheet ── */
+  var allItems = buildContentItems(hwRows, classId, termId, scriptUrl);
+
+  /* ── Split into lessons / homework ── */
+  var lessons  = allItems.filter(function(r){ return r.type === 'lesson'; });
+  var homework = allItems.filter(function(r){ return r.type !== 'lesson'; });
+
+  /* ── Build lesson map for linkedLessons resolution ── */
+  var lessonMap = buildLessonMap(lessons);
+
+  /* ── Resolve linkedLessons on each homework item ── */
+  homework.forEach(function(hw) {
+    hw.linkedLessons = resolveLinkedLessons(hw.lessonIds, lessonMap);
+  });
+
+  /* ── Sort ── */
+  lessons.sort(byLessonNumber);
+  homework.sort(byLinkedLessonNumber);
+
+  /* ── Build indexed sets for locking ── */
+  var passedLessons = buildPassedLessonsSet(viewRows, massar);
+  var subCounts     = buildSubmissionCounts(subRows, massar);
+  var hasActiveSub  = buildActiveSubSet(subRows, massar);
+
+  /* ── Apply locking rules ── */
+  applyLocking(lessons, homework, passedLessons, hasActiveSub);
+
+  /* ── Annotate homework with submission info ── */
+  homework.forEach(function(hw) {
+    var tok = hw.assignmentToken || hw.id;
+    var cnt = subCounts[tok] || 0;
+    hw.submissionCount   = cnt;
+    hw.alreadySubmitted  = cnt >= 2;
+    /* Include score for portal display */
+    hw.submittedScore    = subCounts['score_'+tok] || null;
+    hw.submittedMaxScore = subCounts['max_'+tok]   || null;
+  });
+
+  return {
+    ok:       true,
+    lessons:  lessons,
+    homework: homework
+  };
+}
+
+/* ── Read a full sheet, returning { headers, rows } ── */
+function readSheet(ss, name) {
+  var sheet = ss.getSheetByName(name);
+  if (!sheet || sheet.getLastRow() < 2) return { headers:[], rows:[] };
+  var data    = sheet.getDataRange().getValues();
+  return { headers: data[0], rows: data.slice(1) };
+}
+
+/* ── Build content items from Homework sheet rows ── */
+function buildContentItems(hwData, classId, termId, scriptUrl) {
+  if (!hwData.rows.length) return [];
+  var C   = mapCols(hwData.headers, ['id','type','title','description','subject','classId',
+    'termId','driveFileId','fileUrl','pageId','dueDate','maxScore','active','createdAt',
+    'assignmentToken','lessonNumber','lessonIds']);
+  var now  = new Date();
+  var out  = [];
+  hwData.rows.forEach(function(r) {
+    if (!r[C.id]) return;
+    if (str(r[C.active]||'true').toLowerCase() === 'false') return;
+    var hwClass = str(r[C.classId]);
+    if (hwClass && classId && hwClass !== classId) return;
+    var hwTerm = str(r[C.termId]);
+    if (hwTerm && termId && hwTerm !== termId) return;
+    var dueDate = r[C.dueDate] ? new Date(r[C.dueDate]) : null;
+    out.push({
+      id:              str(r[C.id]),
+      type:            str(r[C.type]||'homework').toLowerCase(),
+      title:           str(r[C.title]),
+      description:     str(r[C.description]),
+      subject:         str(r[C.subject]),
+      fileUrl:         resolveFileUrl(str(r[C.pageId]), str(r[C.driveFileId]), scriptUrl, str(r[C.fileUrl])),
+      dueDate:         dueDate ? dueDate.toISOString().slice(0,10) : '',
+      maxScore:        num(r[C.maxScore]) || 20,
+      termId:          hwTerm,
+      assignmentToken: str(r[C.assignmentToken]),
+      lessonNumber:    num(r[C.lessonNumber]) || 0,
+      lessonIds:       str(r[C.lessonIds]),
+      isOverdue:       dueDate ? dueDate < now : false,
+      createdAt:       r[C.createdAt] ? new Date(r[C.createdAt]).toISOString() : '',
+      locked:          true,     /* default locked; unlocked by applyLocking */
+      linkedLessons:   []
+    });
+  });
+  return out;
+}
+
+/* ── Build lessonId → lesson map (indexed by full id AND base id) ── */
+function buildLessonMap(lessons) {
+  var m = {};
+  lessons.forEach(function(l) {
+    m[l.id] = l;
+    var base = stripClassSuffix(l.id);
+    if (base !== l.id) m[base] = l;
+  });
+  return m;
+}
+
+/* ── Resolve linkedLessons array from comma-separated lessonIds string ── */
+function resolveLinkedLessons(lessonIds, lessonMap) {
+  if (!lessonIds) return [];
+  return lessonIds.split(',').map(function(lid) {
+    lid = lid.trim();
+    var l = lessonMap[lid];
+    return l ? { id:lid, title:l.title, lessonNumber:l.lessonNumber } : null;
+  }).filter(Boolean);
+}
+
+/* ── Build set of passed lesson base-ids for this student ── */
+function buildPassedLessonsSet(viewData, massar) {
+  var passed = {};
+  if (!viewData.rows.length) return passed;
+  var C = mapCols(viewData.headers, ['massarCode','lessonId','passed']);
+  viewData.rows.forEach(function(r) {
+    if (str(r[C.massarCode]) !== massar) return;
+    var lid  = str(r[C.lessonId]);
+    var isP  = str(r[C.passed]).toLowerCase() === 'true';
+    if (isP) {
+      passed[lid] = true;
+      passed[stripClassSuffix(lid)] = true;
+    }
+  });
+  return passed;
+}
+
+/* ── Build submission counts map: token → total count (active+superseded) ── */
+function buildSubmissionCounts(subData, massar) {
+  var counts = {};
+  if (!subData.rows.length) return counts;
+  var C = mapCols(subData.headers, ['massarCode','assignmentToken','homeworkId','score','maxScore','status']);
+  subData.rows.forEach(function(r) {
+    if (str(r[C.massarCode]) !== massar) return;
+    var tok = str(r[C.assignmentToken] || r[C.homeworkId]);
+    if (!tok) return;
+    counts[tok] = (counts[tok] || 0) + 1;
+    /* Store score from the active row */
+    if (str(r[C.status]) === 'active') {
+      counts['score_'+tok] = num(r[C.score]);
+      counts['max_'+tok]   = num(r[C.maxScore]) || 20;
+    }
+  });
+  return counts;
+}
+
+/* ── Build set of tokens with at least one active submission ── */
+function buildActiveSubSet(subData, massar) {
+  var active = {};
+  if (!subData.rows.length) return active;
+  var C = mapCols(subData.headers, ['massarCode','assignmentToken','homeworkId','status']);
+  subData.rows.forEach(function(r) {
+    if (str(r[C.massarCode]) !== massar) return;
+    if (str(r[C.status]) !== 'active') return;
+    var tok = str(r[C.assignmentToken] || r[C.homeworkId]);
+    if (tok) active[tok] = true;
+  });
+  return active;
+}
+
+/* ================================================================
+   LOCKING ENGINE
+   All locking logic lives here. Frontend just renders what backend says.
+   ================================================================ */
+function applyLocking(lessons, homework, passedLessons, hasActiveSub) {
+
+  /* Unit classification helpers */
+  function getPrefix(id) {
+    if (id.indexOf('L-B7') >= 0 || id.indexOf('HW-B7') >= 0) return 'B7';
+    if (id.indexOf('L-B6') >= 0 || id.indexOf('HW-B6') >= 0) return 'B6';
+    return 'CC';
+  }
+  function getCCSubUnit(n) {
+    if (n <= 2)  return 'WU';
+    if (n <= 11) return 'U7';
+    return 'U8';
+  }
+  var CC_ORDER  = ['WU','U7','U8'];
+  var BAC_ORDER = ['B6','B7'];
+
+  /* Build unitKey → [tokens] map for cross-unit checking */
+  var unitTokens = {};
+  homework.forEach(function(hw) {
+    var prefix = getPrefix(hw.id);
+    var key = prefix === 'CC'
+      ? getCCSubUnit(hw.linkedLessons.length ? hw.linkedLessons[0].lessonNumber : 0)
+      : prefix;
+    if (!unitTokens[key]) unitTokens[key] = [];
+    unitTokens[key].push(hw.assignmentToken || hw.id);
+  });
+
+  function unitDone(key) {
+    var tokens = unitTokens[key] || [];
+    return !tokens.length || tokens.every(function(t){ return hasActiveSub[t]; });
+  }
+
+  /* ── Step 1: per-unit lesson chain ── */
+  /* Group lessons by prefix */
+  var byPrefix = {};
+  lessons.forEach(function(l) {
+    var p = getPrefix(l.id);
+    if (!byPrefix[p]) byPrefix[p] = [];
+    byPrefix[p].push(l);
+  });
+  Object.keys(byPrefix).forEach(function(prefix) {
+    var group = byPrefix[prefix];
+    group.sort(byLessonNumber);
+    group.forEach(function(l, idx) {
+      if (idx === 0) { l.locked = false; return; } /* first lesson: unlocked by default */
+      var prev   = group[idx - 1];
+      var prevHW = homework.filter(function(h) {
+        return getPrefix(h.id) === prefix &&
+               h.linkedLessons.some(function(ll){ return ll.lessonNumber === prev.lessonNumber; });
+      })[0];
+      l.locked = prevHW ? !hasActiveSub[prevHW.assignmentToken || prevHW.id] : false;
+    });
+  });
+
+  /* ── Step 2: cross-unit locking (first lesson of each unit) ── */
+  Object.keys(byPrefix).forEach(function(prefix) {
+    var group = byPrefix[prefix];
+    if (!group.length) return;
+    group.sort(byLessonNumber);
+    var firstLesson = group[0];
+    var order  = (prefix === 'B6' || prefix === 'B7') ? BAC_ORDER : CC_ORDER;
+    var unitKey= prefix === 'CC' ? getCCSubUnit(firstLesson.lessonNumber) : prefix;
+    var idx    = order.indexOf(unitKey);
+    if (idx <= 0) { firstLesson.locked = false; return; } /* first unit always open */
+    firstLesson.locked = !unitDone(order[idx - 1]);
+  });
+
+  /* ── Step 3: build lessonLocked lookup ── */
+  var lessonLocked = {};
+  lessons.forEach(function(l) {
+    lessonLocked[l.id] = !!l.locked;
+    lessonLocked[stripClassSuffix(l.id)] = !!l.locked;
+  });
+
+  /* ── Step 4: homework locking ── */
+  homework.forEach(function(hw) {
+    var linked = hw.linkedLessons && hw.linkedLessons.length ? hw.linkedLessons[0] : null;
+    if (!linked) { hw.locked = false; return; }
+
+    var lid   = linked.id;
+    var lbase = stripClassSuffix(lid);
+
+    /* If the lesson is locked → homework is locked */
+    if (lessonLocked[lid] || lessonLocked[lbase]) { hw.locked = true; return; }
+
+    /* Otherwise locked until lesson practice is passed */
+    hw.locked = !(passedLessons[lid] || passedLessons[lbase]);
+  });
+}
+
+/* ── Sort helpers ── */
+function byLessonNumber(a, b)        { return (a.lessonNumber||0) - (b.lessonNumber||0); }
+function byLinkedLessonNumber(a, b) {
+  var an = a.linkedLessons && a.linkedLessons.length ? a.linkedLessons[0].lessonNumber : 999;
+  var bn = b.linkedLessons && b.linkedLessons.length ? b.linkedLessons[0].lessonNumber : 999;
+  return an - bn;
+}
+
+/* ── Strip 4-char class suffix: 'L-B601-GXPG' → 'L-B601' ── */
+function stripClassSuffix(id) {
+  return id.replace(/-[A-Za-z0-9]{4}$/, '');
+}
+
+/* ── Resolve a fileUrl from available data ── */
+function resolveFileUrl(pageId, driveFileId, scriptUrl, sheetFileUrl) {
+  if (sheetFileUrl) return sheetFileUrl;
+  if (pageId)       return scriptUrl + '?page=' + encodeURIComponent(pageId);
+  if (driveFileId)  return 'https://drive.google.com/uc?export=view&id=' + driveFileId;
+  return '';
+}
+
+/* ================================================================
+   submitHomework — server is source of truth for token and limits
+   ================================================================ */
+function handleSubmitHomework(body) {
+  var classId = str(body.classId);
+  var termId  = str(body.termId);
+  var massar  = str(body.massarCode);
+  var pin     = str(body.pin);
+  var score   = (body.score !== null && body.score !== undefined) ? num(body.score) : 0;
+  var max     = num(body.maxScore) || 20;
+  var taken   = num(body.timeTaken) || 0;
+  var answers = body.answers ? JSON.stringify(body.answers) : '';
+
+  /* Required: homeworkId OR assignmentToken to resolve the row */
+  var hwId    = str(body.homeworkId || body.assignmentToken);
+
+  if (!classId) return { ok:false, error:'classId missing' };
+  if (!massar)  return { ok:false, error:'massarCode missing' };
+  if (!pin)     return { ok:false, error:'pin missing' };
+  if (!hwId)    return { ok:false, error:'homeworkId missing' };
+
+  /* Verify identity */
+  var v = handleVerifyStudent({ classId:classId, massarCode:massar, pin:pin });
+  if (!v.ok) return v;
+
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  /* ── Resolve token from the sheet — never trust client ── */
+  var token = resolveToken(ss, hwId, classId);
+  if (!token) {
+    /* Fallback: try using hwId directly as token */
+    token = hwId;
+  }
+
+  /* ── Count ALL rows (active + superseded) — max 2 total ── */
+  var totalCount = countAllAttempts(ss, massar, token);
+  if (totalCount >= 2) {
+    return { ok:false, error:'Max attempts reached. No further submissions allowed.' };
+  }
+
+  var attempt = totalCount + 1;
+  var now     = new Date().toISOString();
+
+  if (attempt === 2) supersedeActive(ss, massar, token);
+
+  /* Auto-flag detection */
+  var flags = buildFlags(ss, body, classId, massar, token, score, taken, attempt, answers);
+
+  safeAppendRow(ss, SH.submissions,
+    ['timestamp','classId','termId','homeworkId','massarCode','studentName','studentId',
+     'score','maxScore','attempt','status','timeTaken','answers','assignmentToken','flag'],
+    [now, classId, termId, token, massar,
+     str(v.studentName), str(v.studentId),
+     score, max, attempt, 'active', taken, answers, token,
+     flags.join(' | ')]
+  );
+
+  /* After successful submission: update Views so linked lesson shows passed */
+  if (max > 0 && score / max >= 0.8) {
+    markLinkedLessonPassed(ss, hwId, classId, massar);
+  }
+
+  handleDeleteDraft({ massarCode:massar, assignmentToken:token });
+
+  return {
+    ok:           true,
+    submittedAt:  now,
+    attempt:      attempt,
+    score:        score,
+    maxScore:     max,
+    studentName:  v.studentName,
+    attemptsLeft: Math.max(0, 2 - attempt)
+  };
+}
+
+/* ── Resolve assignmentToken from the Homework sheet by hwId + classId ── */
+function resolveToken(ss, hwId, classId) {
+  var sheet = ss.getSheetByName(SH.homework);
+  if (!sheet || sheet.getLastRow() < 2) return '';
+  var data = sheet.getDataRange().getValues();
+  var C    = mapCols(data[0], ['id','classId','assignmentToken']);
+  for (var i = 1; i < data.length; i++) {
+    var rowId    = str(data[i][C.id]);
+    var rowClass = str(data[i][C.classId]);
+    var tok      = str(data[i][C.assignmentToken]);
+    /* Match by id (with or without class suffix) + classId */
+    var baseId   = stripClassSuffix(rowId);
+    var baseHwId = stripClassSuffix(hwId);
+    if ((rowId === hwId || baseId === baseHwId) &&
+        (rowClass === classId || !rowClass || !classId)) {
+      return tok || hwId;
+    }
+  }
+  return '';
+}
+
+/* ── Mark linked lesson as passed in Views after homework submission ── */
+function markLinkedLessonPassed(ss, hwId, classId, massar) {
+  try {
+    var hwData = readSheet(ss, SH.homework);
+    var C = mapCols(hwData.headers, ['id','classId','lessonIds','assignmentToken']);
+    hwData.rows.forEach(function(r) {
+      var rowId   = str(r[C.id]);
+      var baseId  = stripClassSuffix(rowId);
+      var baseHwId= stripClassSuffix(hwId);
+      if (rowId !== hwId && baseId !== baseHwId) return;
+      var lids = str(r[C.lessonIds]);
+      if (!lids) return;
+      lids.split(',').forEach(function(lid) {
+        lid = lid.trim();
+        if (lid) handleRecordPractice({ massarCode:massar, lessonId:lid, classId:classId,
+                                        score:1, maxScore:1 }); /* score=1/1 = 100% = passed */
+      });
+    });
+  } catch(e) {
+    Logger.log('[markLinkedLessonPassed] '+e.message);
+  }
+}
+
+/* ── Build submission flags ── */
+function buildFlags(ss, body, classId, massar, token, score, taken, attempt, answers) {
+  var flags = [];
+  if (taken > 0 && taken < 90) flags.push('⚡fast('+taken+'s)');
+  if (body.answers && Array.isArray(body.answers)) {
+    var mcq = body.answers.filter(function(a){ return a.type==='mcq'; }).map(function(a){ return a.answer; });
+    var tf  = body.answers.filter(function(a){ return a.type==='tf';  }).map(function(a){ return a.answer; });
+    if (mcq.length >= 3 && mcq.every(function(a){ return a===mcq[0]; })) flags.push('🔄all-same-mcq');
+    if (tf.length  >= 3 && tf.every(function(a){ return a===tf[0];   })) flags.push('🔄all-same-tf');
+  }
+  if (attempt === 2) {
+    var sheet = ss.getSheetByName(SH.submissions);
+    if (sheet && sheet.getLastRow() >= 2) {
+      var sd = sheet.getDataRange().getValues();
+      var C  = mapCols(sd[0], ['classId','massarCode','homeworkId','score','status','answers']);
+      for (var i = 1; i < sd.length; i++) {
+        if (str(sd[i][C.classId])    !== classId) continue;
+        if (str(sd[i][C.massarCode]) !== massar)  continue;
+        if (str(sd[i][C.homeworkId]) !== token)   continue;
+        if (str(sd[i][C.status])     !== 'superseded') continue;
+        if (score - num(sd[i][C.score]) >= 6) flags.push('🔁jump+'+(score-num(sd[i][C.score])));
+        if (answers && str(sd[i][C.answers]) === answers) flags.push('📋same-as-attempt1');
+        break;
+      }
+      /* Identical answers from another student */
+      if (answers && answers !== '[]') {
+        var C2 = mapCols(sd[0], ['classId','massarCode','homeworkId','answers','status']);
+        for (var j = 1; j < sd.length; j++) {
+          if (str(sd[j][C2.classId])    !== classId) continue;
+          if (str(sd[j][C2.massarCode]) === massar)  continue;
+          if (str(sd[j][C2.homeworkId]) !== token)   continue;
+          if (str(sd[j][C2.status])     !== 'active') continue;
+          if (str(sd[j][C2.answers])    === answers) { flags.push('📋identical'); break; }
+        }
+      }
+    }
+  }
+  return flags;
+}
+
+/* ================================================================
+   recordPractice — saves practice score to Views sheet
+   ================================================================ */
+function handleRecordPractice(body) {
+  var massar   = str(body.massarCode);
+  var lessonId = str(body.lessonId);
+  var classId  = str(body.classId || '');
+  var score    = Number(body.score)    || 0;
+  var maxScore = Number(body.maxScore) || 0;
+  if (!massar || !lessonId) return { ok:false, error:'Missing fields' };
+
+  var passed = maxScore > 0 && score / maxScore >= 0.8;
+  var ss     = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet  = safeGetOrCreate(ss, SH.views,
+    ['massarCode','lessonId','classId','viewedAt','practiceScore','maxScore','passed']);
+
+  var data    = sheet.getLastRow() > 1
+    ? sheet.getRange(2,1,sheet.getLastRow()-1,sheet.getLastColumn()).getValues() : [];
+  var hdrs    = sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0];
+  var C       = mapCols(hdrs, ['massarCode','lessonId','practiceScore','maxScore','passed']);
+  var rowNum  = -1;
+
+  for (var i = 0; i < data.length; i++) {
+    if (str(data[i][C.massarCode]) === massar && str(data[i][C.lessonId]) === lessonId) {
+      rowNum = i + 2; break;
+    }
+  }
+
+  if (rowNum > 0) {
+    var alreadyPassed = str(data[rowNum-2][C.passed]).toLowerCase() === 'true';
+    if (!alreadyPassed || passed) { /* never downgrade */
+      sheet.getRange(rowNum, C.practiceScore+1).setValue(score);
+      sheet.getRange(rowNum, C.maxScore+1).setValue(maxScore);
+      sheet.getRange(rowNum, C.passed+1).setValue(passed ? 'true' : 'false');
+    }
+  } else {
+    sheet.appendRow([massar, lessonId, classId, new Date().toISOString(),
+                     score, maxScore, passed ? 'true' : 'false']);
+  }
+  return { ok:true, passed:passed, score:score, maxScore:maxScore };
+}
+
+/* ================================================================
+   recordView
+   ================================================================ */
+function handleRecordView(body) {
+  var massar   = str(body.massarCode);
+  var lessonId = str(body.lessonId);
+  var classId  = str(body.classId || '');
+  if (!massar || !lessonId) return { ok:false, error:'Missing fields' };
+
+  var ss    = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = safeGetOrCreate(ss, SH.views,
+    ['massarCode','lessonId','classId','viewedAt','practiceScore','maxScore','passed']);
+
+  var today = new Date().toISOString().slice(0,10);
+  var data  = sheet.getLastRow() > 1
+    ? sheet.getRange(2,1,sheet.getLastRow()-1,sheet.getLastColumn()).getValues() : [];
+  var hdrs  = sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0];
+  var C     = mapCols(hdrs, ['massarCode','lessonId','viewedAt']);
+
+  for (var i = 0; i < data.length; i++) {
+    if (str(data[i][C.massarCode]) === massar &&
+        str(data[i][C.lessonId])   === lessonId &&
+        str(data[i][C.viewedAt]).slice(0,10) === today) {
+      return { ok:true, alreadyRecorded:true };
+    }
+  }
+  sheet.appendRow([massar, lessonId, classId, new Date().toISOString(), '', '', '']);
+  return { ok:true, recorded:true };
+}
+
+/* ================================================================
+   loginContainer
+   ================================================================ */
+function handleLoginContainer(body) {
+  var massar = str(body.massarCode);
+  var pin    = str(body.pin);
+  if (!massar || !pin) return { ok:false, error:'Enter your Massar number and PIN' };
+
+  var found = findStudent('', massar);
+  if (!found)         return { ok:false, error:'Massar code not found. Contact your teacher.' };
+  if (found.inactive) return { ok:false, error:'Student inactive' };
+  if (!found.pin)     return { ok:false, error:'No PIN set. Contact your teacher.' };
+  if (sha256(pin) !== found.pin) return { ok:false, error:'Incorrect PIN' };
+
+  var classId  = found.classId;
+  var className = CG.NAMES[classId] || classId;
+  var termId   = 's1';
+  var teacher  = '', school = '', year = '';
 
   try {
-    const r = await api({ action:'loginContainer', massarCode:massar, pin });
-    if (!r.ok) return showErr(r.error || 'Login failed');
-    SESSION = {
-      studentName: r.studentName,
-      massarCode: r.massarCode,
-      classId: r.classId,
-      className: r.className || r.classId,
-      termId: r.termId || 's1',
-      studentId: r.studentId || ''
-    };
-    saveSession();
-    enterApp();
-  } catch(e) {
-    showErr('Connection failed');
-  } finally {
-    btn.disabled = false; btn.textContent = 'Sign in';
+    var ps = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SH.push);
+    if (ps && ps.getLastRow() >= 2) {
+      var snap = JSON.parse(ps.getRange(ps.getLastRow(), 9).getValue());
+      var cls  = (snap.classes||[]).filter(function(c){ return c.id===classId; })[0];
+      if (cls) className = cls.displayName || classId;
+      if (snap.settings && snap.settings.activeTerm) termId = snap.settings.activeTerm;
+      var info = snap.settings && snap.settings.schoolInfo;
+      if (info) { teacher = info.teacherName||''; school = info.establishment||''; year = info.academicYear||''; }
+    }
+  } catch(e) {}
+
+  return {
+    ok:          true,
+    studentName: found.fullName,
+    studentId:   found.studentId,
+    massarCode:  massar,
+    classId:     classId,
+    className:   className,
+    termId:      termId,
+    orderNumber: found.orderNumber,
+    teacherName: teacher,
+    schoolName:  school,
+    academicYear:year
+  };
+}
+
+/* ================================================================
+   verifyStudent
+   ================================================================ */
+function handleVerifyStudent(body) {
+  var classId = str(body.classId);
+  var massar  = str(body.massarCode);
+  var pin     = str(body.pin);
+  if (!classId || !massar || !pin) return { ok:false, error:'Missing fields' };
+  var found = findStudent(classId, massar);
+  if (!found)         return { ok:false, error:'Massar code not found in this class' };
+  if (found.inactive) return { ok:false, error:'Student inactive' };
+  if (!found.pin)     return { ok:false, error:'No PIN set. Contact your teacher.' };
+  if (sha256(pin) !== found.pin) return { ok:false, error:'Incorrect PIN' };
+  return { ok:true, studentName:found.fullName, studentId:found.studentId, massarCode:massar };
+}
+
+/* ================================================================
+   Drafts
+   ================================================================ */
+function handleSaveDraft(body) {
+  var massar    = str(body.massarCode);
+  var hwId      = str(body.assignmentToken || body.homeworkId);
+  var answers   = body.answers ? JSON.stringify(body.answers) : '[]';
+  if (!massar || !hwId) return { ok:false, error:'Missing fields' };
+  var ss    = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = safeGetOrCreate(ss, SH.drafts, ['massarCode','homeworkId','answers','savedAt']);
+  var data  = sheet.getDataRange().getValues();
+  var C     = mapCols(data[0], ['massarCode','homeworkId','answers','savedAt']);
+  var now   = new Date().toISOString();
+  for (var i = 1; i < data.length; i++) {
+    if (str(data[i][C.massarCode])===massar && str(data[i][C.homeworkId])===hwId) {
+      sheet.getRange(i+1,C.answers+1).setValue(answers);
+      sheet.getRange(i+1,C.savedAt+1).setValue(now);
+      return { ok:true, savedAt:now };
+    }
   }
+  sheet.appendRow([massar, hwId, answers, now]);
+  return { ok:true, savedAt:now };
 }
 
-function showErr(msg){
-  const err = document.getElementById('login-err');
-  err.textContent = msg;
-  err.style.display = 'block';
+function handleGetDraft(body) {
+  var massar = str(body.massarCode);
+  var hwId   = str(body.assignmentToken || body.homeworkId);
+  if (!massar || !hwId) return { ok:false, error:'Missing fields' };
+  var ss    = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(SH.drafts);
+  if (!sheet || sheet.getLastRow() < 2) return { ok:true, draft:null };
+  var data = sheet.getDataRange().getValues();
+  var C    = mapCols(data[0], ['massarCode','homeworkId','answers','savedAt']);
+  for (var i = 1; i < data.length; i++) {
+    if (str(data[i][C.massarCode])===massar && str(data[i][C.homeworkId])===hwId) {
+      var ans; try { ans = JSON.parse(str(data[i][C.answers])); } catch(e) { ans = null; }
+      return { ok:true, draft:{ answers:ans, savedAt:str(data[i][C.savedAt]) } };
+    }
+  }
+  return { ok:true, draft:null };
 }
 
-function enterApp(){
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('main-screen').style.display = 'block';
-  document.getElementById('hdr-sub').style.display = 'none';
-  document.getElementById('hdr-meta').style.display = 'block';
-  document.getElementById('hdr-meta').textContent = SESSION.studentName + ' · ' + SESSION.className;
-  document.getElementById('student-name').textContent = SESSION.studentName;
-  document.getElementById('student-line').textContent = SESSION.className + ' · ' + SESSION.massarCode;
-  refreshPortal(true);
+function handleDeleteDraft(body) {
+  var massar = str(body.massarCode);
+  var hwId   = str(body.assignmentToken || body.homeworkId);
+  if (!massar || !hwId) return { ok:true };
+  var ss    = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(SH.drafts);
+  if (!sheet || sheet.getLastRow() < 2) return { ok:true };
+  var data = sheet.getDataRange().getValues();
+  var C    = mapCols(data[0], ['massarCode','homeworkId']);
+  for (var i = 1; i < data.length; i++) {
+    if (str(data[i][C.massarCode])===massar && str(data[i][C.homeworkId])===hwId) {
+      sheet.deleteRow(i+1); return { ok:true };
+    }
+  }
+  return { ok:true };
 }
 
-async function refreshPortal(force){
-  if (!SESSION || LOAD_BUSY) return;
-  LOAD_BUSY = true;
-  try{
-    const r = await api({
-      action:'getPortalData',
-      classId: SESSION.classId,
-      termId: SESSION.termId,
-      massarCode: SESSION.massarCode
+/* ================================================================
+   Push / Pull (teacher app sync)
+   ================================================================ */
+function handlePush(payload) {
+  if (!payload) throw new Error('Empty payload');
+  if (!checkSecret(payload)) return { ok:false, error:'Unauthorized' };
+  var ss  = SpreadsheetApp.getActiveSpreadsheet();
+  var now = new Date().toISOString();
+  safeAppendRow(ss, SH.push,
+    ['pushedAt','schemaVersion','appVersion','classIds','classCount','studentCount','recordCount','absenceCount','snapshot'],
+    [now, payload.schemaVersion||'', payload.appVersion||'',
+     ((payload.classRegistry&&payload.classRegistry.classIds)||[]).join(','),
+     (payload.classes||[]).length, (payload.students||[]).length,
+     (payload.records||[]).length, (payload.absenceRecords||[]).length,
+     JSON.stringify(payload)]
+  );
+  syncStudents(ss, payload.students||[]);
+  saveEvalData(ss, payload.evalData, now);
+  return { ok:true, action:'push_ack', savedAt:now };
+}
+
+function handlePull() {
+  var ss    = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(SH.push);
+  if (!sheet || sheet.getLastRow() < 2) return { ok:false, error:'No backup yet.' };
+  var json; try { json = JSON.parse(sheet.getRange(sheet.getLastRow(),9).getValue()); }
+  catch(e) { return { ok:false, error:'Backup corrupted.' }; }
+  json = injectSubmissions(ss, json);
+  json.evalData = loadEvalData(ss);
+  return { ok:true, action:'pull_data', payload:json };
+}
+
+function handlePullSubmissions(params) {
+  var classId = str(params.classId||'');
+  var massar  = str(params.massarCode||'');
+  if (!classId) return { ok:false, error:'classId required' };
+  var ss    = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(SH.submissions);
+  if (!sheet || sheet.getLastRow() < 2) return { ok:true, submissions:[] };
+  var data = sheet.getDataRange().getValues();
+  var C    = mapCols(data[0], ['classId','massarCode','assignmentToken','homeworkId','score','maxScore','status','timestamp']);
+  var out  = [];
+  for (var i = 1; i < data.length; i++) {
+    if (str(data[i][C.classId])  !== classId)  continue;
+    if (str(data[i][C.status])   !== 'active') continue;
+    if (massar && str(data[i][C.massarCode]) !== massar) continue;
+    out.push({
+      massarCode:      str(data[i][C.massarCode]),
+      assignmentToken: str(data[i][C.assignmentToken]||data[i][C.homeworkId]),
+      score:           num(data[i][C.score]),
+      maxScore:        num(data[i][C.maxScore])||20,
+      submittedAt:     data[i][C.timestamp] ? new Date(data[i][C.timestamp]).toISOString() : ''
     });
-    if (!r.ok) throw new Error(r.error || 'Failed to load');
-    PORTAL = r;
-    console.log('portal version:', r.version);
-    render();
-  } catch(e){
-    document.getElementById('view-units').innerHTML = '<div class="card empty">Failed to load portal data.</div>';
-  } finally {
-    LOAD_BUSY = false;
   }
+  return { ok:true, submissions:out };
 }
 
-function render(){
-  if (!PORTAL) return;
-  if (ACTIVE_UNIT) renderUnit();
-  else showUnits();
+/* Legacy homework list endpoint */
+function handleGetHomeworkList(body) {
+  var result = handleGetPortalData(body);
+  if (!result.ok) return result;
+  return { ok:true, homework: result.homework };
 }
 
-function showUnits(){
-  ACTIVE_UNIT = null;
-  document.getElementById('view-unit').style.display = 'none';
-  const wrap = document.getElementById('view-units');
-  const units = (PORTAL.units || []);
-  if (!units.length){
-    wrap.innerHTML = '<div class="card empty">No content available yet.</div>';
-    return;
+/* ================================================================
+   STUDENT HELPERS
+   ================================================================ */
+function findStudent(classId, massar) {
+  var ss    = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(SH.students);
+  if (!sheet || sheet.getLastRow() < 1) return null;
+  var data = sheet.getDataRange().getValues();
+  var hdr  = data[0];
+  var pinCol = hdr.indexOf('homeworkPin') >= 0 ? 'homeworkPin' : 'pin';
+  var C    = mapCols(hdr, ['studentId','classId','fullName','massarCode',pinCol,'active','orderNumber']);
+  C.pin    = C[pinCol];
+  for (var i = 1; i < data.length; i++) {
+    if (str(data[i][C.massarCode]) !== str(massar)) continue;
+    if (classId && str(data[i][C.classId]) !== str(classId)) continue;
+    return {
+      studentId:   str(data[i][C.studentId]),
+      classId:     str(data[i][C.classId]),
+      fullName:    str(data[i][C.fullName]) || str(massar),
+      pin:         str(data[i][C.pin]),
+      inactive:    C.active >= 0 && str(data[i][C.active]).toLowerCase() === 'false',
+      orderNumber: num(data[i][C.orderNumber]) || 0
+    };
   }
-  let total = PORTAL.totalScore || {score:0,maxScore:0};
-  let html = '<div class="row" style="margin-bottom:12px"><div class="card" style="flex:1"><div class="muted">Total homework score</div><div style="font-size:1.2rem;font-weight:700">' + total.score + ' / ' + total.maxScore + '</div></div></div>';
-  html += '<div class="units">';
-  units.forEach(u => {
-    const doneL = u.stats ? u.stats.lessonsUnlocked : 0;
-    const totalL = u.stats ? u.stats.lessonsTotal : 0;
-    const doneH = u.stats ? u.stats.homeworkDone : 0;
-    const totalH = u.stats ? u.stats.homeworkTotal : 0;
-    let badge = '<span class="badge">Start</span>';
-    if (totalL && doneL === totalL && doneH === totalH) badge = '<span class="badge ok">Complete</span>';
-    else if (doneL || doneH) badge = '<span class="badge warn">In progress</span>';
+  return null;
+}
 
-    html += '<div class="card unit" onclick="openUnit(\'' + esc(u.key) + '\')">' +
-      '<h3>' + esc(u.emoji + ' ' + u.label) + '</h3>' +
-      '<div class="stats">' + doneL + '/' + totalL + ' lessons unlocked · ' + doneH + '/' + totalH + ' homework done</div>' +
-      badge +
-    '</div>';
+function syncStudents(ss, students) {
+  if (!students || !students.length) return;
+  var sheet = ss.getSheetByName(SH.students);
+  if (!sheet) {
+    sheet = ss.insertSheet(SH.students);
+    sheet.appendRow(['studentId','classId','termId','fullName','massarCode',
+                     'pin','orderNumber','dateOfBirth','active','createdAt','updatedAt']);
+    try { sheet.getRange(1,1,1,11).setFontWeight('bold').setBackground('#1C1B18').setFontColor('#fff'); sheet.setFrozenRows(1); } catch(e) {}
+  }
+  var data  = sheet.getDataRange().getValues();
+  var hdr   = data[0];
+  var numC  = hdr.length;
+  var pinN  = hdr.indexOf('homeworkPin') >= 0 ? 'homeworkPin' : 'pin';
+  var C     = mapCols(hdr, ['studentId','classId','termId','fullName','massarCode',
+                              pinN,'orderNumber','dateOfBirth','active','createdAt','updatedAt']);
+  C.pin = C[pinN];
+  var lookup = {};
+  for (var i = 1; i < data.length; i++) {
+    lookup[str(data[i][C.massarCode])+'|'+str(data[i][C.classId])] = i;
+  }
+  var now = new Date().toISOString();
+  var newRows = [];
+  students.forEach(function(s) {
+    var key = str(s.massarCode)+'|'+str(s.classId);
+    if (lookup[key] !== undefined) {
+      var r = data[lookup[key]];
+      if (C.fullName    >= 0) r[C.fullName]    = s.fullName    || r[C.fullName]    || '';
+      if (C.orderNumber >= 0) r[C.orderNumber] = s.orderNumber || r[C.orderNumber] || '';
+      if (C.active      >= 0) r[C.active]      = 'true';
+      if (C.updatedAt   >= 0) r[C.updatedAt]   = now;
+      if (C.pin         >= 0 && s.homeworkPin)  r[C.pin] = s.homeworkPin;
+    } else {
+      var row = new Array(numC).fill('');
+      if (C.studentId   >= 0) row[C.studentId]   = s.id          || '';
+      if (C.classId     >= 0) row[C.classId]     = s.classId     || '';
+      if (C.fullName    >= 0) row[C.fullName]    = s.fullName    || '';
+      if (C.massarCode  >= 0) row[C.massarCode]  = s.massarCode  || '';
+      if (C.pin         >= 0) row[C.pin]         = s.homeworkPin || '';
+      if (C.orderNumber >= 0) row[C.orderNumber] = s.orderNumber || '';
+      if (C.dateOfBirth >= 0) row[C.dateOfBirth] = s.dateOfBirth || '';
+      if (C.active      >= 0) row[C.active]      = 'true';
+      if (C.createdAt   >= 0) row[C.createdAt]   = now;
+      if (C.updatedAt   >= 0) row[C.updatedAt]   = now;
+      newRows.push(row);
+    }
   });
-  html += '</div>';
-  wrap.innerHTML = html;
+  if (data.length > 1) sheet.getRange(2,1,data.length-1,numC).setValues(data.slice(1));
+  if (newRows.length) sheet.getRange(sheet.getLastRow()+1,1,newRows.length,numC).setValues(newRows);
 }
 
-function openUnit(key){
-  ACTIVE_UNIT = key;
-  ACTIVE_TAB = 'lessons';
-  renderUnit();
-}
-
-function renderUnit(){
-  const unit = (PORTAL.units || []).find(u => u.key === ACTIVE_UNIT);
-  if (!unit) return showUnits();
-  document.getElementById('view-units').innerHTML = '';
-  document.getElementById('view-unit').style.display = 'block';
-  document.getElementById('unit-title').textContent = unit.emoji + ' ' + unit.label;
-  document.getElementById('unit-stats').textContent =
-    (unit.stats.lessonsUnlocked || 0) + '/' + (unit.stats.lessonsTotal || 0) + ' lessons unlocked · ' +
-    (unit.stats.homeworkDone || 0) + '/' + (unit.stats.homeworkTotal || 0) + ' homework done';
-  document.getElementById('tab-lessons').classList.toggle('active', ACTIVE_TAB === 'lessons');
-  document.getElementById('tab-homework').classList.toggle('active', ACTIVE_TAB === 'homework');
-  renderUnitList(unit);
-}
-
-function setTab(tab){
-  ACTIVE_TAB = tab;
-  renderUnit();
-}
-
-function renderUnitList(unit){
-  const list = document.getElementById('unit-list');
-  const items = ACTIVE_TAB === 'lessons' ? (unit.lessons || []) : (unit.homework || []);
-  if (!items.length){
-    list.innerHTML = '<div class="empty">No items in this section.</div>';
-    return;
+/* Count ALL rows (active+superseded) for student+token */
+function countAllAttempts(ss, massar, token) {
+  var sheet = ss.getSheetByName(SH.submissions);
+  if (!sheet || sheet.getLastRow() < 2) return 0;
+  var data = sheet.getDataRange().getValues();
+  var n = 0;
+  for (var i = 1; i < data.length; i++) {
+    if (str(data[i][4]) !== massar) continue;
+    if (str(data[i][3]) !== token && str(data[i][13]) !== token) continue;
+    n++;
   }
-  let html = '<div class="list">';
-  items.forEach(item => {
-    const locked = !!item.locked;
-    const sub = item.submission;
-    const num = ACTIVE_TAB === 'lessons' ? (item.lessonNumber || '→') : (sub ? '✅' : '📝');
-    const meta = ACTIVE_TAB === 'lessons'
-      ? ((item.passed ? 'Passed activity' : 'Activity not passed yet') + (item.createdAt ? ' · ' + fmtDate(item.createdAt) : ''))
-      : (((item.linkedLessons && item.linkedLessons[0]) ? ('Linked to lesson ' + (item.linkedLessons[0].lessonNumber || '')) : '') + (sub ? (' · Submitted ' + sub.score + '/' + sub.maxScore) : ''));
-    const action = locked ? "showToast('Locked')" : "openContent('" + ACTIVE_TAB.slice(0,-1) + "','" + esc(item.id) + "')";
-    html += '<div class="card item' + (locked ? ' locked' : '') + '" onclick="' + action + '">' +
-      '<div class="num">' + esc(num) + '</div>' +
-      '<div class="body"><div class="title">' + esc(item.title) + '</div><div class="meta2">' + esc(meta) + '</div></div>' +
-      (sub ? '<div class="score">' + sub.score + ' / ' + sub.maxScore + '</div>' : '') +
-    '</div>';
+  return n;
+}
+
+function supersedeActive(ss, massar, token) {
+  var sheet = ss.getSheetByName(SH.submissions);
+  if (!sheet || sheet.getLastRow() < 2) return;
+  var data = sheet.getDataRange().getValues();
+  for (var i = 1; i < data.length; i++) {
+    if (str(data[i][4])  !== massar) continue;
+    if (str(data[i][3])  !== token && str(data[i][13]) !== token) continue;
+    if (str(data[i][10]) !== 'active') continue;
+    sheet.getRange(i+1,11).setValue('superseded');
+  }
+}
+
+function hasViewedLesson(ss, massar, lessonId) {
+  var sheet = ss.getSheetByName(SH.views);
+  if (!sheet || sheet.getLastRow() < 2) return false;
+  var data = sheet.getRange(2,1,sheet.getLastRow()-1,2).getValues();
+  return data.some(function(r){ return str(r[0])===massar && str(r[1])===lessonId; });
+}
+
+function injectSubmissions(ss, payload) {
+  var sheet = ss.getSheetByName(SH.submissions);
+  if (!sheet || sheet.getLastRow() < 2) return payload;
+  var data = sheet.getDataRange().getValues();
+  var C    = mapCols(data[0], ['studentId','assignmentToken','homeworkId','massarCode','score','maxScore','status','timestamp']);
+  var subs = {};
+  for (var i = 1; i < data.length; i++) {
+    if (str(data[i][C.status]) !== 'active') continue;
+    var k = str(data[i][C.studentId])+'|'+str(data[i][C.assignmentToken]||data[i][C.homeworkId]);
+    subs[k] = { massarCode:str(data[i][C.massarCode]), studentId:str(data[i][C.studentId]),
+                score:num(data[i][C.score]), maxScore:num(data[i][C.maxScore])||20,
+                assignmentToken:str(data[i][C.assignmentToken]||data[i][C.homeworkId]),
+                submittedAt: data[i][C.timestamp] ? new Date(data[i][C.timestamp]).toISOString() : '' };
+  }
+  var hwByToken = {};
+  (payload.homeworkAssignments||[]).forEach(function(hw){ if(hw.assignmentToken) hwByToken[hw.assignmentToken]=hw; });
+  var existing = {};
+  (payload.homeworkSubmissions||[]).forEach(function(s){ existing[s.studentId+'|'+s.assignmentId]=true; });
+  for (var k in subs) {
+    var sub = subs[k]; var hw = hwByToken[sub.assignmentToken];
+    if (!hw || existing[sub.studentId+'|'+hw.id]) continue;
+    payload.homeworkSubmissions = payload.homeworkSubmissions||[];
+    payload.homeworkSubmissions.push({ id:'portal_'+k, assignmentId:hw.id, studentId:sub.studentId,
+      classId:hw.classId, score:sub.score, lateDays:0, submittedAt:sub.submittedAt,
+      notes:'', massarCode:sub.massarCode, submittedFrom:'portal' });
+  }
+  return payload;
+}
+
+/* ================================================================
+   SHEET HELPERS
+   ================================================================ */
+function safeGetOrCreate(ss, name, headers) {
+  var sheet = ss.getSheetByName(name);
+  if (!sheet) {
+    sheet = ss.insertSheet(name);
+    sheet.appendRow(headers);
+    try { sheet.getRange(1,1,1,headers.length).setFontWeight('bold').setBackground('#1C1B18').setFontColor('#fff'); sheet.setFrozenRows(1); } catch(e) {}
+  }
+  return sheet;
+}
+
+function safeAppendRow(ss, name, headers, row) {
+  var sheet = ss.getSheetByName(name) || (function(){
+    var s = ss.insertSheet(name);
+    s.appendRow(headers);
+    try { s.getRange(1,1,1,headers.length).setFontWeight('bold').setBackground('#1C1B18').setFontColor('#fff'); s.setFrozenRows(1); } catch(e) {}
+    return s;
+  })();
+  sheet.appendRow(row);
+}
+
+function mapCols(headers, keys) {
+  var out = {};
+  keys.forEach(function(k){ out[k] = headers.indexOf(k); });
+  return out;
+}
+
+function str(v)  { return String(v === null || v === undefined ? '' : v).trim(); }
+function num(v)  { var n = Number(v); return isNaN(n) ? 0 : n; }
+
+function sha256(text) {
+  var bytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, text, Utilities.Charset.UTF_8);
+  return bytes.map(function(b){ return ('0'+(b&0xff).toString(16)).slice(-2); }).join('');
+}
+
+function saveEvalData(ss, evalData, pushedAt) {
+  if (!evalData) return;
+  safeAppendRow(ss, SH.evalData, ['savedAt','classCount','evalData'],
+    [pushedAt||new Date().toISOString(), Object.keys(evalData.classes||{}).length, JSON.stringify(evalData)]);
+}
+
+function loadEvalData(ss) {
+  var sheet = ss.getSheetByName(SH.evalData);
+  if (!sheet || sheet.getLastRow() < 2) return null;
+  try { return JSON.parse(sheet.getRange(sheet.getLastRow(),3).getValue()); } catch(e) { return null; }
+}
+
+function getSecret() {
+  try {
+    var cfg = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SH.config);
+    if (!cfg) return '';
+    var rows = cfg.getDataRange().getValues();
+    for (var i = 1; i < rows.length; i++) {
+      if (str(rows[i][0]) === 'teacherSecret') return str(rows[i][1]);
+    }
+  } catch(e) {}
+  return '';
+}
+
+function checkSecret(body) {
+  var s = getSecret();
+  return !s || str(body.secret||body.teacherSecret||'') === s;
+}
+
+/* ================================================================
+   GITHUB SYNC
+   ================================================================ */
+function syncPortalContent() {
+  var ui  = SpreadsheetApp.getUi();
+  var ss  = SpreadsheetApp.getActiveSpreadsheet();
+  var cfg = getConfig(ss);
+  var PAT    = cfg['githubPAT']    || '';
+  var repo   = cfg['githubRepo']   || 'cimikool/portal1';
+  var branch = cfg['githubBranch'] || 'main';
+
+  if (!PAT) { ui.alert('⚠ Add githubPAT to Config sheet.'); return; }
+
+  /* Fetch manifest */
+  var mUrl  = 'https://raw.githubusercontent.com/'+repo+'/'+branch+'/manifest.json';
+  var mResp = UrlFetchApp.fetch(mUrl, {muteHttpExceptions:true});
+  if (mResp.getResponseCode() !== 200) { ui.alert('❌ manifest.json not found ('+mResp.getResponseCode()+')'); return; }
+  var manifest;
+  try { manifest = JSON.parse(mResp.getContentText()); }
+  catch(e) { ui.alert('❌ manifest.json invalid JSON'); return; }
+
+  var files = manifest.files || [];
+  if (!files.length) { ui.alert('⚠ manifest.json is empty'); return; }
+
+  /* Get/create sheet */
+  var sheet = safeGetOrCreate(ss, SH.homework,
+    ['id','type','title','description','subject','classId','termId','driveFileId',
+     'pageId','fileUrl','dueDate','maxScore','active','createdAt','assignmentToken','lessonNumber','lessonIds']);
+  var data = sheet.getDataRange().getValues();
+  var hdr  = data[0];
+  var RC   = mapCols(hdr, ['id','type','title','subject','classId','termId',
+                             'pageId','fileUrl','maxScore','active','createdAt',
+                             'assignmentToken','lessonNumber','lessonIds']);
+
+  safeGetOrCreate(ss, SH.views,
+    ['massarCode','lessonId','classId','viewedAt','practiceScore','maxScore','passed']);
+
+  var now = new Date().toISOString().slice(0,10);
+  var added = 0, updated = 0, errors = [];
+  var tokenUpdates = {}, tokensDone = 0, tokensFailed = 0;
+
+  files.forEach(function(file) {
+    var path     = file.path;
+    var classIds = file.classIds || [''];
+    var rawUrl   = 'https://raw.githubusercontent.com/'+repo+'/'+branch+'/'+path;
+    var resp;
+    try { resp = UrlFetchApp.fetch(rawUrl, {muteHttpExceptions:true}); }
+    catch(e) { errors.push(path+': fetch failed'); return; }
+    if (resp.getResponseCode() !== 200) { errors.push(path+': HTTP '+resp.getResponseCode()); return; }
+
+    var html      = resp.getContentText();
+    var metaMatch = html.match(/<script[^>]+id="__meta__"[^>]*>([\s\S]*?)<\/script>/);
+    if (!metaMatch) { errors.push(path+': no __meta__'); return; }
+    var meta;
+    try { meta = JSON.parse(metaMatch[1].trim()); }
+    catch(e) { errors.push(path+': bad __meta__ JSON'); return; }
+
+    var pageId  = meta.pageId || path.replace('.html','');
+    var fileUrl = 'https://cimikool.github.io/'+repo.split('/')[1]+'/'+path;
+
+    classIds.forEach(function(classId) {
+      var rowId = (classIds.length===1 && !classId)
+        ? meta.id
+        : meta.id+(classId ? '-'+classId.slice(0,4) : '');
+
+      /* Find existing row */
+      var rowNum = -1;
+      for (var r = 1; r < data.length; r++) {
+        if (str(data[r][RC.id])===rowId && (str(data[r][RC.classId])===classId||!classId)) {
+          rowNum = r+1; break;
+        }
+      }
+
+      if (rowNum > 0) {
+        if (RC.title    >= 0) sheet.getRange(rowNum,RC.title+1).setValue(meta.title||'');
+        if (RC.fileUrl  >= 0) sheet.getRange(rowNum,RC.fileUrl+1).setValue(fileUrl);
+        if (RC.maxScore >= 0) sheet.getRange(rowNum,RC.maxScore+1).setValue(meta.maxScore||0);
+        if (RC.lessonNumber >= 0) sheet.getRange(rowNum,RC.lessonNumber+1).setValue(meta.lessonNumber||'');
+        if (RC.lessonIds    >= 0) sheet.getRange(rowNum,RC.lessonIds+1).setValue(meta.lessonIds||'');
+        var existTok = str(data[rowNum-1][RC.assignmentToken]);
+        if (meta.type==='homework' && !existTok) {
+          var tok = generateToken();
+          sheet.getRange(rowNum,RC.assignmentToken+1).setValue(tok);
+          tokenUpdates[path] = tok;
+        } else if (existTok && meta.type==='homework') {
+          var curTok = (html.match(/assignmentToken:\s*'([^']+)'/) || [])[1] || '';
+          if (curTok !== existTok) tokenUpdates[path] = existTok;
+        }
+        updated++;
+      } else {
+        var newRow = new Array(hdr.length).fill('');
+        var tok2   = meta.type==='homework' ? generateToken() : '';
+        if (RC.id     >= 0) newRow[RC.id]     = rowId;
+        if (RC.type   >= 0) newRow[RC.type]   = meta.type||'lesson';
+        if (RC.title  >= 0) newRow[RC.title]  = meta.title||'';
+        if (RC.subject>= 0) newRow[RC.subject]= meta.subject||'English';
+        if (RC.classId>= 0) newRow[RC.classId]= classId;
+        if (RC.termId >= 0) newRow[RC.termId] = meta.termId||'s1';
+        if (RC.pageId >= 0) newRow[RC.pageId] = pageId;
+        if (RC.fileUrl>= 0) newRow[RC.fileUrl]= fileUrl;
+        if (RC.maxScore>=0) newRow[RC.maxScore]=meta.maxScore||0;
+        if (RC.active >= 0) newRow[RC.active] = 'true';
+        if (RC.createdAt>=0)newRow[RC.createdAt]=now;
+        if (RC.assignmentToken>=0) newRow[RC.assignmentToken]=tok2;
+        if (RC.lessonNumber>=0) newRow[RC.lessonNumber]=meta.lessonNumber||'';
+        if (RC.lessonIds>=0)    newRow[RC.lessonIds]=meta.lessonIds||'';
+        sheet.appendRow(newRow);
+        added++;
+        if (tok2) tokenUpdates[path] = tok2;
+      }
+    });
   });
-  html += '</div>';
-  list.innerHTML = html;
-}
 
-function submissionKey(item){ return item.assignmentToken || item.id; }
-
-function openContent(type,id){
-  const unit = (PORTAL.units || []).find(u => u.key === ACTIVE_UNIT);
-  const items = type === 'lesson' ? (unit.lessons || []) : (unit.homework || []);
-  const item = items.find(x => x.id === id);
-  if (!item || !item.fileUrl) return alert('File not available');
-  if (item.locked) return showToast('Locked');
-
-  ls.set('lp_core_return_unit', ACTIVE_UNIT);
-  ls.set('lp_core_return_tab', ACTIVE_TAB);
-  ls.set('lp_core_refresh', '1');
-
-  const params = new URLSearchParams({
-    scriptUrl: SCRIPT_URL,
-    secret: APP_SECRET,
-    classId: SESSION.classId,
-    termId: SESSION.termId,
-    massarCode: SESSION.massarCode,
-    studentName: SESSION.studentName,
-    studentId: SESSION.studentId || '',
-    contentType: type,
-    contentId: item.id,
-    lessonId: type === 'lesson' ? item.id : ((item.linkedLessons && item.linkedLessons[0] && item.linkedLessons[0].id) || ''),
-    homeworkId: type === 'homework' ? item.id : '',
-    assignmentToken: type === 'homework' ? (item.assignmentToken || '') : '',
-    lessonNumber: item.lessonNumber || '',
-    lessonTitle: item.title || ''
+  /* Write tokens back to GitHub */
+  Object.keys(tokenUpdates).forEach(function(path) {
+    if (writeTokenToGitHub(repo, branch, path, tokenUpdates[path], PAT)) tokensDone++;
+    else tokensFailed++;
   });
-  window.location.href = item.fileUrl + '#' + params.toString();
+
+  var msg = '✅ Sync complete!\n\n📗 Added: '+added+'\n✏️ Updated: '+updated+'\n🔑 Tokens: '+tokensDone;
+  if (tokensFailed) msg += '\n⚠️ Token failures: '+tokensFailed;
+  if (errors.length) msg += '\n\n❌ Errors:\n'+errors.join('\n');
+  ui.alert('Sync Result', msg, ui.ButtonSet.OK);
 }
 
-function showToast(msg){ alert(msg); }
-
-function logout(){
-  clearSession();
-  SESSION = null;
-  PORTAL = null;
-  ACTIVE_UNIT = null;
-  document.getElementById('main-screen').style.display = 'none';
-  document.getElementById('login-screen').style.display = 'block';
-  document.getElementById('hdr-sub').style.display = 'block';
-  document.getElementById('hdr-meta').style.display = 'none';
+function generateToken() {
+  var c = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+  var t = '';
+  for (var i = 0; i < 16; i++) t += c[Math.floor(Math.random()*c.length)];
+  return t;
 }
 
-function esc(s){ return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function fmtDate(s){ try { return new Date(s).toLocaleDateString('en-GB'); } catch { return ''; } }
+function writeTokenToGitHub(repo, branch, path, token, PAT) {
+  try {
+    var base = 'https://api.github.com/repos/'+repo+'/contents/'+path;
+    var hdrs = { 'Authorization':'token '+PAT, 'Accept':'application/vnd.github.v3+json', 'User-Agent':'DaftarScript' };
+    var get  = UrlFetchApp.fetch(base+'?ref='+branch, {headers:hdrs, muteHttpExceptions:true});
+    if (get.getResponseCode() !== 200) return false;
+    var fd      = JSON.parse(get.getContentText());
+    var content = Utilities.newBlob(Utilities.base64Decode(fd.content.replace(/\n/g,''))).getDataAsString();
+    var updated = content
+      .replace(/(assignmentToken:\s*')[^']*(')/,  '$1'+token+'$2')
+      .replace(/("assignmentToken"\s*:\s*")[^"]*(")/,'$1'+token+'$2');
+    if (updated === content) return true;
+    var put = UrlFetchApp.fetch(base, {
+      method:'PUT', headers:hdrs, muteHttpExceptions:true,
+      payload:JSON.stringify({ message:'Sync: token for '+path,
+        content:Utilities.base64Encode(Utilities.newBlob(updated).getBytes()),
+        sha:fd.sha, branch:branch })
+    });
+    return put.getResponseCode() === 200 || put.getResponseCode() === 201;
+  } catch(e) { Logger.log('[writeTokenToGitHub] '+e.message); return false; }
+}
 
-(function init(){
-  const s = loadSession();
-  if (!s) return;
-  SESSION = s;
-  ACTIVE_UNIT = ls.get('lp_core_return_unit') || null;
-  ACTIVE_TAB = ls.get('lp_core_return_tab') || 'lessons';
-  ls.del('lp_core_return_unit');
-  ls.del('lp_core_return_tab');
-  enterApp();
-}());
+function getConfig(ss) {
+  var cfg = {};
+  var sheet = ss.getSheetByName(SH.config);
+  if (!sheet) return cfg;
+  sheet.getDataRange().getValues().forEach(function(r){ if(r[0]) cfg[str(r[0])]=str(r[1]); });
+  return cfg;
+}
 
-window.addEventListener('pageshow', function(){
-  if (SESSION && ls.get('lp_core_refresh')) {
-    ls.del('lp_core_refresh');
-    refreshPortal(true);
+/* ================================================================
+   UTILITY / SETUP
+   ================================================================ */
+function setupSheets() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  safeGetOrCreate(ss, SH.push,        ['pushedAt','schemaVersion','appVersion','classIds','classCount','studentCount','recordCount','absenceCount','snapshot']);
+  safeGetOrCreate(ss, SH.students,    ['studentId','classId','fullName','massarCode','homeworkPin','orderNumber','dateOfBirth','active','createdAt','updatedAt']);
+  safeGetOrCreate(ss, SH.homework,    ['id','type','title','description','subject','classId','termId','driveFileId','pageId','fileUrl','dueDate','maxScore','active','createdAt','assignmentToken','lessonNumber','lessonIds']);
+  safeGetOrCreate(ss, SH.submissions, ['timestamp','classId','termId','homeworkId','massarCode','studentName','studentId','score','maxScore','attempt','status','timeTaken','answers','assignmentToken','flag']);
+  safeGetOrCreate(ss, SH.evalData,    ['savedAt','classCount','evalData']);
+  safeGetOrCreate(ss, SH.drafts,      ['massarCode','homeworkId','answers','savedAt']);
+  safeGetOrCreate(ss, SH.views,       ['massarCode','lessonId','classId','viewedAt','practiceScore','maxScore','passed']);
+  var cfg = safeGetOrCreate(ss, SH.config, ['key','value','note']);
+  if (cfg.getLastRow() < 2) {
+    cfg.appendRow(['scriptVersion','v6','Do not edit']);
   }
-});
-window.addEventListener('focus', function(){
-  if (SESSION && ls.get('lp_core_refresh')) {
-    ls.del('lp_core_refresh');
-    refreshPortal(true);
+  SpreadsheetApp.getUi().alert('✅ Setup complete — all sheets ready.');
+}
+
+function onOpen() {
+  SpreadsheetApp.getUi().createMenu('🎓 Daftar')
+    .addItem('🔄 Sync Portal Content from GitHub', 'syncPortalContent')
+    .addItem('⚙️ Setup Guide', 'showSyncSetupGuide')
+    .addItem('🧹 Clean Portal Sheet', 'cleanPortalSheet')
+    .addItem('🔧 Fix BAC File URLs', 'fixBACFileUrls')
+    .addItem('🐛 Debug Unlock', 'debugUnlock')
+    .addToUi();
+}
+
+function cleanPortalSheet() {
+  var ui    = SpreadsheetApp.getUi();
+  var ss    = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(SH.homework);
+  if (!sheet) { ui.alert('Homework sheet not found'); return; }
+  var data  = sheet.getDataRange().getValues();
+  var idCol = data[0].indexOf('id');
+  var clCol = data[0].indexOf('classId');
+  var del   = [], seen = {};
+  for (var i = 1; i < data.length; i++) {
+    var k = str(data[i][idCol])+'|'+str(data[i][clCol]);
+    if (seen[k]) del.push(i+1); else seen[k] = true;
   }
-});
-</script>
-</body>
-</html>
+  if (!del.length) { ui.alert('✅ Sheet is clean.'); return; }
+  del.reverse().forEach(function(r){ sheet.deleteRow(r); });
+  ui.alert('✅ Removed '+del.length+' duplicate rows.');
+}
+
+function fixBACFileUrls() {
+  var ss    = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(SH.homework);
+  var data  = sheet.getDataRange().getValues();
+  var hdr   = data[0];
+  var fuCol = hdr.indexOf('fileUrl');
+  if (fuCol < 0) { SpreadsheetApp.getUi().alert('fileUrl column not found'); return; }
+  var fixed = 0;
+  for (var i = 1; i < data.length; i++) {
+    var url = str(data[i][fuCol]);
+    var fix = url.replace(/lesson-l-b(\d)/g,'lesson-lb$1').replace(/homework-hw-b(\d)/g,'homework-hwb$1');
+    if (fix !== url) { sheet.getRange(i+1,fuCol+1).setValue(fix); fixed++; }
+  }
+  SpreadsheetApp.getUi().alert('✅ Fixed '+fixed+' fileUrl(s).');
+}
+
+function debugUnlock() {
+  /* Change these values before running */
+  var massar  = 'PUT_MASSAR_HERE';
+  var classId = 'PUT_CLASSID_HERE';
+  var ss      = SpreadsheetApp.getActiveSpreadsheet();
+
+  Logger.log('=== VIEWS for '+massar+' ===');
+  var vd = readSheet(ss, SH.views);
+  var vC = mapCols(vd.headers, ['massarCode','lessonId','passed']);
+  vd.rows.forEach(function(r,i){
+    if (str(r[vC.massarCode])===massar)
+      Logger.log('Row '+(i+2)+': lessonId='+r[vC.lessonId]+' passed='+r[vC.passed]);
+  });
+
+  Logger.log('=== SUBMISSIONS for '+massar+' ===');
+  var sd = readSheet(ss, SH.submissions);
+  var sC = mapCols(sd.headers, ['massarCode','assignmentToken','status','attempt']);
+  sd.rows.forEach(function(r,i){
+    if (str(r[sC.massarCode])===massar)
+      Logger.log('Row '+(i+2)+': token='+r[sC.assignmentToken]+' status='+r[sC.status]+' attempt='+r[sC.attempt]);
+  });
+
+  Logger.log('=== PORTAL DATA for '+massar+' ===');
+  var result = handleGetPortalData({ classId:classId, massarCode:massar, termId:'s1' });
+  result.lessons.forEach(function(l){
+    Logger.log('LESSON: '+l.id+' "'+l.title+'" locked='+l.locked);
+  });
+  result.homework.forEach(function(h){
+    Logger.log('HW: '+h.id+' "'+h.title+'" locked='+h.locked+
+               ' submissions='+h.submissionCount+
+               ' linked='+h.linkedLessons.map(function(ll){return ll.id;}).join(','));
+  });
+}
+
+function showSyncSetupGuide() {
+  var html = HtmlService.createHtmlOutput(
+    '<style>body{font-family:sans-serif;padding:16px;font-size:14px;line-height:1.6;}code{background:#f3f4f6;padding:2px 6px;border-radius:4px;}h3{margin-top:16px;}</style>'+
+    '<h3>1 — GitHub PAT</h3>'+
+    '<p>github.com → Settings → Developer settings → Personal access tokens → Generate (check <b>repo</b>)</p>'+
+    '<h3>2 — Config sheet</h3>'+
+    '<table border="1" cellpadding="6" style="border-collapse:collapse"><tr><th>key</th><th>value</th></tr>'+
+    '<tr><td><code>githubPAT</code></td><td>ghp_yourtoken</td></tr>'+
+    '<tr><td><code>githubRepo</code></td><td>cimikool/portal1</td></tr>'+
+    '<tr><td><code>githubBranch</code></td><td>main</td></tr></table>'+
+    '<h3>3 — Run Sync</h3><p>🎓 Daftar → 🔄 Sync Portal Content</p>'
+  ).setTitle('Setup Guide').setWidth(460).setHeight(360);
+  SpreadsheetApp.getUi().showModalDialog(html, '⚙️ Setup Guide');
+}
+
+function testConnection() {
+  Logger.log('v6 test OK — '+new Date().toISOString());
+  Logger.log(JSON.stringify(handleGetPortalData({ classId:'GXPGjggyDv', massarCode:'TEST', termId:'s1' })).slice(0,300));
+}
