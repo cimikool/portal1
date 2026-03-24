@@ -512,7 +512,7 @@ var Portal = {
     var html = lessons.map(function(l) {
       var locked = !!l.locked;
       var done   = l.submissionCount > 0; /* lesson viewed+passed */
-      return '<div class="lesson-card'+(locked?' locked':'')+'" onclick="'+(locked?'Portal.locked()':'Portal.openItem(\'lesson\',\''+esc(l.id)+'\'')+'">'
+      return '<div class="lesson-card'+(locked?' locked':'')+'" onclick="'+(locked?'Portal.locked()':'Portal.openItem(\'lesson\',\''+esc(l.id)+'\')') +'">'
         + '<div class="lc-top">'
         +   '<div class="lc-num'+(done?' done':'')+'">'+( locked ? '🔒' : (l.lessonNumber||'—') )+'</div>'
         +   '<div class="lc-title">'+esc(l.title)+'</div>'
