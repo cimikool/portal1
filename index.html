@@ -654,12 +654,22 @@ var Portal = {
       lessonNumber:    item.lessonNumber || '',
     });
 
-    /* Resolve direct GitHub Pages URL */
+    /* Resolve URL — three cases:
+       1. Sheet has a direct GitHub Pages URL → use it as-is
+       2. Backend returns ?page= fallback → rewrite to GitHub Pages URL
+       3. Empty → show error */
     var url = item.fileUrl || '';
+    if (!url) {
+      Portal.toast('⚠ File not available. Contact your teacher.');
+      return;
+    }
     if (url.indexOf('?page=') >= 0) {
       var pageId = decodeURIComponent(url.split('?page=')[1].split('&')[0]);
+      /* Use the configured base — same repo as the portal */
       url = 'https://cimikool.github.io/portal1/' + pageId + '.html';
     }
+    /* Sanity check: log the final URL so you can debug in console */
+    console.log('[Portal] navigating to:', url);
 
     window.location.href = url + '#' + params.toString();
   },
