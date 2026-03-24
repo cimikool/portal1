@@ -387,15 +387,28 @@ var Portal = {
 
   /* ── Update total score badge ── */
   updateTotalScore: function() {
-    var total = 0, max = 0;
+    /* Average of all submitted homework scores, each normalized to /20 */
+    var sum = 0, count = 0;
     State.homework.forEach(function(hw) {
       if (hw.submissionCount > 0 && hw.submittedScore !== null) {
-        total += (hw.submittedScore || 0);
-        max   += (hw.submittedMaxScore || hw.maxScore || 20);
+        /* Backend already normalizes to /20, but cap defensively */
+        var s   = Math.min(hw.submittedScore || 0, 20);
+        var mx  = hw.submittedMaxScore || 20;
+        /* Express as /20 in case backend sends non-normalized value */
+        var on20 = mx > 0 ? Math.round(s / mx * 20) : s;
+        sum   += Math.min(on20, 20);
+        count += 1;
       }
     });
     var el = document.getElementById('total-score');
-    if (el) el.textContent = max > 0 ? (total + ' / ' + max) : '—';
+    if (el) {
+      if (count === 0) {
+        el.textContent = '—';
+      } else {
+        var avg = Math.round(sum / count);
+        el.textContent = avg + ' / 20';
+      }
+    }
   },
 
   /* ================================================================
@@ -555,9 +568,12 @@ var Portal = {
     var badge  = isDone
       ? '<span class="badge done">Submitted</span>'
       : hw.isOverdue ? '<span class="badge overdue">Overdue</span>' : '';
-    var score  = isDone && hw.submittedScore !== null
-      ? '<span class="hw-score">'+hw.submittedScore+' / '+(hw.submittedMaxScore||hw.maxScore||20)+'</span>'
-      : '';
+    var score = '';
+    if (isDone && hw.submittedScore !== null) {
+      /* Always display as /20 */
+      var s20 = Math.min(hw.submittedScore || 0, 20);
+      score = '<span class="hw-score">'+s20+' / 20</span>';
+    }
 
     var lessons = '';
     if (hw.linkedLessons && hw.linkedLessons.length) {

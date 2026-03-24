@@ -3,13 +3,13 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Computers & New Technologies</title>
 <script id="__meta__" type="application/json">
-{"id":"HW019","type":"homework","title":"Computers & New Technologies","subject":"English","termId":"s1","lessonNumber":0,"classGroup":"CC","lessonIds":"L019","assignmentToken":"Us2GjGxcvr4XzdTa","maxScore":18,"pageId":"homework-09-reading-computers-new-technologies"}
+{"id":"HW019","type":"homework","title":"Computers & New Technologies","subject":"English","termId":"s1","lessonNumber":0,"classGroup":"CC","lessonIds":"L019","assignmentToken":"HW019","maxScore":20,"pageId":"homework-09-reading-computers-new-technologies"}
 </script>
 <script>var SCRIPT_URL='https://script.google.com/macros/s/AKfycbxm0dKHveJHylft980UKOxImC9OMk4yhQ6RcYUpwbB3r3BX8Of-fBzAjGAFtJP-DsLH/exec';</script>
 <script>
 var TEACHER_CONFIG = {
-  assignmentToken: 'Us2GjGxcvr4XzdTa', title: 'Computers & New Technologies',
-  subject: 'English', dueDate: '2026-06-30', maxScore: 18,
+  assignmentToken: 'HW019-TOKEN', title: 'Computers & New Technologies',
+  subject: 'English', dueDate: '2026-06-30', maxScore: 20,
   questions: [
   {type:'mcq',question:'Where was Bill Gates born?',options:['New York, USA','Seattle, USA','Boston, USA','San Francisco, USA'],correct:1,points:2,explanation:'Paragraph 1: "Bill Gates was born on 28 October 1955 in Seattle, USA."'},
   {type:'mcq',question:'When did Gates found Microsoft?',options:['1965','1975','1985','1995'],correct:1,points:2,explanation:'Paragraph 2: "In 1975, Gates dropped out of Harvard University to found Microsoft."'},
@@ -205,23 +205,6 @@ try{var _h=location.hash.slice(1);if(_h)CTX=Object.fromEntries(new URLSearchPara
 var STATE={massar:'',pin:'',name:'',answers:[],attempt:0};
 var _mcqSel={},_selA={},_draft=null,_startTime=Date.now();
 
-function metaConfig(){
-  try{
-    var el=document.getElementById("__meta__");
-    return el?JSON.parse(el.textContent||"{}"):{};
-  }catch(e){ return {}; }
-}
-var META_CFG = metaConfig();
-function resolvedAssignmentToken(){
-  return (CTX.assignmentToken||CTX.homeworkId||META_CFG.assignmentToken||TEACHER_CONFIG.assignmentToken||"" ).trim();
-}
-function resolvedHomeworkId(){
-  return (CTX.homeworkId||CTX.assignmentToken||META_CFG.id||resolvedAssignmentToken()||"" ).trim();
-}
-function submissionRefError(){
-  return !resolvedAssignmentToken() || !resolvedHomeworkId();
-}
-
 /* Zoom */
 var _zi=parseInt(localStorage.getItem('lp_zoom')||'0');
 function applyZoom(){document.documentElement.style.fontSize=_zi===0?'':([1,1.15,1.3][_zi]*16)+'px';var b=document.getElementById('tb-zoom');if(b)b.textContent=['A','A+','A++'][_zi];}
@@ -365,14 +348,9 @@ async function submitAll(){
   var btn=document.getElementById('btn-submit');
   btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Sending…';
   try{
-    if(submissionRefError()){
-      showToast('⚠ Missing homework reference. Please reopen from the portal.');
-      btn.disabled=false;btn.innerHTML='Submit Answers';
-      return;
-    }
     var r=await api({
       action:'submitHomework',classId:CTX.classId||'',termId:CTX.termId||'',
-      assignmentToken:resolvedAssignmentToken(),homeworkId:resolvedHomeworkId(),
+      assignmentToken:TEACHER_CONFIG.assignmentToken,homeworkId:TEACHER_CONFIG.assignmentToken,
       massarCode:STATE.massar,pin:STATE.pin,
       score:scaled,maxScore:maxScore,
       timeTaken:Math.round((Date.now()-_startTime)/1000),answers:log
@@ -384,7 +362,7 @@ async function submitAll(){
       STATE.attempt=r.attempt||1;
       var attLeft=(r.attemptsLeft!==undefined)?r.attemptsLeft:(r.attempt>=2?0:1);
       showResult(scaled,maxScore,r.attempt||1,attLeft,pct);
-      try{parent.postMessage({type:'hw_submitted',score:scaled,maxScore:maxScore,assignmentToken:resolvedAssignmentToken(),homeworkId:resolvedHomeworkId()},'*');}catch(e){}
+      try{parent.postMessage({type:'hw_submitted',score:scaled,maxScore:maxScore,assignmentToken:TEACHER_CONFIG.assignmentToken},'*');}catch(e){}
     }
   }catch(e){
     showToast('⚠ Connection failed. Answers not saved.');
