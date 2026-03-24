@@ -692,5 +692,18 @@ function restoreCheckUI(score,maxScore,passed){
 /* ── Restore practice on every page load ── */
 restorePractice();
 </script>
+<script>
+function goBack() {
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    try {
+      var p = Object.fromEntries(new URLSearchParams(location.hash.slice(1)));
+      if (p.scriptUrl) { window.location.href = p.scriptUrl; return; }
+    } catch(e) {}
+    window.location.href = window.location.origin + '/portal1/index.html';
+  }
+}
+</script>
 </body>
 </html>
