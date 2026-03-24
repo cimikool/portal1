@@ -613,6 +613,13 @@ var Portal = {
 
   setTab: function(tab) {
     State.activeTab = tab;
+    /* Update tab button active states directly — no full re-render needed */
+    document.querySelectorAll('.tabs .tab').forEach(function(btn) {
+      var isActive = btn.textContent.toLowerCase().indexOf(tab) >= 0 ||
+                     (tab === 'lessons'  && btn.textContent.indexOf('Lessons')  >= 0) ||
+                     (tab === 'homework' && btn.textContent.indexOf('Homework') >= 0);
+      btn.classList.toggle('active', isActive);
+    });
     Portal.renderTab();
   },
 
