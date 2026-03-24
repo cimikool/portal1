@@ -1,683 +1,362 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Learning Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;height:100dvh;}html,body{height:100%;margin:0;padding:0;}
-html{font-family:'Cairo',sans-serif;background:#F5F4F0;color:#1A1917;-webkit-text-size-adjust:100%;}
-body{min-height:100dvh;display:flex;flex-direction:column;overflow-x:hidden;}
-#app{flex:1;display:flex;flex-direction:column;width:100%;max-width:100%;padding:12px;}
-.hdr{background:#1C1B18;color:#fff;border-radius:14px;padding:16px 20px;margin-bottom:12px;}
-.hdr h1{font-size:.95rem;font-weight:700;}
-.hdr .sub{font-size:.72rem;opacity:.5;}
-.school-info{font-size:.72rem;opacity:.6;margin-top:4px;line-height:1.6;}
-.student-bar{border-top:1px solid rgba(255,255,255,.12);margin-top:10px;padding-top:10px;display:none;}
-.bar-collapsed{display:flex;align-items:center;justify-content:space-between;}
-.bar-mini-name{font-size:.85rem;font-weight:700;}
-.bar-mini-sub{font-size:.7rem;opacity:.5;margin-top:1px;}
-.expand-btn{background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.7);border-radius:8px;padding:4px 10px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:'Cairo',sans-serif;}
-.expand-btn:hover{background:rgba(255,255,255,.18);}
-.bar-expanded{margin-top:10px;}
-.student-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;}
-.sf{background:rgba(255,255,255,.07);border-radius:8px;padding:7px 10px;}
-.sf .lbl{font-size:.65rem;opacity:.5;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px;}
-.sf .val{font-size:.82rem;font-weight:700;}
-.sf.full{grid-column:1/-1;}
-.score-bar{background:rgba(255,255,255,.1);border-radius:10px;padding:9px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.score-bar .lbl{font-size:.72rem;opacity:.6;}
-.score-bar .val{font-size:1.2rem;font-weight:700;color:#86EFAC;}
-.last-login{font-size:.68rem;opacity:.4;text-align:center;margin-bottom:6px;}
-.new-banner{background:#FEF3C7;border-radius:8px;padding:7px 12px;margin-bottom:8px;font-size:.78rem;font-weight:700;color:#92400E;display:none;}
-.logout-btn{width:100%;background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.6);border-radius:8px;padding:7px;font-size:.75rem;font-weight:600;cursor:pointer;font-family:'Cairo',sans-serif;}
-.logout-btn:hover{background:rgba(255,255,255,.15);}
-.units-screen{display:flex;flex-direction:column;gap:12px;}
-.units-title{font-size:.75rem;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;padding:0 2px;}
-.unit-card{background:#fff;border-radius:16px;border:1.5px solid #E5E3DE;padding:18px 20px;cursor:pointer;transition:all .18s;box-shadow:0 2px 10px rgba(0,0,0,.05);}
-.unit-card:hover{border-color:#1C1B18;box-shadow:0 4px 18px rgba(0,0,0,.12);transform:translateY(-1px);}
-.unit-card.complete{border-color:#10B981;background:#F0FDF4;}
-.unit-card.locked-unit{opacity:.55;cursor:not-allowed;}
-.unit-card.locked-unit:hover{transform:none;box-shadow:0 2px 10px rgba(0,0,0,.05);}
-.unit-card-top{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
-.unit-emoji{font-size:2rem;width:52px;height:52px;display:flex;align-items:center;justify-content:center;background:#F5F4F0;border-radius:13px;flex-shrink:0;}
-.unit-card.complete .unit-emoji{background:#D1FAE5;}
-.unit-info{flex:1;min-width:0;}
-.unit-label{font-size:1rem;font-weight:700;color:#1A1917;margin-bottom:3px;}
-.unit-stats{font-size:.75rem;color:#9CA3AF;display:flex;gap:10px;flex-wrap:wrap;}
-.unit-stats span{display:flex;align-items:center;gap:3px;}
-.unit-badge{margin-left:auto;flex-shrink:0;}
-.unit-badge .ub{border-radius:20px;padding:4px 12px;font-size:.75rem;font-weight:700;}
-.ub.done{background:#D1FAE5;color:#065F46;}
-.ub.in-progress{background:#EEF2FF;color:#3730A3;}
-.ub.locked{background:#F2F1EE;color:#9CA3AF;}
-.unit-progress{display:flex;flex-direction:column;gap:5px;}
-.prog-row{display:flex;align-items:center;justify-content:space-between;font-size:.72rem;color:#9CA3AF;margin-bottom:2px;}
-.prog-track{height:7px;background:#F2F1EE;border-radius:20px;overflow:hidden;}
-.prog-fill{height:100%;border-radius:20px;background:#4338CA;transition:width .4s ease;}
-.unit-card.complete .prog-fill{background:#10B981;}
-.unit-header-bar{display:flex;align-items:center;gap:10px;margin-bottom:12px;background:#fff;border-radius:12px;padding:10px 14px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
-.unit-back-btn{background:#F2F1EE;border:none;color:#1A1917;border-radius:8px;padding:6px 12px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:'Cairo',sans-serif;white-space:nowrap;flex-shrink:0;}
-.unit-back-btn:hover{background:#E5E3DE;}
-.unit-header-title{flex:1;font-size:.9rem;font-weight:700;color:#1A1917;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.unit-header-emoji{font-size:1.2rem;flex-shrink:0;}
-.tabs{display:flex;gap:0;background:#fff;border-radius:12px;padding:4px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:14px;}
-.tab-btn{flex:1;padding:9px;border:none;border-radius:9px;background:none;font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:600;color:#9CA3AF;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
-.tab-btn.active{background:#1C1B18;color:#fff;}
-.tab-btn .badge-count{background:#EF4444;color:#fff;border-radius:20px;padding:1px 7px;font-size:.68rem;font-weight:700;}
-.tab-btn.active .badge-count{background:rgba(255,255,255,.25);}
-.card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.07);margin-bottom:12px;}
-.section-title{font-size:.75rem;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;padding:0 2px;}
-.lesson-card{background:#fff;border-radius:13px;border:1.5px solid #E5E3DE;padding:14px 16px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:12px;margin-bottom:8px;}
-.lesson-card:hover{border-color:#1C1B18;box-shadow:0 2px 12px rgba(0,0,0,.1);}
-.lesson-num{width:38px;height:38px;border-radius:10px;background:#1C1B18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;flex-shrink:0;}
-.lesson-info{flex:1;min-width:0;}
-.lesson-title{font-size:.9rem;font-weight:700;color:#1A1917;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.lesson-meta{font-size:.72rem;color:#9CA3AF;margin-top:3px;}
-.hw-card{background:#fff;border-radius:13px;border:1.5px solid #E5E3DE;padding:14px 16px;cursor:pointer;transition:all .15s;margin-bottom:8px;}
-.hw-card:hover{border-color:#4338CA;box-shadow:0 2px 12px rgba(67,56,202,.12);}
-.hw-card.done{border-color:#D1FAE5;background:#F0FDF4;}
-.hw-card.overdue{border-color:#FEE2E2;background:#FFF5F5;}
-.hw-top{display:flex;align-items:center;gap:12px;}
-.hw-icon{width:40px;height:40px;border-radius:10px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
-.hw-card.done .hw-icon{background:#D1FAE5;}
-.hw-card.overdue .hw-icon{background:#FEE2E2;}
-.hw-info{flex:1;min-width:0;}
-.hw-title{font-size:.9rem;font-weight:700;color:#1A1917;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.hw-meta{font-size:.72rem;color:#9CA3AF;margin-top:3px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
-.badge{padding:1px 8px;border-radius:20px;font-weight:600;background:#F2F1EE;color:#5C5A52;font-size:.72rem;}
-.badge.done{background:#D1FAE5;color:#065F46;}
-.badge.overdue{background:#FEE2E2;color:#991B1B;}
-.hw-score{font-size:.85rem;font-weight:700;color:#065F46;white-space:nowrap;flex-shrink:0;background:#D1FAE5;padding:3px 10px;border-radius:20px;}
-.hw-lessons{margin-top:10px;padding-top:10px;border-top:1px solid rgba(0,0,0,.06);display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
-.hw-lessons-lbl{font-size:.7rem;color:#9CA3AF;font-weight:600;white-space:nowrap;}
-.lesson-link{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:#F2F1EE;border-radius:20px;font-size:.75rem;font-weight:600;color:#1A1917;cursor:pointer;border:1.5px solid transparent;transition:all .12s;}
-.lesson-link:hover{background:#E5E3DE;border-color:#1C1B18;}
-.lesson-link .ln{background:#1C1B18;color:#fff;border-radius:4px;padding:1px 5px;font-size:.65rem;font-weight:700;}
-.form-lbl{font-size:.8rem;font-weight:700;color:#5C5A52;display:block;margin-bottom:5px;}
-.form-inp{width:100%;background:#F2F1EE;border:1.5px solid rgba(0,0,0,.09);border-radius:10px;padding:10px 13px;font-size:.95rem;color:#1A1917;font-family:'Cairo',sans-serif;outline:none;transition:border-color .15s;margin-bottom:12px;}
-.form-inp:focus{border-color:#4338CA;box-shadow:0 0 0 3px rgba(67,56,202,.1);}
-.form-inp[type=password]{letter-spacing:.25em;}
-.form-hint{font-size:.75rem;color:#9CA3AF;margin-top:-8px;margin-bottom:12px;}
-.btn-primary{width:100%;padding:12px;background:#4338CA;color:#fff;border:none;border-radius:11px;font-family:'Cairo',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
-.btn-primary:hover{background:#3730A3;}
-.btn-primary:disabled{background:#9CA3AF;cursor:not-allowed;}
-.err{background:#FEF2F2;border:1px solid #FCA5A5;border-radius:10px;padding:10px 14px;font-size:.82rem;color:#991B1B;margin-bottom:12px;display:none;}
-.empty{text-align:center;padding:32px 16px;color:#9CA3AF;font-size:.85rem;}
-.empty-icon{font-size:2.5rem;margin-bottom:10px;opacity:.4;}
-.loading-row{display:flex;align-items:center;justify-content:center;gap:10px;padding:24px;color:#9CA3AF;font-size:.85rem;}
-.spinner{width:20px;height:20px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
-.spinner.dark{border-color:rgba(0,0,0,.12);border-top-color:#4338CA;}
-@keyframes spin{to{transform:rotate(360deg)}}
-.refresh-btn{background:none;border:1.5px solid #E5E3DE;border-radius:10px;padding:8px 20px;font-family:'Cairo',sans-serif;font-size:.8rem;color:#5C5A52;cursor:pointer;display:block;margin:16px auto 0;}
-.refresh-btn:hover{border-color:#1C1B18;}
-.lesson-card.locked,.hw-card.locked{opacity:.55;cursor:not-allowed;filter:grayscale(.3);}
-.lesson-card.locked:hover,.hw-card.locked:hover{transform:none;box-shadow:none;}
+:root{
+  --bg:#f6f4ef; --card:#fff; --ink:#1c1b18; --muted:#8a867c; --line:#e6e2d8;
+  --brand:#3f46c7; --ok:#0f9d58; --warn:#b45309; --danger:#b91c1c;
+}
+*{box-sizing:border-box} html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:'Cairo',sans-serif}
+body{min-height:100vh}
+#app{max-width:980px;margin:0 auto;padding:16px}
+.hdr{background:#1c1b18;color:#fff;border-radius:16px;padding:18px 20px;margin-bottom:14px}
+.hdr h1{margin:0;font-size:1.05rem}
+.hdr .sub{opacity:.65;font-size:.78rem;margin-top:2px}
+.meta{margin-top:10px;font-size:.8rem;opacity:.82}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.login{max-width:420px;margin:42px auto}
+label{display:block;margin:0 0 6px;font-weight:700;font-size:.84rem}
+input{width:100%;padding:12px 14px;border:1px solid #d8d2c5;background:#f9f8f5;border-radius:12px;font:inherit;margin-bottom:12px}
+button{font:inherit;cursor:pointer}
+.btn{border:none;background:var(--brand);color:#fff;padding:12px 14px;border-radius:12px;font-weight:700}
+.btn.secondary{background:#efede6;color:var(--ink)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.err{display:none;background:#fef2f2;border:1px solid #fecaca;color:#991b1b;padding:10px 12px;border-radius:12px;margin-bottom:12px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:12px}
+.muted{color:var(--muted)}
+.units{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.unit{padding:16px;cursor:pointer}
+.unit h3{margin:0 0 6px;font-size:1rem}
+.stats{font-size:.8rem;color:var(--muted)}
+.badge{display:inline-block;padding:3px 10px;border-radius:999px;background:#efede6;font-size:.75rem;font-weight:700;margin-top:8px}
+.badge.ok{background:#dcfce7;color:#166534}
+.badge.warn{background:#fef3c7;color:#92400e}
+.tabs{display:flex;gap:8px;margin:12px 0}
+.tab{flex:1;border:none;border-radius:12px;padding:10px;background:#efede6;color:var(--ink);font-weight:700}
+.tab.active{background:var(--ink);color:#fff}
+.list{display:flex;flex-direction:column;gap:10px}
+.item{display:flex;gap:12px;align-items:flex-start;padding:14px}
+.item .num{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#1c1b18;color:#fff;font-weight:700;flex-shrink:0}
+.item .body{flex:1;min-width:0}
+.item .title{font-weight:700}
+.item .meta2{font-size:.78rem;color:var(--muted);margin-top:4px}
+.item.locked{opacity:.58}
+.item.locked .num{background:#8d8b84}
+.score{background:#dcfce7;color:#166534;border-radius:999px;padding:4px 10px;font-size:.76rem;font-weight:700;white-space:nowrap}
+.link{border:none;background:none;color:var(--brand);padding:0;font-weight:700}
+.back{margin-bottom:10px}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+@media (max-width:640px){#app{padding:12px}.row{flex-direction:column}}
 </style>
 </head>
 <body>
 <div id="app">
-<div class="hdr">
-  <div style="display:flex;align-items:flex-start;justify-content:space-between;">
-    <div>
-      <h1>🎓 Learning Portal</h1>
-      <div class="sub" id="hdr-sub">Enter your details to access your content</div>
-      <div class="school-info" id="school-info" style="display:none;"></div>
-    </div>
+  <div class="hdr">
+    <h1>🎓 Learning Portal</h1>
+    <div class="sub" id="hdr-sub">Login to access your lessons and homework</div>
+    <div class="meta" id="hdr-meta" style="display:none"></div>
   </div>
-  <div class="student-bar" id="student-bar">
-    <div class="bar-collapsed">
+
+  <div id="login-screen" class="card login">
+    <div id="login-err" class="err"></div>
+    <label>Massar Number</label>
+    <input id="massar" placeholder="e.g. N130032465" autocomplete="off">
+    <label>PIN</label>
+    <input id="pin" type="password" maxlength="4" placeholder="••••" inputmode="numeric">
+    <button class="btn" id="login-btn" onclick="doLogin()">Sign in</button>
+  </div>
+
+  <div id="main-screen" style="display:none">
+    <div class="toolbar">
       <div>
-        <div class="bar-mini-name" id="el-name-mini"></div>
-        <div class="bar-mini-sub" id="el-class-mini"></div>
+        <div id="student-name" style="font-weight:700"></div>
+        <div id="student-line" class="muted"></div>
       </div>
-      <button class="expand-btn" id="bar-toggle" onclick="toggleBar()">▼ Details</button>
+      <div class="row">
+        <button class="btn secondary" onclick="refreshPortal(true)">Refresh</button>
+        <button class="btn secondary" onclick="logout()">Sign out</button>
+      </div>
     </div>
-    <div class="bar-expanded" id="bar-expanded" style="display:none;">
-      <div id="new-banner" class="new-banner"></div>
-      <div class="student-grid">
-        <div class="sf full"><div class="lbl">Student</div><div class="val" id="el-name"></div></div>
-        <div class="sf"><div class="lbl">Class</div><div class="val" id="el-class"></div></div>
-        <div class="sf"><div class="lbl">Term</div><div class="val" id="el-term"></div></div>
-        <div class="sf"><div class="lbl">Teacher</div><div class="val" id="el-teacher"></div></div>
-        <div class="sf"><div class="lbl">School</div><div class="val" id="el-school" style="font-size:.72rem;"></div></div>
-        <div class="sf"><div class="lbl">Academic Year</div><div class="val" id="el-year"></div></div>
-        <div class="sf"><div class="lbl">Massar</div><div class="val" id="el-massar" style="font-size:.72rem;"></div></div>
+
+    <div id="view-units"></div>
+
+    <div id="view-unit" style="display:none">
+      <button class="btn secondary back" onclick="showUnits()">← Units</button>
+      <div class="card">
+        <div id="unit-title" style="font-weight:700;font-size:1rem"></div>
+        <div id="unit-stats" class="muted" style="margin-top:4px"></div>
+        <div class="tabs">
+          <button class="tab active" id="tab-lessons" onclick="setTab('lessons')">Lessons</button>
+          <button class="tab" id="tab-homework" onclick="setTab('homework')">Homework</button>
+        </div>
+        <div id="unit-list"></div>
       </div>
-      <div class="score-bar" id="score-bar" style="display:none;">
-        <div class="lbl">Total homework score</div>
-        <div class="val" id="el-total"></div>
-      </div>
-      <div class="last-login" id="el-last-login"></div>
-      <button class="logout-btn" onclick="logout()">Sign out</button>
     </div>
   </div>
-</div>
-
-<div id="login-screen" style="flex:1;display:flex;align-items:center;justify-content:center;padding:8px;">
-  <div style="width:100%;max-width:380px;">
-    <div style="text-align:center;margin-bottom:28px;">
-      <div style="font-size:2.5rem;margin-bottom:10px;">🎓</div>
-      <h1 style="font-size:1.2rem;font-weight:800;color:#1A1917;margin-bottom:4px;">Learning Portal</h1>
-      <div id="login-school-name" style="font-size:.82rem;color:#9CA3AF;font-weight:500;"></div>
-      <div id="login-teacher-name" style="font-size:.78rem;color:#C0BEB8;margin-top:2px;"></div>
-    </div>
-    <div style="background:#fff;border-radius:18px;padding:28px 24px;box-shadow:0 4px 24px rgba(0,0,0,.08);">
-      <div class="err" id="login-err"></div>
-      <div style="margin-bottom:16px;">
-        <label class="form-lbl" for="massar-inp">Massar Number</label>
-        <input class="form-inp" id="massar-inp" type="text" placeholder="e.g. N130032465" autocomplete="off" autocapitalize="none" inputmode="text" spellcheck="false" style="margin-bottom:0;">
-      </div>
-      <div style="margin-bottom:20px;">
-        <label class="form-lbl" for="pin-inp">Secret Code (PIN)</label>
-        <input class="form-inp" id="pin-inp" type="password" maxlength="4" placeholder="••••" inputmode="numeric" autocomplete="off" style="margin-bottom:4px;">
-        <div class="form-hint" style="margin-bottom:0;">4 digits — given to you by your teacher</div>
-      </div>
-      <button class="btn-primary" id="login-btn" onclick="doLogin()">Sign In</button>
-    </div>
-    <div style="text-align:center;margin-top:16px;font-size:.72rem;color:#C0BEB8;">Abdellah Guennoun High School · Salah Sahmoudi</div>
-  </div>
-</div>
-
-<div id="main-screen" style="display:none;">
-  <div id="unit-header-bar" class="unit-header-bar" style="display:none;">
-    <button class="unit-back-btn" onclick="exitUnit()">← Units</button>
-    <span class="unit-header-emoji" id="unit-header-emoji"></span>
-    <span class="unit-header-title" id="unit-header-title"></span>
-  </div>
-
-  <div class="tabs" id="tab-bar" style="display:none;">
-    <button class="tab-btn active" id="tab-lessons" onclick="switchTab('lessons')">📖 Lessons <span class="badge-count" id="lesson-count" style="display:none;"></span></button>
-    <button class="tab-btn" id="tab-homework" onclick="switchTab('homework')">📝 Homework <span class="badge-count" id="hw-count" style="display:none;"></span></button>
-  </div>
-
-  <div id="content-wrap">
-    <div class="loading-row"><div class="spinner dark"></div><span>Loading…</span></div>
-  </div>
-</div>
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxm0dKHveJHylft980UKOxImC9OMk4yhQ6RcYUpwbB3r3BX8Of-fBzAjGAFtJP-DsLH/exec';
+const SCRIPT_URL = 'PASTE_YOUR_WEBAPP_URL_HERE';
 const APP_SECRET = '';
 
-const CC_CLASS_IDS  = ['vYckXeY_GS','U889smjzQU','EhHw9lPmTZ','DVfRHIJMai','WQg786n7Gq'];
-const BAC_CLASS_IDS = ['zjNsrntmh7','GXPGjggyDv'];
-
-const UNIT_MAP = [
-  { unit: 0,  label: 'Warm-up',                 emoji: '🌱', lessonRange: [1, 2],   classIds: CC_CLASS_IDS },
-  { unit: 7,  label: 'Unit 7 — The Arts',      emoji: '🎨', lessonRange: [3, 11],  classIds: CC_CLASS_IDS },
-  { unit: 8,  label: 'Unit 8 — Science & Tech',emoji: '🔬', lessonRange: [12, 21], classIds: CC_CLASS_IDS },
-  { unit: 61, label: 'Unit 6 — Cultural Issues', emoji: '🌍', lessonRange: [1, 7], classIds: BAC_CLASS_IDS, idPrefix: 'L-B6' },
-  { unit: 71, label: 'Unit 7 — Citizenship', emoji: '🏛️', lessonRange: [1, 7], classIds: BAC_CLASS_IDS, idPrefix: 'L-B7' }
-];
-
-let SESSION=null, LESSONS=[], HOMEWORK=[], SCORES={}, ACTIVE_TAB='lessons', BAR_OPEN=false, ACTIVE_UNIT=null;
-let LAST_LOAD_TS = 0;
-let LOAD_IN_FLIGHT = null;
+let SESSION = null;
+let PORTAL = null;
+let ACTIVE_UNIT = null;
+let ACTIVE_TAB = 'lessons';
+let LOAD_BUSY = false;
 
 const ls = {
   get(k){ try { return localStorage.getItem(k); } catch { return null; } },
   set(k,v){ try { localStorage.setItem(k,v); } catch {} },
   del(k){ try { localStorage.removeItem(k); } catch {} }
 };
-function saveSession(s){ try { sessionStorage.setItem('lp_session', JSON.stringify(s)); } catch {} }
-function loadSession(){ try { return JSON.parse(sessionStorage.getItem('lp_session') || 'null'); } catch { return null; } }
-function clearSession(){ try { sessionStorage.removeItem('lp_session'); } catch {} }
+
 function withSecret(obj){ if (APP_SECRET) obj.secret = APP_SECRET; return obj; }
 
-async function api(body) {
+async function api(body){
   const res = await fetch(SCRIPT_URL, {
     method:'POST',
     headers:{'Content-Type':'text/plain'},
-    body: JSON.stringify(withSecret(body)),
-    redirect:'follow'
+    body: JSON.stringify(withSecret(body))
   });
   if (!res.ok) throw new Error('HTTP ' + res.status);
   return res.json();
 }
-async function apiGet(params) {
-  const res = await fetch(SCRIPT_URL + '?' + new URLSearchParams(withSecret(params)).toString(), { redirect:'follow' });
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  return res.json();
-}
 
-async function doLogin() {
-  const massar = document.getElementById('massar-inp').value.trim();
-  const pin = document.getElementById('pin-inp').value.trim();
-  const errEl = document.getElementById('login-err');
-  errEl.style.display = 'none';
+function saveSession(){ sessionStorage.setItem('lp_core_session', JSON.stringify(SESSION)); }
+function loadSession(){ try { return JSON.parse(sessionStorage.getItem('lp_core_session') || 'null'); } catch { return null; } }
+function clearSession(){ sessionStorage.removeItem('lp_core_session'); }
+
+async function doLogin(){
+  const massar = document.getElementById('massar').value.trim();
+  const pin = document.getElementById('pin').value.trim();
+  const err = document.getElementById('login-err');
+  err.style.display = 'none';
   if (!massar) return showErr('Please enter your Massar number');
-  if (!pin || pin.length !== 4) return showErr('Please enter your 4-digit PIN');
-  setLoginLoading(true);
+  if (!pin) return showErr('Please enter your PIN');
+
+  const btn = document.getElementById('login-btn');
+  btn.disabled = true; btn.textContent = 'Signing in...';
+
   try {
-    const d = await api({ action:'loginContainer', massarCode:massar, pin });
-    if (!d.ok) return showErr(d.error || 'Incorrect details');
+    const r = await api({ action:'loginContainer', massarCode:massar, pin });
+    if (!r.ok) return showErr(r.error || 'Login failed');
     SESSION = {
-      studentName: d.studentName, studentId: d.studentId, massarCode: d.massarCode,
-      classId: d.classId, className: d.className, termId: d.termId,
-      teacherName: d.teacherName || '', schoolName: d.schoolName || '',
-      academicYear: d.academicYear || '', orderNumber: d.orderNumber || 0,
-      classGroup: d.classGroup || d.className || '', _pin: pin
+      studentName: r.studentName,
+      massarCode: r.massarCode,
+      classId: r.classId,
+      className: r.className || r.classId,
+      termId: r.termId || 's1',
+      studentId: r.studentId || ''
     };
-    saveSession(SESSION);
-    ls.set('lp_last_' + massar, new Date().toISOString());
+    saveSession();
     enterApp();
-  } catch {
-    showErr('Connection failed — check your internet and try again');
+  } catch(e) {
+    showErr('Connection failed');
   } finally {
-    setLoginLoading(false);
+    btn.disabled = false; btn.textContent = 'Sign in';
   }
 }
-function setLoginLoading(on){
-  const b = document.getElementById('login-btn');
-  b.disabled = on;
-  b.innerHTML = on ? '<div class="spinner"></div> Verifying…' : 'Sign In';
-}
+
 function showErr(msg){
-  const el = document.getElementById('login-err');
-  el.textContent = msg;
-  el.style.display = 'block';
+  const err = document.getElementById('login-err');
+  err.textContent = msg;
+  err.style.display = 'block';
 }
 
-function enterApp(skipAutoLoad){
-  SCORES = {}; LESSONS = []; HOMEWORK = [];
-  if (!skipAutoLoad) ACTIVE_UNIT = null;
-
-  if (SESSION.schoolName) document.getElementById('login-school-name').textContent = SESSION.schoolName;
-  if (SESSION.teacherName) document.getElementById('login-teacher-name').textContent = '👨‍🏫 ' + SESSION.teacherName;
-
-  const si = document.getElementById('school-info');
-  const siParts = [SESSION.schoolName, SESSION.teacherName].filter(Boolean);
-  if (siParts.length) { si.textContent = siParts.join(' · '); si.style.display = 'block'; }
-
-  document.getElementById('hdr-sub').style.display = 'none';
-  document.getElementById('el-name-mini').textContent = SESSION.studentName;
-  document.getElementById('el-class-mini').textContent = SESSION.className + ' · ' + (SESSION.termId === 's1' ? 'Term 1' : 'Term 2');
-  document.getElementById('el-name').textContent = SESSION.studentName;
-  document.getElementById('el-class').textContent = SESSION.className;
-  document.getElementById('el-term').textContent = SESSION.termId === 's1' ? 'Term 1' : 'Term 2';
-  document.getElementById('el-teacher').textContent = SESSION.teacherName || '—';
-  document.getElementById('el-school').textContent = SESSION.schoolName || '—';
-  document.getElementById('el-year').textContent = SESSION.academicYear || '—';
-  document.getElementById('el-massar').textContent = SESSION.massarCode;
-
-  const prev = ls.get('lp_prev_' + SESSION.massarCode);
-  if (prev) {
-    const d = new Date(prev);
-    document.getElementById('el-last-login').textContent =
-      'Last login: ' + d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
-  }
-  ls.set('lp_prev_' + SESSION.massarCode, ls.get('lp_last_' + SESSION.massarCode) || new Date().toISOString());
-
-  document.getElementById('student-bar').style.display = 'block';
+function enterApp(){
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('main-screen').style.display = 'block';
-
-  if (!skipAutoLoad) loadContent(true);
+  document.getElementById('hdr-sub').style.display = 'none';
+  document.getElementById('hdr-meta').style.display = 'block';
+  document.getElementById('hdr-meta').textContent = SESSION.studentName + ' · ' + SESSION.className;
+  document.getElementById('student-name').textContent = SESSION.studentName;
+  document.getElementById('student-line').textContent = SESSION.className + ' · ' + SESSION.massarCode;
+  refreshPortal(true);
 }
 
-function toggleBar(){ BAR_OPEN = !BAR_OPEN; document.getElementById('bar-expanded').style.display = BAR_OPEN ? 'block' : 'none'; document.getElementById('bar-toggle').textContent = BAR_OPEN ? '▲ Hide' : '▼ Details'; }
-function expandBar(){ BAR_OPEN = true; document.getElementById('bar-expanded').style.display = 'block'; document.getElementById('bar-toggle').textContent = '▲ Hide'; }
-
-async function loadContent(force){
-  if (!SESSION) return;
-  const now = Date.now();
-  if (!force && LOAD_IN_FLIGHT) return LOAD_IN_FLIGHT;
-  if (!force && now - LAST_LOAD_TS < 1200) return;
-
-  const wrap = document.getElementById('content-wrap');
-  wrap.innerHTML = '<div class="loading-row"><div class="spinner dark"></div><span>Loading…</span></div>';
-
-  LOAD_IN_FLIGHT = (async () => {
-    try {
-      const portalData = await api({
-        action:'getPortalData',
-        classId:SESSION.classId,
-        termId:SESSION.termId,
-        massarCode:SESSION.massarCode
-      });
-
-      if (!portalData.ok) {
-        wrap.innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div>' + (portalData.error || 'Error loading') + '</div>';
-        return;
-      }
-
-      LESSONS = (portalData.lessons || []).map(l => ({ ...l, locked: !!l.locked }));
-      HOMEWORK = (portalData.homework || []).map(h => ({ ...h, locked: !!h.locked }));
-      SCORES = portalData.scores || {};
-
-      updateTotalScoreFromPortal(portalData.totalScore);
-      checkNewContent();
-
-      if (ACTIVE_UNIT !== null) renderContentView();
-      else renderUnitView();
-
-      LAST_LOAD_TS = Date.now();
-    } catch {
-      wrap.innerHTML = '<div class="empty"><div class="empty-icon">📡</div>Connection failed — try again</div>';
-    } finally {
-      LOAD_IN_FLIGHT = null;
-    }
-  })();
-
-  return LOAD_IN_FLIGHT;
-}
-
-function getLessonsForUnit(unitNum){
-  const u = UNIT_MAP.find(x => x.unit === unitNum);
-  if (!u) return LESSONS;
-  if (u.idPrefix) return LESSONS.filter(l => (l.id || '').indexOf(u.idPrefix) === 0);
-  return LESSONS.filter(l => {
-    const n = l.lessonNumber || 0;
-    return n >= u.lessonRange[0] && n <= u.lessonRange[1];
-  });
-}
-function getHomeworkForUnit(unitNum){
-  const u = UNIT_MAP.find(x => x.unit === unitNum);
-  if (!u) return HOMEWORK;
-  if (u.idPrefix) {
-    return HOMEWORK.filter(h => {
-      const lessonIds = h.lessonIds || '';
-      if (lessonIds.indexOf(u.idPrefix) >= 0) return true;
-      return (h.linkedLessons || []).some(ll => (ll.id || '').indexOf(u.idPrefix) === 0);
+async function refreshPortal(force){
+  if (!SESSION || LOAD_BUSY) return;
+  LOAD_BUSY = true;
+  try{
+    const r = await api({
+      action:'getPortalData',
+      classId: SESSION.classId,
+      termId: SESSION.termId,
+      massarCode: SESSION.massarCode
     });
+    if (!r.ok) throw new Error(r.error || 'Failed to load');
+    PORTAL = r;
+    console.log('portal version:', r.version);
+    render();
+  } catch(e){
+    document.getElementById('view-units').innerHTML = '<div class="card empty">Failed to load portal data.</div>';
+  } finally {
+    LOAD_BUSY = false;
   }
-  return HOMEWORK.filter(h => {
-    if (h.linkedLessons && h.linkedLessons.length) {
-      return h.linkedLessons.some(ll => ll.lessonNumber >= u.lessonRange[0] && ll.lessonNumber <= u.lessonRange[1]);
-    }
-    const n = h.lessonNumber || 0;
-    return n >= u.lessonRange[0] && n <= u.lessonRange[1];
-  });
 }
 
-function renderUnitView(){
-  document.getElementById('unit-header-bar').style.display = 'none';
-  document.getElementById('tab-bar').style.display = 'none';
-  const wrap = document.getElementById('content-wrap');
-  if (!LESSONS.length && !HOMEWORK.length) {
-    wrap.innerHTML = '<div class="empty"><div class="empty-icon">📚</div>No content available yet</div>';
+function render(){
+  if (!PORTAL) return;
+  if (ACTIVE_UNIT) renderUnit();
+  else showUnits();
+}
+
+function showUnits(){
+  ACTIVE_UNIT = null;
+  document.getElementById('view-unit').style.display = 'none';
+  const wrap = document.getElementById('view-units');
+  const units = (PORTAL.units || []);
+  if (!units.length){
+    wrap.innerHTML = '<div class="card empty">No content available yet.</div>';
     return;
   }
-  let html = '<div class="units-title">My Courses</div><div class="units-screen">';
-  const studentClassId = SESSION ? (SESSION.classId || '') : '';
+  let total = PORTAL.totalScore || {score:0,maxScore:0};
+  let html = '<div class="row" style="margin-bottom:12px"><div class="card" style="flex:1"><div class="muted">Total homework score</div><div style="font-size:1.2rem;font-weight:700">' + total.score + ' / ' + total.maxScore + '</div></div></div>';
+  html += '<div class="units">';
+  units.forEach(u => {
+    const doneL = u.stats ? u.stats.lessonsUnlocked : 0;
+    const totalL = u.stats ? u.stats.lessonsTotal : 0;
+    const doneH = u.stats ? u.stats.homeworkDone : 0;
+    const totalH = u.stats ? u.stats.homeworkTotal : 0;
+    let badge = '<span class="badge">Start</span>';
+    if (totalL && doneL === totalL && doneH === totalH) badge = '<span class="badge ok">Complete</span>';
+    else if (doneL || doneH) badge = '<span class="badge warn">In progress</span>';
 
-  UNIT_MAP.forEach(u => {
-    if (u.classIds && u.classIds.length && u.classIds.indexOf(studentClassId) < 0) return;
-    const uLessons = getLessonsForUnit(u.unit);
-    const uHomework = getHomeworkForUnit(u.unit);
-    if (!uLessons.length && !uHomework.length) return;
-
-    const totalLessons = uLessons.length;
-    const passedLessons = uLessons.filter(l => !l.locked).length;
-    const totalHW = uHomework.length;
-    const doneHW = uHomework.filter(h => !!SCORES[h.assignmentToken || h.id]).length;
-    const allLocked = uLessons.length ? uLessons.every(l => l.locked) : false;
-    const allComplete = passedLessons === totalLessons && doneHW === totalHW && totalLessons > 0;
-    const progPct = totalLessons > 0 ? Math.round((passedLessons / totalLessons) * 100) : 0;
-
-    let badgeHtml = '';
-    if (allComplete) badgeHtml = '<div class="unit-badge"><span class="ub done">✅ Complete</span></div>';
-    else if (allLocked) badgeHtml = '<div class="unit-badge"><span class="ub locked">🔒 Locked</span></div>';
-    else if (passedLessons > 0 || doneHW > 0) badgeHtml = '<div class="unit-badge"><span class="ub in-progress">In progress</span></div>';
-
-    let cardCls = 'unit-card';
-    if (allComplete) cardCls += ' complete';
-    if (allLocked && totalLessons > 0 && u.unit !== 0) cardCls += ' locked-unit';
-
-    const clickAttr = (allLocked && u.unit !== 0 && totalLessons > 0)
-      ? 'onclick="showToast(\'🔒 Complete the previous unit first.\')"'
-      : 'onclick="enterUnit(' + u.unit + ')"';
-
-    html += '<div class="' + cardCls + '" ' + clickAttr + '><div class="unit-card-top"><div class="unit-emoji">' + u.emoji + '</div><div class="unit-info"><div class="unit-label">' + esc(u.label) + '</div><div class="unit-stats">' +
-      (totalLessons ? '<span>📖 ' + passedLessons + '/' + totalLessons + ' lessons</span>' : '') +
-      (totalHW ? '<span>📝 ' + doneHW + '/' + totalHW + ' homework</span>' : '') +
-      '</div></div>' + badgeHtml + '</div>';
-
-    if (totalLessons > 0) {
-      html += '<div class="unit-progress"><div class="prog-row"><span>Lesson progress</span><span>' + progPct + '%</span></div><div class="prog-track"><div class="prog-fill" style="width:' + progPct + '%"></div></div></div>';
-    }
-    html += '</div>';
+    html += '<div class="card unit" onclick="openUnit(\'' + esc(u.key) + '\')">' +
+      '<h3>' + esc(u.emoji + ' ' + u.label) + '</h3>' +
+      '<div class="stats">' + doneL + '/' + totalL + ' lessons unlocked · ' + doneH + '/' + totalH + ' homework done</div>' +
+      badge +
+    '</div>';
   });
-
-  html += '</div><button class="refresh-btn" onclick="loadContent(true)">↻ Refresh</button>';
+  html += '</div>';
   wrap.innerHTML = html;
 }
-function enterUnit(unitNum){ ACTIVE_UNIT = unitNum; ACTIVE_TAB = 'lessons'; renderContentView(); }
-function exitUnit(){ ACTIVE_UNIT = null; ls.del('lp_return_unit_' + SESSION.massarCode); renderUnitView(); }
 
-function renderContentView(){
-  const u = UNIT_MAP.find(x => x.unit === ACTIVE_UNIT);
-  document.getElementById('unit-header-bar').style.display = 'flex';
-  document.getElementById('unit-header-emoji').textContent = u ? u.emoji : '📚';
-  document.getElementById('unit-header-title').textContent = u ? u.label : 'Content';
-  document.getElementById('tab-bar').style.display = 'flex';
-  updateTabCounts();
+function openUnit(key){
+  ACTIVE_UNIT = key;
+  ACTIVE_TAB = 'lessons';
+  renderUnit();
+}
+
+function renderUnit(){
+  const unit = (PORTAL.units || []).find(u => u.key === ACTIVE_UNIT);
+  if (!unit) return showUnits();
+  document.getElementById('view-units').innerHTML = '';
+  document.getElementById('view-unit').style.display = 'block';
+  document.getElementById('unit-title').textContent = unit.emoji + ' ' + unit.label;
+  document.getElementById('unit-stats').textContent =
+    (unit.stats.lessonsUnlocked || 0) + '/' + (unit.stats.lessonsTotal || 0) + ' lessons unlocked · ' +
+    (unit.stats.homeworkDone || 0) + '/' + (unit.stats.homeworkTotal || 0) + ' homework done';
   document.getElementById('tab-lessons').classList.toggle('active', ACTIVE_TAB === 'lessons');
   document.getElementById('tab-homework').classList.toggle('active', ACTIVE_TAB === 'homework');
-  renderTab(ACTIVE_TAB);
+  renderUnitList(unit);
 }
-function switchTab(tab){ ACTIVE_TAB = tab; document.getElementById('tab-lessons').classList.toggle('active', tab === 'lessons'); document.getElementById('tab-homework').classList.toggle('active', tab === 'homework'); renderTab(tab); }
-function renderTab(tab){ if (tab === 'lessons') renderLessons(); else renderHomework(); }
-function updateTabCounts(){
-  const uLessons = ACTIVE_UNIT !== null ? getLessonsForUnit(ACTIVE_UNIT) : LESSONS;
-  const uHomework = ACTIVE_UNIT !== null ? getHomeworkForUnit(ACTIVE_UNIT) : HOMEWORK;
-  const lc = document.getElementById('lesson-count');
-  const hc = document.getElementById('hw-count');
-  if (uLessons.length) { lc.textContent = uLessons.length; lc.style.display = 'inline'; } else { lc.style.display = 'none'; }
-  if (uHomework.length) { hc.textContent = uHomework.length; hc.style.display = 'inline'; } else { hc.style.display = 'none'; }
+
+function setTab(tab){
+  ACTIVE_TAB = tab;
+  renderUnit();
 }
-function updateTotalScore(){
-  const keys = Object.keys(SCORES);
-  if (!keys.length) { document.getElementById('score-bar').style.display = 'none'; return; }
-  let total = 0, maxT = 0;
-  keys.forEach(k => { total += Number(SCORES[k].score || 0); maxT += Number(SCORES[k].maxScore || 0); });
-  document.getElementById('el-total').textContent = total + ' / ' + maxT;
-  document.getElementById('score-bar').style.display = 'flex';
-}
-function updateTotalScoreFromPortal(totalScore){
-  if (!totalScore || !Number(totalScore.maxScore || 0)) {
-    updateTotalScore();
+
+function renderUnitList(unit){
+  const list = document.getElementById('unit-list');
+  const items = ACTIVE_TAB === 'lessons' ? (unit.lessons || []) : (unit.homework || []);
+  if (!items.length){
+    list.innerHTML = '<div class="empty">No items in this section.</div>';
     return;
   }
-  document.getElementById('el-total').textContent =
-    Number(totalScore.score || 0) + ' / ' + Number(totalScore.maxScore || 0);
-  document.getElementById('score-bar').style.display = 'flex';
+  let html = '<div class="list">';
+  items.forEach(item => {
+    const locked = !!item.locked;
+    const sub = item.submission;
+    const num = ACTIVE_TAB === 'lessons' ? (item.lessonNumber || '→') : (sub ? '✅' : '📝');
+    const meta = ACTIVE_TAB === 'lessons'
+      ? ((item.passed ? 'Passed activity' : 'Activity not passed yet') + (item.createdAt ? ' · ' + fmtDate(item.createdAt) : ''))
+      : (((item.linkedLessons && item.linkedLessons[0]) ? ('Linked to lesson ' + (item.linkedLessons[0].lessonNumber || '')) : '') + (sub ? (' · Submitted ' + sub.score + '/' + sub.maxScore) : ''));
+    const action = locked ? "showToast('Locked')" : "openContent('" + ACTIVE_TAB.slice(0,-1) + "','" + esc(item.id) + "')";
+    html += '<div class="card item' + (locked ? ' locked' : '') + '" onclick="' + action + '">' +
+      '<div class="num">' + esc(num) + '</div>' +
+      '<div class="body"><div class="title">' + esc(item.title) + '</div><div class="meta2">' + esc(meta) + '</div></div>' +
+      (sub ? '<div class="score">' + sub.score + ' / ' + sub.maxScore + '</div>' : '') +
+    '</div>';
+  });
+  html += '</div>';
+  list.innerHTML = html;
 }
-function checkNewContent(){
-  const lastVisit = ls.get('lp_visit_' + SESSION.massarCode);
-  const banner = document.getElementById('new-banner');
-  if (!lastVisit) { ls.set('lp_visit_' + SESSION.massarCode, new Date().toISOString()); return; }
-  const isNew = item => item.createdAt && new Date(item.createdAt) > new Date(lastVisit);
-  const newL = LESSONS.filter(isNew).length;
-  const newH = HOMEWORK.filter(isNew).length;
-  if (newL || newH) {
-    const parts = [];
-    if (newL) parts.push(newL + ' new lesson' + (newL > 1 ? 's' : ''));
-    if (newH) parts.push(newH + ' new assignment' + (newH > 1 ? 's' : ''));
-    banner.textContent = '🆕 ' + parts.join(' & ') + '!';
-    banner.style.display = 'block';
-    expandBar();
-  }
-  ls.set('lp_visit_' + SESSION.massarCode, new Date().toISOString());
-}
-function renderLessons(){
-  const wrap = document.getElementById('content-wrap');
-  const items = ACTIVE_UNIT !== null ? getLessonsForUnit(ACTIVE_UNIT) : LESSONS;
-  if (!items.length) return wrap.innerHTML = '<div class="empty"><div class="empty-icon">📖</div>No lessons available yet</div>';
-  let html = '<div class="section-title">' + items.length + ' Lesson' + (items.length > 1 ? 's' : '') + '</div>';
-  items.forEach(l => html += lessonCard(l));
-  html += '<button class="refresh-btn" onclick="loadContent(true)">↻ Refresh</button>';
-  wrap.innerHTML = html;
-}
-function lessonCard(l){
-  const url = l.fileUrl;
-  const locked = !!l.locked;
-  const click = locked ? 'showToast(\'🔒 Complete the previous step first.\')' : url ? 'openContent(\'lesson\',\'' + esc(l.id) + '\')' : '';
-  return '<div class="lesson-card' + (locked ? ' locked' : '') + '" onclick="' + click + '"' +
-    (locked ? ' style="opacity:.55;cursor:not-allowed;"' : '') +
-    (!locked && !url ? ' style="opacity:.5;cursor:not-allowed;"' : '') + '><div class="lesson-num">' +
-    (locked ? '🔒' : (l.lessonNumber || '—')) + '</div><div class="lesson-info"><div class="lesson-title">' + esc(l.title) + '</div><div class="lesson-meta">' +
-    (l.subject ? '<span>' + esc(l.subject) + '</span>' : '') +
-    (l.createdAt ? '<span>' + new Date(l.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) + '</span>' : '') +
-    (url ? '' : '<span style="color:#EF4444;">Link missing</span>') +
-    '</div></div><span style="color:#C0BEB8;font-size:.9rem;">→</span></div>';
-}
-function renderHomework(){
-  const wrap = document.getElementById('content-wrap');
-  const items = ACTIVE_UNIT !== null ? getHomeworkForUnit(ACTIVE_UNIT) : HOMEWORK;
-  if (!items.length) return wrap.innerHTML = '<div class="empty"><div class="empty-icon">📝</div>No assignments yet</div>';
-  const active = items.filter(h => !h.isOverdue);
-  const overdue = items.filter(h => h.isOverdue);
-  let html = '';
-  if (active.length) html += '<div class="section-title">Available</div>' + active.map(hwCard).join('');
-  if (overdue.length) html += '<div class="section-title" style="margin-top:14px;color:#B91C1C;">Past Due</div>' + overdue.map(hwCard).join('');
-  html += '<button class="refresh-btn" onclick="loadContent(true)">↻ Refresh</button>';
-  wrap.innerHTML = html;
-}
-function hwCard(hw){
-  const tok = hw.assignmentToken || hw.id;
-  const sub = SCORES[tok];
-  const isDone = !!sub;
-  const locked = !!hw.locked;
-  let cls = 'hw-card';
-  if (locked) cls += ' locked'; else if (isDone) cls += ' done'; else if (hw.isOverdue) cls += ' overdue';
 
-  let lessonsStrip = '';
-  if (hw.linkedLessons && hw.linkedLessons.length) {
-    lessonsStrip = '<div class="hw-lessons"><span class="hw-lessons-lbl">Covers:</span>' +
-      hw.linkedLessons.map(ll => '<span class="lesson-link" onclick="event.stopPropagation();openContentFromHw(\'' + esc(ll.id) + '\')"><span class="ln">' + ll.lessonNumber + '</span>' + esc(ll.title) + '</span>').join('') +
-      '</div>';
-  }
+function submissionKey(item){ return item.assignmentToken || item.id; }
 
-  return '<div class="' + cls + '" onclick="' + (hw.fileUrl ? 'openContent(\'homework\',\'' + esc(hw.id) + '\')' : '') + '"' + (hw.fileUrl ? '' : ' style="cursor:not-allowed;"') + '><div class="hw-top"><div class="hw-icon">' +
-    (locked ? '🔒' : isDone ? '✅' : hw.isOverdue ? '⏰' : '📝') +
-    '</div><div class="hw-info"><div class="hw-title">' + esc(hw.title) + '</div><div class="hw-meta">' +
-    (hw.subject ? '<span class="badge">' + esc(hw.subject) + '</span>' : '') +
-    (hw.dueDate ? '<span>Due ' + hw.dueDate + '</span>' : '') +
-    (isDone ? '<span class="badge done">Submitted</span>' : hw.isOverdue ? '<span class="badge overdue">Overdue</span>' : '') +
-    '</div>' +
-    (hw.description ? '<div style="font-size:.75rem;color:#9CA3AF;margin-top:3px;">' + esc(hw.description) + '</div>' : '') +
-    '</div>' +
-    (isDone ? '<span class="hw-score">' + sub.score + ' / ' + sub.maxScore + '</span>' : '') +
-    '</div>' + lessonsStrip + '</div>';
-}
-function getAttemptNumberFor(item){
-  const tok = item.assignmentToken || item.id;
-  return SCORES[tok] ? '2' : '1';
-}
-function openContent(type, id){
-  const item = type === 'lesson' ? LESSONS.find(l => l.id === id) : HOMEWORK.find(h => h.id === id);
-  if (!item || !item.fileUrl) return alert('File not available. Contact your teacher.');
-  if (item.locked) return showToast('🔒 Complete the previous step first.');
+function openContent(type,id){
+  const unit = (PORTAL.units || []).find(u => u.key === ACTIVE_UNIT);
+  const items = type === 'lesson' ? (unit.lessons || []) : (unit.homework || []);
+  const item = items.find(x => x.id === id);
+  if (!item || !item.fileUrl) return alert('File not available');
+  if (item.locked) return showToast('Locked');
 
-  ls.set('lp_return_tab_' + SESSION.massarCode, ACTIVE_TAB);
-  ls.set('lp_return_unit_' + SESSION.massarCode, ACTIVE_UNIT !== null ? String(ACTIVE_UNIT) : '');
-  ls.set('lp_return_needs_refresh_' + SESSION.massarCode, '1');
+  ls.set('lp_core_return_unit', ACTIVE_UNIT);
+  ls.set('lp_core_return_tab', ACTIVE_TAB);
+  ls.set('lp_core_refresh', '1');
 
-  const tok = item.assignmentToken || item.id;
-  const sub = SCORES[tok];
   const params = new URLSearchParams({
-    massarCode: SESSION.massarCode,
-    pin: SESSION._pin || '',
-    classId: SESSION.classId,
-    termId: SESSION.termId,
-    studentName: SESSION.studentName,
     scriptUrl: SCRIPT_URL,
     secret: APP_SECRET,
+    classId: SESSION.classId,
+    termId: SESSION.termId,
+    massarCode: SESSION.massarCode,
+    studentName: SESSION.studentName,
+    studentId: SESSION.studentId || '',
     contentType: type,
     contentId: item.id,
+    lessonId: type === 'lesson' ? item.id : ((item.linkedLessons && item.linkedLessons[0] && item.linkedLessons[0].id) || ''),
+    homeworkId: type === 'homework' ? item.id : '',
+    assignmentToken: type === 'homework' ? (item.assignmentToken || '') : '',
     lessonNumber: item.lessonNumber || '',
-    lessonTitle: item.title || '',
-    subject: item.subject || '',
-    homeworkId: item.id,
-    assignmentToken: tok,
-    priorScore: sub ? String(sub.score || '') : '',
-    priorMaxScore: sub ? String(sub.maxScore || '') : '',
-    attempt: getAttemptNumberFor(item)
+    lessonTitle: item.title || ''
   });
+  window.location.href = item.fileUrl + '#' + params.toString();
+}
 
-  let fileUrl = item.fileUrl || '';
-  if (fileUrl.indexOf('?page=') >= 0) {
-    const pageId = fileUrl.split('?page=')[1].split('&')[0];
-    fileUrl = 'https://cimikool.github.io/portal1/' + pageId + '.html';
-  }
-  window.location.href = fileUrl + '#' + params.toString();
-}
-function openContentFromHw(lessonId){ openContent('lesson', lessonId); }
-function showToast(msg){
-  const t = document.createElement('div');
-  t.style.cssText = "position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#065F46;color:#fff;border-radius:12px;padding:12px 24px;font-size:.88rem;font-weight:700;box-shadow:0 4px 20px rgba(0,0,0,.25);z-index:9999;font-family:'Cairo',sans-serif;white-space:nowrap;";
-  t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 4000);
-}
+function showToast(msg){ alert(msg); }
+
 function logout(){
-  const massar = SESSION ? SESSION.massarCode : '';
   clearSession();
-  SESSION = null; LESSONS = []; HOMEWORK = []; SCORES = {}; ACTIVE_UNIT = null;
-  if (massar) ls.del('lp_return_needs_refresh_' + massar);
-  document.getElementById('student-bar').style.display = 'none';
-  document.getElementById('school-info').style.display = 'none';
-  document.getElementById('hdr-sub').style.display = '';
+  SESSION = null;
+  PORTAL = null;
+  ACTIVE_UNIT = null;
   document.getElementById('main-screen').style.display = 'none';
   document.getElementById('login-screen').style.display = 'block';
-  document.getElementById('massar-inp').value = '';
-  document.getElementById('pin-inp').value = '';
-  document.getElementById('login-err').style.display = 'none';
+  document.getElementById('hdr-sub').style.display = 'block';
+  document.getElementById('hdr-meta').style.display = 'none';
 }
+
 function esc(s){ return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmtDate(s){ try { return new Date(s).toLocaleDateString('en-GB'); } catch { return ''; } }
 
-document.getElementById('pin-inp').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-document.getElementById('massar-inp').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('pin-inp').focus(); });
-
-(function(){
+(function init(){
   const s = loadSession();
-  if (s && s.massarCode && s.classId) {
-    SESSION = s;
-    const savedTab = ls.get('lp_return_tab_' + s.massarCode);
-    const savedUnit = ls.get('lp_return_unit_' + s.massarCode);
-    if (savedTab !== null) {
-      ls.del('lp_return_tab_' + s.massarCode);
-      ls.del('lp_return_unit_' + s.massarCode);
-      ACTIVE_UNIT = (savedUnit !== null && savedUnit !== '') ? parseInt(savedUnit, 10) : null;
-      ACTIVE_TAB = savedTab || 'lessons';
-    }
-    enterApp(true);
-    loadContent(true);
-  }
+  if (!s) return;
+  SESSION = s;
+  ACTIVE_UNIT = ls.get('lp_core_return_unit') || null;
+  ACTIVE_TAB = ls.get('lp_core_return_tab') || 'lessons';
+  ls.del('lp_core_return_unit');
+  ls.del('lp_core_return_tab');
+  enterApp();
 }());
 
-window.addEventListener('pageshow', function() {
-  if (!SESSION || !SESSION.massarCode) return;
-  const savedTab = ls.get('lp_return_tab_' + SESSION.massarCode);
-  const savedUnit = ls.get('lp_return_unit_' + SESSION.massarCode);
-  const needsRefresh = ls.get('lp_return_needs_refresh_' + SESSION.massarCode);
-
-  if (savedTab !== null) {
-    ls.del('lp_return_tab_' + SESSION.massarCode);
-    ls.del('lp_return_unit_' + SESSION.massarCode);
-    ACTIVE_UNIT = (savedUnit !== null && savedUnit !== '') ? parseInt(savedUnit, 10) : null;
-    ACTIVE_TAB = savedTab || 'lessons';
-  }
-  if (needsRefresh) {
-    ls.del('lp_return_needs_refresh_' + SESSION.massarCode);
-    loadContent(true);
-  }
-});
-document.addEventListener('visibilitychange', function(){
-  if (!document.hidden && SESSION && ls.get('lp_return_needs_refresh_' + SESSION.massarCode)) {
-    ls.del('lp_return_needs_refresh_' + SESSION.massarCode);
-    loadContent(true);
+window.addEventListener('pageshow', function(){
+  if (SESSION && ls.get('lp_core_refresh')) {
+    ls.del('lp_core_refresh');
+    refreshPortal(true);
   }
 });
 window.addEventListener('focus', function(){
-  if (SESSION && ls.get('lp_return_needs_refresh_' + SESSION.massarCode)) {
-    ls.del('lp_return_needs_refresh_' + SESSION.massarCode);
-    loadContent(true);
+  if (SESSION && ls.get('lp_core_refresh')) {
+    ls.del('lp_core_refresh');
+    refreshPortal(true);
   }
 });
 </script>
