@@ -387,28 +387,22 @@ var Portal = {
 
   /* ── Update total score badge ── */
   updateTotalScore: function() {
-    /* Average of all submitted homework scores, each normalized to /20 */
+    /* Average of all submitted homework scores.
+       Backend guarantees each score is already on a /20 scale.
+       We normalize defensively in case of old sheet data. */
     var sum = 0, count = 0;
     State.homework.forEach(function(hw) {
       if (hw.submissionCount > 0 && hw.submittedScore !== null) {
-        /* Backend already normalizes to /20, but cap defensively */
-        var s   = Math.min(hw.submittedScore || 0, 20);
-        var mx  = hw.submittedMaxScore || 20;
-        /* Express as /20 in case backend sends non-normalized value */
+        var s  = hw.submittedScore || 0;
+        var mx = hw.submittedMaxScore || 20;
+        /* Normalize to /20 — handles any legacy scores not yet on /20 scale */
         var on20 = mx > 0 ? Math.round(s / mx * 20) : s;
-        sum   += Math.min(on20, 20);
+        sum   += Math.min(on20, 20);  /* hard cap */
         count += 1;
       }
     });
     var el = document.getElementById('total-score');
-    if (el) {
-      if (count === 0) {
-        el.textContent = '—';
-      } else {
-        var avg = Math.round(sum / count);
-        el.textContent = avg + ' / 20';
-      }
-    }
+    if (el) el.textContent = count > 0 ? (Math.round(sum / count) + ' / 20') : '—';
   },
 
   /* ================================================================
